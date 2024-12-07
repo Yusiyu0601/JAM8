@@ -45,7 +45,7 @@ namespace JAM8.Console.Pages
             // 创建一个包含90002个元素的数组（示例数据）
             int totalElements = df.N_Record;
             int[] arr = new int[totalElements];
-            Random rand = new Random();
+            Random rand = new();
             for (int i = 0; i < df.N_Record; i++)
             {
                 var value = df[i, 0];
@@ -100,7 +100,7 @@ namespace JAM8.Console.Pages
             var ti = g.first_gridProperty();
             Mould mould = ti.gridStructure.dim == Dimension.D2 ? Mould.create_by_ellipse(10, 10, 1) :
                 Mould.create_by_ellipse(7, 7, 2, 1);
-            mould = Mould.create_by_mould(mould, 20);
+            mould = Mould.create_by_mould(mould, 60);
 
             //手动测试
             int progress_for_inverse_retrieve = EasyConsole.Input.ReadInt("逆向查询占比", 0, 100);

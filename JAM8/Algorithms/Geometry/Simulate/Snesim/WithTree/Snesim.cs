@@ -67,8 +67,19 @@ namespace JAM8.Algorithms.Geometry
 
             Stopwatch sw = new();//只记录模拟时间（不包括构建搜索树）
             sw.Start();
+
+            MyDataFrame df_time = MyDataFrame.create(["progress", "ElapsedMilliseconds", "totalElapsedTime"]);
+            // 累计时长变量（单位：毫秒）
+            long totalElapsedTime = 0;
             while (path.is_visit_over() == false)
             {
+                if (path.progress % 1 == 0)
+                {
+                    sw.Stop();
+                    totalElapsedTime += sw.ElapsedMilliseconds;  // 累加时长
+                    df_time.add_record([path.progress, sw.ElapsedMilliseconds, totalElapsedTime]);
+                    sw.Restart();
+                }
                 MyConsoleProgress.Print(path.progress, "snesim");
                 var si = path.visit_next();
                 var value_si = g["模型"].get_value(si);
@@ -81,9 +92,10 @@ namespace JAM8.Algorithms.Geometry
                     g["模型"].set_value(si, value);
                     nod_cut[value]++;
                 }
-                if (path.progress % 20 == 0)
-                    g["模型"].deep_clone().show_win($"{path.progress}");
+                //if (path.progress % 5 == 0)
+                //    g["模型"].deep_clone().show_win($"{path.progress}");
             }
+            df_time.show_win("time vs progress");
             sw.Stop();
             tree.df.show_win("访问节点总数", true);
             return (g, sw.ElapsedMilliseconds);

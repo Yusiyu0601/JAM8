@@ -62,6 +62,7 @@
   <ItemGroup>
     <PackageReference Include="Accord.MachineLearning" Version="3.8.0" />
     <PackageReference Include="CsvHelper" Version="30.0.1" />
+    <PackageReference Include="DG.AdvancedDataGridView" Version="1.2.29921.15" />
     <PackageReference Include="Easy.Common" Version="6.5.0" />
     <PackageReference Include="ExcelLibrary" Version="1.2011.7.31" />
     <PackageReference Include="HNSW" Version="1.0.42139" />
