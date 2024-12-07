@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net7.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <PublishAot>true</PublishAot>
+    <_SuppressWinFormsTrimError>true</_SuppressWinFormsTrimError>
+    <Platforms>x64</Platforms>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ReactorLocation>"C:\Program Files (x86)\Eziriz\.NET Reactor\dotNET_Reactor.Console.exe"</ReactorLocation>
+    <ReactorProject>""</ReactorProject>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="TorchSharp-cuda-windows" Version="0.101.5" />
+    <PackageReference Include="TorchVision" Version="0.101.5" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\JAM7\JAM7.csproj" />
+  </ItemGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties Reactor_Commands="" Reactor_Configuration="Release" Reactor_Deploy="0" Reactor_Enabled="0" Reactor_Output="&lt;AssemblyLocation&gt;\&lt;AssemblyFileName&gt;" Reactor_Project="" />
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>

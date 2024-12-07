@@ -1,0 +1,122 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>disable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <PublishAot>true</PublishAot>
+	<Platforms>x64</Platforms>
+    <_SuppressWinFormsTrimError>true</_SuppressWinFormsTrimError>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ReactorLocation>"C:\Program Files (x86)\Eziriz\.NET Reactor\dotNET_Reactor.Console.exe"</ReactorLocation>
+    <ReactorProject>""</ReactorProject>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="ExportDll\**" />
+    <Compile Remove="常用工具\Forms_Grid\**" />
+    <Compile Remove="常用工具\Forms_Image\**" />
+    <Compile Remove="常用工具\Forms_MachineLearning\**" />
+    <Compile Remove="常用工具\Forms_Plot\**" />
+    <Compile Remove="常用工具\Forms_WellLog\**" />
+    <Compile Remove="常用工具\Form_Excel\**" />
+    <Compile Remove="常用工具\Form_Variogram\**" />
+    <Compile Remove="建模方法\Forms\**" />
+    <Compile Remove="资源文件\**" />
+    <EmbeddedResource Remove="ExportDll\**" />
+    <EmbeddedResource Remove="常用工具\Forms_Grid\**" />
+    <EmbeddedResource Remove="常用工具\Forms_Image\**" />
+    <EmbeddedResource Remove="常用工具\Forms_MachineLearning\**" />
+    <EmbeddedResource Remove="常用工具\Forms_Plot\**" />
+    <EmbeddedResource Remove="常用工具\Forms_WellLog\**" />
+    <EmbeddedResource Remove="常用工具\Form_Excel\**" />
+    <EmbeddedResource Remove="常用工具\Form_Variogram\**" />
+    <EmbeddedResource Remove="建模方法\Forms\**" />
+    <EmbeddedResource Remove="资源文件\**" />
+    <None Remove="ExportDll\**" />
+    <None Remove="常用工具\Forms_Grid\**" />
+    <None Remove="常用工具\Forms_Image\**" />
+    <None Remove="常用工具\Forms_MachineLearning\**" />
+    <None Remove="常用工具\Forms_Plot\**" />
+    <None Remove="常用工具\Forms_WellLog\**" />
+    <None Remove="常用工具\Form_Excel\**" />
+    <None Remove="常用工具\Form_Variogram\**" />
+    <None Remove="建模方法\Forms\**" />
+    <None Remove="资源文件\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Accord.MachineLearning" Version="3.8.0" />
+    <PackageReference Include="EasyConsole" Version="1.1.0" />
+    <PackageReference Include="FileHelpers" Version="3.5.2" />
+    <PackageReference Include="NetOctree" Version="2.1.0" />
+    <PackageReference Include="Shouldly" Version="4.2.1" />
+    <PackageReference Include="WinFormsComInterop" Version="0.5.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="JAM8.Export.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ProjectExtensions>
+    <VisualStudio><UserProperties Reactor_Commands="" Reactor_Configuration="Release" Reactor_Deploy="0" Reactor_Enabled="0" Reactor_Output="&lt;AssemblyLocation&gt;\&lt;AssemblyFileName&gt;" Reactor_Project="" /></VisualStudio>
+  </ProjectExtensions>
+  <ItemGroup>
+    <PrivateSdkAssemblies Remove="建模方法\Forms\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <FrameworkAssemblies Remove="建模方法\Forms\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <PrivateSdkAssemblies Remove="常用工具\Form_Excel\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <FrameworkAssemblies Remove="常用工具\Form_Excel\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <PrivateSdkAssemblies Remove="常用工具\Forms_Grid\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <FrameworkAssemblies Remove="常用工具\Forms_Grid\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <PrivateSdkAssemblies Remove="常用工具\Forms_MachineLearning\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <FrameworkAssemblies Remove="常用工具\Forms_MachineLearning\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <PrivateSdkAssemblies Remove="常用工具\Forms_Image\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <FrameworkAssemblies Remove="常用工具\Forms_Image\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <PrivateSdkAssemblies Remove="常用工具\Forms_WellLog\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <FrameworkAssemblies Remove="常用工具\Forms_WellLog\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <PrivateSdkAssemblies Remove="常用工具\Forms_Plot\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <FrameworkAssemblies Remove="常用工具\Forms_Plot\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <PrivateSdkAssemblies Remove="常用工具\Form_Variogram\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <FrameworkAssemblies Remove="常用工具\Form_Variogram\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <PrivateSdkAssemblies Remove="资源文件\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <FrameworkAssemblies Remove="资源文件\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\JAM8\JAM8.csproj" />
+  </ItemGroup>
+</Project>
