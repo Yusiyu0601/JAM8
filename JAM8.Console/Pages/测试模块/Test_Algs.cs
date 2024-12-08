@@ -1,4 +1,5 @@
-﻿using EasyConsole;
+﻿using System.Collections.Generic;
+using EasyConsole;
 using JAM8.Algorithms.Forms;
 using JAM8.Algorithms.Geometry;
 using JAM8.Algorithms.Numerics;
@@ -42,41 +43,37 @@ namespace JAM8.Console.Pages
             MyDataFrame df = MyDataFrame.read_from_excel();
             df.show_win("", true);
 
-            // 创建一个包含90002个元素的数组（示例数据）
-            int totalElements = df.N_Record;
-            int[] arr = new int[totalElements];
-            Random rand = new();
-            for (int i = 0; i < df.N_Record; i++)
+            MyDataFrame new_df = MyDataFrame.create(df.series_names);
+
+            Dictionary<string, double[]> temp = [];
+
+            for (int i = 0; i < df.N_Series; i++)
             {
-                var value = df[i, 0];
-                arr[i] = Convert.ToInt32(value);
+                var series_buffer = df.get_series<double>(i);
+
+                // 分成100等份
+                int partitionSize = series_buffer.Length / 100; // 每一份的大小
+
+                var list2 = series_buffer
+                    .Select((value, index) => new { value, index }) // 把值和索引配对
+                    .GroupBy(x => x.index / partitionSize)         // 按索引分组
+                    .Select(group => group.Average(x => x.value))  // 计算每组的均值
+                    .ToArray();
+
+                temp.Add(df.series_names[i], list2);
             }
-            // 定义分块数目为101（包括边界）
-            int numChunks = 101;
-            double[] means = new double[numChunks];
 
-            // 分块计算
-            for (int i = 0; i < numChunks; i++)
+            for (int i = 0; i < temp.FirstOrDefault().Value.Length; i++)
             {
-                // 确定当前分块的范围
-                int start = i * (totalElements / numChunks);
-                int end = (i == numChunks - 1) ? totalElements : (i + 1) * (totalElements / numChunks);
-
-                // 计算该分块的均值
-                double sum = 0;
-                for (int j = start; j < end; j++)
+                List<object> objs = [];
+                foreach (var (key, value) in temp)
                 {
-                    sum += arr[j];
+                    objs.Add(temp[key][i]);
                 }
 
-                means[i] = sum / (end - start);
+                new_df.add_record(objs.ToArray());
             }
 
-            MyDataFrame new_df = MyDataFrame.create(["NodeCountAverage"]);
-            for (int i = 0; i < means.Length; i++)
-            {
-                new_df.add_record([means[i]]);
-            }
             new_df.show_win("NodeCountAverage", true);
         }
 

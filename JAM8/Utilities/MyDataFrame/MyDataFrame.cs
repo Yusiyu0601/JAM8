@@ -78,43 +78,48 @@ namespace JAM8.Utilities
         /// 根据序列名称新建MyDataFrame对象，如果名称有重复，默认修改相同列名。
         /// </summary>
         /// <param name="series_names"></param>
-        /// <param name="remove_same_series_names">当列名重复时，如果remove_same_series_names为true，则保留第1个列名，删除后续出现的列名；
+        /// <param name="remove_same_series_names">默认为false
+        /// 当列名重复时，如果remove_same_series_names为true，则保留第1个列名，删除后续出现的列名；
         /// 如果remove_same_series_names为false，则将之后出现的列名添加后缀</param>
         /// <returns></returns>
         public static MyDataFrame create(IList<string> series_names, bool remove_same_series_names = false)
         {
-            if (remove_same_series_names == true)//删除相同列名，只保留第1次出现的列名
+            // 检查输入是否为 null 或空列表，若是，返回一个空的 MyDataFrame
+            if (series_names == null || !series_names.Any())
             {
-                series_names = series_names.Distinct().ToList();
+                throw new ArgumentException("series_names cannot be null or empty.", nameof(series_names));
             }
-            else//保留相同名称的列名，对同名列名加后缀
+
+            // 如果不去重，处理列名，遇到重复的列名添加后缀
+            if (!remove_same_series_names)
             {
-                //series_names出现次数统计
-                Dictionary<string, int> count_series_names = new();
-                //修改重复的series_name
-                for (int i = 0; i < series_names.Count; i++)
+                var seriesNameCount = new Dictionary<string, int>();
+                series_names = series_names.Select(name =>
                 {
-                    var series_name = series_names[i];
-                    if (count_series_names.ContainsKey(series_name))//如果有重复
+                    // 如果列名已出现过，添加后缀
+                    if (seriesNameCount.ContainsKey(name))
                     {
-                        count_series_names[series_name] += 1;//累加1
-                        series_names[i] = $"{series_names[i]}_new{count_series_names[series_name] - 1}";//将计数添加序列名称后面
+                        // 后缀递增
+                        int count = seriesNameCount[name]++;
+                        return $"{name}{count}";  // 为列名添加递增后缀
                     }
                     else
                     {
-                        count_series_names.Add(series_name, 1);
+                        // 第一次出现该列名
+                        seriesNameCount[name] = 1;
+                        return name;
                     }
-                }
+                }).ToList();
+            }
+            else
+            {
+                series_names = series_names.Distinct().ToList();
             }
 
-            MyDataFrame df = new() { data = new() };
-            if (series_names != null)
-            {
-                for (int i = 0; i < series_names.Count; i++)
-                {
-                    df.add_series(series_names[i]);
-                }
-            }
+            // 创建 MyDataFrame 并添加序列
+            var df = new MyDataFrame { data = [] };
+            series_names.ForEach(name => df.add_series(name)); // 假设 add_series 方法用于添加列
+
             return df;
         }
 
@@ -248,7 +253,7 @@ namespace JAM8.Utilities
         {
             List<string> series_names = new(df.series_names);
             series_names.AddRange(new_series_names);
-            MyDataFrame new_df = create(series_names.ToArray(), true);//删除重名的series_name
+            MyDataFrame new_df = create([.. series_names], true);//删除重名的series_name
             for (int iRecord = 0; iRecord < df.N_Record; iRecord++)
             {
                 var record = new_df.new_record();

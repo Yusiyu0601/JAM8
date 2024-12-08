@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Text;
 using JAM8.Utilities;
 using Tensorboard;
@@ -48,7 +49,7 @@ namespace JAM8.Algorithms.Geometry
         /// </summary>
         public List<Dictionary<float?, STreeNode[]>> stree_nodes_with_levels = null;
 
-        public MyDataFrame df = null;//统计访问节点数量
+        public MyDataFrame df = null;//统计访问节点数量和计算时间
 
         /// <summary>
         /// 创建搜索树
@@ -78,7 +79,7 @@ namespace JAM8.Algorithms.Geometry
             tree.建立分层节点集合();
             MyConsoleHelper.write_string_to_console("搜索树节点总数", tree.get_nodes_count().ToString());
 
-            tree.df = MyDataFrame.create(["访问总数"]);
+            tree.df = MyDataFrame.create(["访问节点总数", "计算时间"]);
 
             return tree;
         }
@@ -230,6 +231,8 @@ namespace JAM8.Algorithms.Geometry
 
             //总数与当前层
             int Sum = 0, Level = 0;
+            Stopwatch sw = new();
+            sw.Start();
             //针对数据事件的邻居，由近及远（直到最后一个非空节点的位置）逐个查找满足条件的节点
             for (int neighbor_idx = 0; neighbor_idx <= data_event.neighbor_not_nulls_ids.Last(); neighbor_idx++)
             {
@@ -270,9 +273,11 @@ namespace JAM8.Algorithms.Geometry
                 Sum += nodes_temp.Count;
                 Level = nodes_temp.Count;
             }
+            sw.Stop();
 
-            var record = df.new_record([Sum]);
-            df.add_record(record);
+            // 将 tick 转换为微秒
+            double elapsedMicroseconds = (sw.ElapsedTicks / (double)Stopwatch.Frequency) * 1_000_000;
+            df.add_record([Sum, elapsedMicroseconds]);
 
             // 输出结果
             return core_values_all_levels

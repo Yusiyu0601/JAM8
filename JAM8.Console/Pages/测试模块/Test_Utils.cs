@@ -27,9 +27,16 @@ namespace JAM8.Console.Pages
 
            .Add("退出", CommonFunctions.Cancel)
            .Add("MyConsoleProgress测试", MyConsoleProgress测试)
+           .Add("MyDataFrame create测试", MyDataFrame_create测试)
            ;
 
             menu.Display();
+        }
+
+        private void MyDataFrame_create测试()
+        {
+            MyDataFrame df = MyDataFrame.create(["A", "A", "B", "B", "A"]);
+            MyDataFrame df2 = MyDataFrame.create(["A", "A", "B", "B", "A"], true);
         }
 
         private void MyConsoleProgress测试()
