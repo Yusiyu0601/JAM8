@@ -55,7 +55,7 @@ namespace JAM8.Utilities
             using var dr = new CsvDataReader(csv);
             var dt = new DataTable();
             dt.Load(dr);
-            MyDataFrame df = MyDataFrame.create_from_dataTable(dt);
+            MyDataFrame df = MyDataFrame.create_from_datatable(dt);
             return df;
         }
 

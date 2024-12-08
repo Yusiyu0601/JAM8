@@ -13,7 +13,7 @@ namespace JAM8.SpecificApps.常用工具
         private void button1_Click(object sender, EventArgs e)
         {
             var dt = ExcelHelper.excel_to_dataTable(FileDialogHelper.OpenExcel());
-            var df = MyDataFrame.create_from_dataTable(dt);
+            var df = MyDataFrame.create_from_datatable(dt);
 
             var plt = formsPlot1.Plot;
             plt.Clear();

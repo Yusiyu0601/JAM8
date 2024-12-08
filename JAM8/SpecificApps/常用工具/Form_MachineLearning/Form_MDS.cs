@@ -109,7 +109,8 @@ namespace JAM8.SpecificApps.常用工具
             for (int i = 1; i <= N_dims; i++)
                 series_names[i - 1] = $"dim{i}";
             var result = MyDataFrame.create_from_array(series_names, locs);
-            result = MyDataFrame.create_from_mydf(result, "ID", true);
+            result.add_series("ID");
+            result.move_series("ID", 0);
             result.copy_series_from(df_距离矩阵.series_names, "ID");
             result.show_win("降维后");
         }
@@ -120,7 +121,8 @@ namespace JAM8.SpecificApps.常用工具
             var locs = CMDSCALE.CMDSCALE_MathNet(df_距离矩阵.convert_to_double_2dArray(), N_dims);
             string[] series_names = new string[] { "dim1", "dim2" };
             var result = MyDataFrame.create_from_array(series_names, locs);
-            result = MyDataFrame.create_from_mydf(result, "ID", true);
+            result.add_series("ID");
+            result.move_series("ID", 0);
             result.copy_series_from(df_距离矩阵.series_names, "ID");
             result.show_win("降维后");
 

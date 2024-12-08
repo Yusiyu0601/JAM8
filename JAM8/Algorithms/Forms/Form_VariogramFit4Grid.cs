@@ -333,7 +333,11 @@ namespace JAM8.Algorithms.Forms
                 { "gamma", gamma },
                 { "N_pair",N_pair.Select(a => (double)a).ToArray() }
             };
-            MyDataFrame df = MyDataFrame.create_from_multiple_series(dict);
+
+            MyDataFrame df = MyDataFrame.create(["h", "gamma", "N_pairs"]);
+            for (int i = 0; i < h.Length; i++)
+                df.add_record([h[i], gamma[i], N_pair[i]]);
+
             dataGridView1.DataSource = df.convert_to_dataTable();
             if (variogram_fit.nugget < 0)//偶尔存在这种情况
                 variogram_fit.nugget = 0;

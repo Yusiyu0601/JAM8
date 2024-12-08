@@ -38,7 +38,7 @@
             MySeries series = new()
             {
                 series_name = series_name,
-                buffer = new()
+                buffer = []
             };
 
             return series;

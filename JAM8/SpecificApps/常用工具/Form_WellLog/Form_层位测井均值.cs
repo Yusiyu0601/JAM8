@@ -19,7 +19,7 @@ namespace JAM8.SpecificApps.常用工具
         {
             DataTable dt = ExcelHelper.excel_to_dataTable(FileDialogHelper.OpenExcel());
             dataGridView1.DataSource = dt;
-            df_层位数据 = MyDataFrame.create_from_dataTable(dt);
+            df_层位数据 = MyDataFrame.create_from_datatable(dt);
 
             comboBox1.Items.Clear();
             comboBox2.Items.Clear();

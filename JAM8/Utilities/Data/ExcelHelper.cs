@@ -24,6 +24,15 @@ namespace JAM8.Utilities
         /// <summary>
         /// 读取Excel文件，转换为DataTable对象(首行为标题)
         /// </summary>
+        /// <returns></returns>
+        public static DataTable excel_to_dataTable()
+        {
+            return ExcelHelper.excel_to_dataTable(FileDialogHelper.OpenExcel());
+        }
+
+        /// <summary>
+        /// 读取Excel文件，转换为DataTable对象(首行为标题)
+        /// </summary>
         /// <param name="file_name"></param>
         /// <returns></returns>
         public static DataTable excel_to_dataTable(string file_name)

@@ -34,7 +34,7 @@ namespace JAM8.SpecificApps.常用工具
             Console.WriteLine(@"提示:输入xlsx文件A格式为 <首行标题> [井名] [层位] [顶深] [低深]");
 
             DataTable dt = ExcelHelper.excel_to_dataTable(FileDialogHelper.OpenExcel());
-            MyDataFrame df_测井解释 = MyDataFrame.create_from_dataTable(dt);
+            MyDataFrame df_测井解释 = MyDataFrame.create_from_datatable(dt);
             df_测井解释.show_win("测井解释", true);
 
             Console.WriteLine();

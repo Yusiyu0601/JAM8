@@ -48,7 +48,9 @@ namespace JAM8.Algorithms.MachineLearning
 
         public MyDataFrame predict(MyDataFrame df_predict, string[] input_series_names)
         {
-            MyDataFrame df_result = MyDataFrame.create_from_mydf(df_predict, new string[] { "predict_value" });
+            //MyDataFrame df_result = MyDataFrame.create_from_dataframe(df_predict, new string[] { "predict_value" });
+            MyDataFrame df_result = df_predict.deep_clone();
+            df_result.add_series("predict_value");
             //从dt提取input列的数据（多输入）
             double[][] input = df_result.get_series_subset(input_series_names).convert_to_double_jagged_array();
             //int[] ouput = rf_model.Decide(input);

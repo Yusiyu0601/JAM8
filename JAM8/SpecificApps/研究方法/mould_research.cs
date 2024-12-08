@@ -59,8 +59,9 @@ namespace JAM8.SpecificApps.研究方法
             var dismat = MyMatrix.create_dismat(df_pats, MyDistanceType.manhattan);
             var locs = CMDSCALE.CMDSCALE_MathNet(dismat, 2);
             string[] series_names = new string[] { "dim1", "dim2" };
-            var result = MyDataFrame.create_from_array(series_names, locs.buffer);
-            result = MyDataFrame.create_from_mydf(result, "ID", true);
+            var result = MyDataFrame.create_from_array<float>(series_names, locs.buffer);
+            result.add_series("ID");
+            result.move_series("ID", 0);
             result.show_win("降维后");
 
             Form_QuickChart.ScatterPlot(

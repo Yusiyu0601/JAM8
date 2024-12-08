@@ -4,7 +4,7 @@
     {
         public MyRecord deep_clone()
         {
-            MyRecord clone = new();
+            MyRecord clone = [];
             foreach (var item in this)
                 clone.Add(item.Key, item.Value);
             return clone;

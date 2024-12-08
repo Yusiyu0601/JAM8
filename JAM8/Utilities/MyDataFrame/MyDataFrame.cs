@@ -15,12 +15,13 @@ namespace JAM8.Utilities
     /// </summary>
     public class MyDataFrame
     {
+        //私有构造函数
         private MyDataFrame() { }
 
         #region 属性
 
         /// <summary>
-        /// 序列名称
+        /// 序列名称(只读)
         /// </summary>
         public string[] series_names
         {
@@ -34,7 +35,7 @@ namespace JAM8.Utilities
         /// </summary>
         public List<MySeries> data { get; internal set; }
         /// <summary>
-        /// 记录总数
+        /// 记录总数(只读)
         /// </summary>
         public int N_Record
         {
@@ -47,7 +48,7 @@ namespace JAM8.Utilities
             }
         }
         /// <summary>
-        /// 序列总数
+        /// 序列总数(只读)
         /// </summary>
         public int N_Series
         {
@@ -59,35 +60,37 @@ namespace JAM8.Utilities
 
         #endregion
 
-        #region create
+        #region create dataframe
 
         /// <summary>
-        /// 根据序列数量新建MyDataFrame对象，序列名称series{i}
+        /// 根据序列数量新建 MyDataFrame 对象，序列名称为 series1, series2, ..., series{series_count}
         /// </summary>
-        /// <param name="series_count"></param>
-        /// <returns></returns>
+        /// <param name="series_count">序列数量</param>
+        /// <returns>新建的 MyDataFrame 对象</returns>
         public static MyDataFrame create(int series_count)
         {
-            string[] series_names = new string[series_count];
-            for (int i = 1; i <= series_count; i++)
-                series_names[i - 1] = $"series{i}";
+            // 生成序列名称数组
+            var series_names = Enumerable.Range(1, series_count)
+                                          .Select(i => $"series{i}")
+                                          .ToArray();
+
+            // 调用已有的 create 方法以生成 MyDataFrame
             return create(series_names);
         }
 
         /// <summary>
-        /// 根据序列名称新建MyDataFrame对象，如果名称有重复，默认修改相同列名。
+        /// 根据序列名称新建 MyDataFrame 对象。如果列名有重复，默认修改相同列名，
+        /// 可以选择保留第一个列名并删除其他重复列，或者将重复列名添加递增后缀。
         /// </summary>
-        /// <param name="series_names"></param>
-        /// <param name="remove_same_series_names">默认为false
-        /// 当列名重复时，如果remove_same_series_names为true，则保留第1个列名，删除后续出现的列名；
-        /// 如果remove_same_series_names为false，则将之后出现的列名添加后缀</param>
-        /// <returns></returns>
+        /// <param name="series_names">列名列表</param>
+        /// <param name="remove_same_series_names">如果为 true，保留第一个出现的列名，删除后续出现的重复列名；如果为 false，给重复列名添加递增后缀。</param>
+        /// <returns>创建的 MyDataFrame 对象</returns>
         public static MyDataFrame create(IList<string> series_names, bool remove_same_series_names = false)
         {
-            // 检查输入是否为 null 或空列表，若是，返回一个空的 MyDataFrame
-            if (series_names == null || !series_names.Any())
+            // 检查输入是否为 null、空列表，或包含空字符串，若是，抛出异常
+            if (series_names == null || !series_names.Any() || series_names.Any(name => string.IsNullOrEmpty(name)))
             {
-                throw new ArgumentException("series_names cannot be null or empty.", nameof(series_names));
+                throw new ArgumentException("series_names cannot be null, empty, or contain empty strings.", nameof(series_names));
             }
 
             // 如果不去重，处理列名，遇到重复的列名添加后缀
@@ -100,7 +103,7 @@ namespace JAM8.Utilities
                     if (seriesNameCount.ContainsKey(name))
                     {
                         // 后缀递增
-                        int count = seriesNameCount[name]++;
+                        int count = seriesNameCount[name] += 1;
                         return $"{name}{count}";  // 为列名添加递增后缀
                     }
                     else
@@ -113,12 +116,19 @@ namespace JAM8.Utilities
             }
             else
             {
+                // 去重，保留第一个出现的列名
                 series_names = series_names.Distinct().ToList();
             }
 
             // 创建 MyDataFrame 并添加序列
-            var df = new MyDataFrame { data = [] };
-            series_names.ForEach(name => df.add_series(name)); // 假设 add_series 方法用于添加列
+            var df = new MyDataFrame { data = [] };// 初始化 data
+
+            // 添加列并进行重复列名的检查
+            foreach (var series_name in series_names)
+            {
+                // 添加新列到 MyDataFrame
+                df.data.Add(MySeries.create(series_name));
+            }
 
             return df;
         }
@@ -126,44 +136,30 @@ namespace JAM8.Utilities
         /// <summary>
         /// 根据二维数组新建MyDataFrame对象
         /// </summary>
-        /// <param name="array"></param>
-        /// <returns></returns>
-        public static MyDataFrame create_from_array(IList<string> series_names, float[,] array)
+        /// <typeparam name="T">数组元素类型，例如 float 或 double</typeparam>
+        /// <param name="series_names">列名列表</param>
+        /// <param name="array">二维数组</param>
+        /// <returns>新建的 MyDataFrame 对象</returns>
+        /// <exception cref="ArgumentException">当列名数量与数组列数不匹配时抛出</exception>
+        public static MyDataFrame create_from_array<T>(IList<string> series_names, T[,] array) where T : struct
         {
+            // 检查列名数量是否与数组列数一致
+            int N_Series = array.GetLength(1);
+            if (series_names.Count != N_Series)
+            {
+                throw new ArgumentException($"列名数量 ({series_names.Count}) 与数组的列数 ({N_Series}) 不匹配。");
+            }
+
             var df = create(series_names);
 
             int N_Record = array.GetLength(0);
-            int N_Series = array.GetLength(1);
             for (int iRecord = 0; iRecord < N_Record; iRecord++)
             {
                 var record = df.new_record();
                 for (int iSeries = 0; iSeries < N_Series; iSeries++)
                 {
-                    string series_name = df.series_names[iSeries];
-                    record[series_name] = array[iRecord, iSeries];
-                }
-                df.add_record(record);
-            }
-            return df;
-        }
-        /// <summary>
-        /// 根据二维数组新建MyDataFrame对象
-        /// </summary>
-        /// <param name="array"></param>
-        /// <returns></returns>
-        public static MyDataFrame create_from_array(IList<string> series_names, double[,] array)
-        {
-            var df = create(series_names);
-
-            int N_Record = array.GetLength(0);
-            int N_Series = array.GetLength(1);
-            for (int iRecord = 0; iRecord < N_Record; iRecord++)
-            {
-                var record = df.new_record();
-                for (int iSeries = 0; iSeries < N_Series; iSeries++)
-                {
-                    string series_name = df.series_names[iSeries];
-                    record[series_name] = array[iRecord, iSeries];
+                    string seriesName = df.series_names[iSeries];
+                    record[seriesName] = array[iRecord, iSeries];
                 }
                 df.add_record(record);
             }
@@ -171,134 +167,24 @@ namespace JAM8.Utilities
         }
 
         /// <summary>
-        /// 根据DataTable新建MyDataFrame对象
+        /// 根据 DataTable 新建 MyDataFrame 对象
         /// </summary>
-        /// <param name="dt"></param>
-        /// <returns></returns>
-        public static MyDataFrame create_from_dataTable(DataTable dt)
+        /// <param name="dt">输入的 DataTable</param>
+        /// <returns>生成的 MyDataFrame 对象</returns>
+        public static MyDataFrame create_from_datatable(DataTable dt)
         {
-            if (dt == null)
-                return null;
-            List<string> series_names = new();
-            foreach (DataColumn Column in dt.Columns)
-                series_names.Add(Column.ColumnName);
-            MyDataFrame df = create(series_names.ToArray());
+            if (dt == null || dt.Columns.Count == 0)
+                throw new ArgumentException("DataTable 为空或没有列。");
 
-            for (int i = 0; i < dt.Rows.Count; i++)
-            {
-                MyRecord record = df.new_record();//新建1行
-                for (int j = 0; j < dt.Columns.Count; j++)
-                {
-                    string series_name = df.series_names[j];
-                    record[series_name] = dt.Rows[i][j];
-                }
-                df.add_record(record);
-            }
-            return df;
-        }
-
-        /// <summary>
-        /// 根据单个序列的数组新建MyDataFrame对象
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="series_name">序列名称</param>
-        /// <param name="series_array">序列数组</param>
-        /// <returns></returns>
-        public static MyDataFrame create_from_one_series<T>(string series_name, T[] series_array)
-        {
-            MyDataFrame df = create(new string[] { series_name });
-            for (int i = 0; i < series_array.Length; i++)
-            {
-                var record = df.new_record();
-                record[series_name] = series_array[i];
-                df.add_record(record);
-            }
-            return df;
-        }
-
-        /// <summary>
-        /// 根据多个不重名序列的数组新建MyDataFrame对象
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="series"></param>
-        /// <returns></returns>
-        public static MyDataFrame create_from_multiple_series<T>(Dictionary<string, T[]> series_dict)
-        {
-            int count_max = series_dict.Max(a => a.Value.Length);//所有序列，其中记录数量的最大值
-            MyDataFrame df = create(series_dict.Select(a => a.Key).ToArray());
-
-            for (int i = 0; i < count_max; i++)
-            {
-                var record = df.new_record();
-
-                foreach (var series_name in df.series_names)
-                {
-                    record[series_name] = series_dict[series_name][i];
-                }
-
-                df.add_record(record);
-            }
+            // 提取列名
+            var seriesNames = dt.Columns.Cast<DataColumn>().Select(col => col.ColumnName).ToList();
+            // 创建 MyDataFrame 对象
+            MyDataFrame df = create(seriesNames);
+            // 添加记录
+            foreach (DataRow row in dt.Rows)
+                df.add_record(row.ItemArray);
 
             return df;
-        }
-
-        /// <summary>
-        /// 根据已有df创建新的df，根据new_series_names需要添加新series。
-        /// 注意：不添加重名的series_name
-        /// </summary>
-        /// <param name="df"></param>
-        /// <param name="new_series_names"></param>
-        /// <returns></returns>
-        public static MyDataFrame create_from_mydf(MyDataFrame df, string[] new_series_names)
-        {
-            List<string> series_names = new(df.series_names);
-            series_names.AddRange(new_series_names);
-            MyDataFrame new_df = create([.. series_names], true);//删除重名的series_name
-            for (int iRecord = 0; iRecord < df.N_Record; iRecord++)
-            {
-                var record = new_df.new_record();
-                foreach (var series_name in df.series_names)
-                {
-                    record[series_name] = df[iRecord, series_name];
-                }
-                new_df.add_record(record);
-            }
-            return new_df;
-        }
-
-        /// <summary>
-        /// 根据已有df创建新的df，根据new_series_names需要添加新series。
-        /// 注意：不添加重名的series_name
-        /// </summary>
-        /// <param name="df"></param>
-        /// <param name="new_series_name"></param>
-        /// <param name="to_first"></param>
-        /// <returns></returns>
-        public static MyDataFrame create_from_mydf(MyDataFrame df, string new_series_name, bool to_first = false)
-        {
-            List<string> series_names = new();
-            if (to_first)//将新列名排在第1位置
-            {
-                series_names.Add(new_series_name);
-                series_names.AddRange(df.series_names);
-            }
-            else
-            {
-                series_names.AddRange(df.series_names);
-                series_names.Add(new_series_name);
-            }
-
-            MyDataFrame new_df = create(series_names.ToArray(), true);//删除重名的series_name
-            for (int iRecord = 0; iRecord < df.N_Record; iRecord++)
-            {
-                var record = new_df.new_record();
-                foreach (var series_name in df.series_names)
-                {
-                    record[series_name] = df[iRecord, series_name];
-                }
-                new_df.add_record(record);
-            }
-            return new_df;
         }
 
         #endregion
@@ -341,8 +227,6 @@ namespace JAM8.Utilities
             }
         }
 
-        #endregion
-
         /// <summary>
         /// 根据列名获取对应的索引，如果不存在返回-1
         /// </summary>
@@ -353,7 +237,9 @@ namespace JAM8.Utilities
             return series_names.IndexOf(series_name);
         }
 
-        #region get record
+        #endregion
+
+        #region record操作
 
         /// <summary>
         /// 获取记录
@@ -362,18 +248,83 @@ namespace JAM8.Utilities
         /// <returns></returns>
         public MyRecord get_record(int record_idx)
         {
-            MyRecord row = new();
+            MyRecord row = [];
             //提取某行的所有列，构成MyRow
-            foreach (var column_name in series_names)
+            foreach (var series_name in series_names)
             {
-                row.Add(column_name, this[record_idx, column_name]);
+                row.Add(series_name, this[record_idx, series_name]);
             }
             return row;
         }
 
+        /// <summary>
+        /// (基于 MyDataFrame 的列结构) 创建一个记录对象。
+        /// 如果提供了数据集合，将使用该数据填充记录；
+        /// 否则，创建一个空记录，所有列的值为 null。
+        /// </summary>
+        /// <param name="data">可选的数据集合，用于填充记录。如果为 null，则创建空记录。</param>
+        /// <returns>新创建的 MyRecord 对象。</returns>
+        /// <exception cref="ArgumentException">如果数据长度与列名数量不匹配。</exception>
+        public MyRecord new_record(IEnumerable<object> data = null)
+        {
+            // 创建记录并填充数据
+            MyRecord record = [];
+
+            if (data == null)
+            {
+                // 创建空记录，所有列值为 null
+                foreach (var series_name in series_names)
+                {
+                    record.Add(series_name, null);
+                }
+            }
+            else
+            {
+                // 将输入数据转为列表以支持索引访问
+                var dataList = data.ToList();
+
+                // 检查数据长度是否与列名数量一致
+                if (dataList.Count != N_Series)
+                {
+                    throw new ArgumentException($"Input data length ({dataList.Count}) does not match the number of series ({N_Series}).", nameof(data));
+                }
+
+                for (int iSeries = 0; iSeries < N_Series; iSeries++)
+                {
+                    record.Add(series_names[iSeries], dataList[iSeries]);
+                }
+            }
+            return record;
+        }
+
+        /// <summary>
+        /// 添加记录
+        /// </summary>
+        public void add_record(MyRecord record)
+        {
+            foreach (var (series_name, value) in record)
+                get_series(series_name).add(value);
+        }
+
+        /// <summary>
+        /// 添加记录，列数必须相同
+        /// </summary>
+        /// <param name="record"></param>
+        /// <returns></returns>
+        public bool add_record(IEnumerable<object> record)
+        {
+            // 利用 new_record 创建记录对象
+            var myRecord = new_record(record);
+
+            // 调用 add_record(MyRecord) 插入记录
+            add_record(myRecord);
+
+            return true;
+        }
+
         #endregion
 
-        #region get series
+        #region series操作
 
         /// <summary>
         /// 获取Series
@@ -384,6 +335,7 @@ namespace JAM8.Utilities
         {
             return data[series_idx];
         }
+
         /// <summary>
         /// 获取Series
         /// </summary>
@@ -396,6 +348,7 @@ namespace JAM8.Utilities
                 return null;
             return data[idx_series];
         }
+
         /// <summary>
         /// 获取Series，并转换为T类型
         /// </summary>
@@ -410,6 +363,7 @@ namespace JAM8.Utilities
                 result[i] = (T)Convert.ChangeType(series[i], typeof(T));
             return result;
         }
+
         /// <summary>
         /// 获取Series，并转换为T类型
         /// </summary>
@@ -422,87 +376,71 @@ namespace JAM8.Utilities
             return get_series<T>(idx_series);
         }
 
-        #endregion
-
-        //添加列对象，如果有重复，返回false
-        bool add_series(string series_name)
-        {
-            if (series_name == string.Empty)
-                return false;
-            if (series_names.Contains(series_name))
-                return false;
-
-            data.Add(MySeries.create(series_name));
-
-            return true;
-        }
-
-        #region 添加记录
-
         /// <summary>
-        /// (基于MyDataFrame的列结构)创建1个空记录
+        /// 添加一个新列
         /// </summary>
-        public MyRecord new_record()
+        /// <param name="series_name"></param>
+        public void add_series(string series_name)
         {
-            MyRecord record = new();
-            foreach (var series_name in series_names)
+            // 1. 检查列名是否有效
+            if (string.IsNullOrEmpty(series_name) || series_names.Contains(series_name))
             {
-                record.Add(series_name, null);
+                throw new ArgumentException($"Column name '{series_name}' is invalid or already exists.");
             }
-            return record;
-        }
-        /// <summary>
-        /// (基于MyDataFrame的列结构)创建1个空记录，并使用输入参数充填record
-        /// </summary>
-        /// <param name="data"></param>
-        /// <returns></returns>
-        public MyRecord new_record(object[] data)
-        {
-            MyRecord record = new();
-            int flag = -1;
-            foreach (var series_name in series_names)
+
+            // 2. 创建一个新的 MySeries 对象
+            MySeries newSeries = MySeries.create(series_name);
+
+            // 3. 为新列补充数据，假设所有其他列的行数是相同的
+            for (int iRecord = 0; iRecord < N_Record; iRecord++)
             {
-                flag++;
-                record.Add(series_name, data[flag]);
+                newSeries.add(null);  // 添加默认值（如 null）到新列中
             }
-            return record;
-        }
-        public MyRecord new_record(IList<object> data)
-        {
-            MyRecord record = new();
-            int flag = -1;
-            foreach (var series_name in series_names)
-            {
-                flag++;
-                record.Add(series_name, data[flag]);
-            }
-            return record;
+
+            data.Add(newSeries);  // 新列添加到 MyDataFrame 中
         }
 
         /// <summary>
-        /// 添加记录
+        /// 根据列名调整其在 data 中的位置（默认为第1列）。
         /// </summary>
-        public void add_record(MyRecord record)
+        /// <param name="series_name">需要调整位置的列名。</param>
+        /// <param name="newIndex">目标索引位置（默认为第1列）。</param>
+        /// <exception cref="ArgumentException">如果列名不存在。</exception>
+        /// <exception cref="ArgumentOutOfRangeException">如果目标索引超出范围。</exception>
+        public void move_series(string series_name, int newIndex = 0)
         {
-            foreach (var (series_name, value) in record)
-                get_series(series_name).add(value);
-        }
-        /// <summary>
-        /// 添加记录，列数必须相同
-        /// </summary>
-        /// <param name="record"></param>
-        /// <returns></returns>
-        public bool add_record(object[] record)
-        {
-            if (record.Length != N_Series)
-                return false;
-
-            for (int i = 0; i < N_Series; i++)
+            if (string.IsNullOrEmpty(series_name))
             {
-                string series_name = series_names[i];
-                get_series(series_name).add(record[i]);
+                throw new ArgumentException("Series name cannot be null or empty.", nameof(series_name));
             }
-            return true;
+
+            // 检查目标索引范围是否有效
+            if (newIndex < 0 || newIndex >= data.Count)
+            {
+                throw new ArgumentOutOfRangeException(nameof(newIndex), "Target index is out of range.");
+            }
+
+            // 找到目标列在 data 中的位置
+            var seriesIndex = data.FindIndex(series => series.series_name == series_name);
+            if (seriesIndex == -1)
+            {
+                throw new ArgumentException($"Series '{series_name}' does not exist in the data.", nameof(series_name));
+            }
+
+            // 如果当前索引与目标索引相同，则无需移动
+            if (seriesIndex == newIndex)
+            {
+                return;
+            }
+
+            // 提取目标列
+            var series = data[seriesIndex];
+
+            // 从原位置移除目标列
+            data.RemoveAt(seriesIndex);
+
+            // 在目标索引位置插入目标列
+            data.Insert(newIndex, series);
         }
 
         #endregion
@@ -583,10 +521,7 @@ namespace JAM8.Utilities
         /// <returns></returns>
         public MyDataFrame deep_clone()
         {
-            MyDataFrame clone = new()
-            {
-                data = new()
-            };
+            MyDataFrame clone = new() { data = [] };
             for (int i = 0; i < N_Series; i++)
                 clone.data.Add(get_series(i).deep_clone());
             return clone;
@@ -982,7 +917,7 @@ namespace JAM8.Utilities
         public static MyDataFrame read_from_excel(string file_name)
         {
             var dt = excel_to_dataTable(file_name);
-            return create_from_dataTable(dt);
+            return create_from_datatable(dt);
         }
         /// <summary>
         /// 从Excel文件流读取
@@ -992,7 +927,7 @@ namespace JAM8.Utilities
         public static MyDataFrame read_from_excel(Stream stream, ExcelStreamType excel_stream_Type)
         {
             var dt = ExcelHelper.excel_to_dataTable(stream, excel_stream_Type);
-            return create_from_dataTable(dt);
+            return create_from_datatable(dt);
         }
         /// <summary>
         /// 从Excel文件读取

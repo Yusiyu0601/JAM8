@@ -1,4 +1,5 @@
-﻿using EasyConsole;
+﻿using System.Data;
+using EasyConsole;
 using JAM8.Utilities;
 
 namespace JAM8.Console.Pages
@@ -35,8 +36,28 @@ namespace JAM8.Console.Pages
 
         private void MyDataFrame_create测试()
         {
+
             MyDataFrame df = MyDataFrame.create(["A", "A", "B", "B", "A"]);
+            df.add_series("C");
+            df.add_record([1, 2, 3, 4, 5, 6]);
+            df.move_series("C");
+            var record = df.new_record();
+            df.add_record(record);
+            df.show_win();
+
             MyDataFrame df2 = MyDataFrame.create(["A", "A", "B", "B", "A"], true);
+
+            MyDataFrame df3 = MyDataFrame.create(5);
+
+            var seriesNames = new List<string> { "Col1", "Col2" };
+            var data = new float[,] { { 1.0f, 2.0f }, { 3.0f, 4.0f } };
+
+            var df4 = MyDataFrame.create_from_array(seriesNames, data);
+            DataTable dt = ExcelHelper.excel_to_dataTable();
+            var df5 = MyDataFrame.create_from_datatable(dt);
+            df5.add_series("C");
+            df5.show_win();
+
         }
 
         private void MyConsoleProgress测试()

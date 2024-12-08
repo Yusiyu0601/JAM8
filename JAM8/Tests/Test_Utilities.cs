@@ -28,7 +28,9 @@ namespace JAM8.Tests
             //df_TIs = df_TIs.get_series_subset(new List<string>() { "Entropy", "Label" });
             df_TIs.show_win();
 
-            var df_result = MyDataFrame.create_from_mydf(df_TIs, new string[] { "hsim" });
+            //var df_result = MyDataFrame.create_from_dataframe(df_TIs, new string[] { "hsim" });
+            var df_result = df_TIs.deep_clone();
+            df_result.add_series("hsim");
             for (int record_idx = 0; record_idx < df_TIs.N_Record; record_idx++)
             {
                 string name = df_TIs[record_idx, "Label"].ToString();
@@ -79,7 +81,7 @@ namespace JAM8.Tests
             OpenFileDialog ofd = new();
             ofd.ShowDialog();
             var dt = ExcelHelper.excel_to_dataTable(ofd.FileName);
-            MyDataFrame df = MyDataFrame.create_from_dataTable(dt);
+            MyDataFrame df = MyDataFrame.create_from_datatable(dt);
             df.show_console();
             List<ABC> abc = EntityHelper.dataTable_to_entities<ABC>(dt);
             Console.WriteLine(abc.Count);
