@@ -43,6 +43,7 @@ namespace JAM8.Console.Pages
             df.move_series("C");
             var record = df.new_record();
             df.add_record(record);
+            var objs = df.get_record(0).get_values();
             df.show_win();
 
             MyDataFrame df2 = MyDataFrame.create(["A", "A", "B", "B", "A"], true);

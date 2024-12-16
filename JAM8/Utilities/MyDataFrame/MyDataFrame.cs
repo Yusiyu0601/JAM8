@@ -244,16 +244,25 @@ namespace JAM8.Utilities
         /// <summary>
         /// 获取记录
         /// </summary>
-        /// <param name="iRecord"></param>
-        /// <returns></returns>
+        /// <param name="record_idx">要获取的记录的索引。</param>
+        /// <returns>构造的 MyRecord 对象。</returns>
+        /// <exception cref="ArgumentOutOfRangeException">当 record_idx 超出范围时抛出。</exception>
         public MyRecord get_record(int record_idx)
         {
+            // 检查记录索引是否超出范围
+            if (record_idx < 0 || record_idx >= N_Record)
+            {
+                throw new ArgumentOutOfRangeException(nameof(record_idx), "Record index is out of range.");
+            }
+
+            // 创建 MyRecord 并填充数据
             MyRecord row = [];
-            //提取某行的所有列，构成MyRow
             foreach (var series_name in series_names)
             {
+                // 使用索引器提取指定列和行的数据
                 row.Add(series_name, this[record_idx, series_name]);
             }
+
             return row;
         }
 

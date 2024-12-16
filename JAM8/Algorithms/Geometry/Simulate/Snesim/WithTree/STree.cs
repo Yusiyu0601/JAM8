@@ -79,7 +79,7 @@ namespace JAM8.Algorithms.Geometry
             tree.建立分层节点集合();
             MyConsoleHelper.write_string_to_console("搜索树节点总数", tree.get_nodes_count().ToString());
 
-            tree.df = MyDataFrame.create(["访问节点总数", "计算时间"]);
+            tree.df = MyDataFrame.create(["访问节点总数", "计算时间(毫秒)"]);
 
             return tree;
         }
@@ -275,8 +275,8 @@ namespace JAM8.Algorithms.Geometry
             }
             sw.Stop();
 
-            // 将 tick 转换为微秒
-            double elapsedMicroseconds = (sw.ElapsedTicks / (double)Stopwatch.Frequency) * 1_000_000;
+            // 将 tick 转换为毫秒
+            double elapsedMicroseconds = (sw.ElapsedTicks / (double)Stopwatch.Frequency) * 1_000;
             df.add_record([Sum, elapsedMicroseconds]);
 
             // 输出结果

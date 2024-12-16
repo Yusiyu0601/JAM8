@@ -33,9 +33,35 @@ namespace JAM8.Console.Pages
            .Add("退出", CommonFunctions.Cancel)
            .Add("Snesim测试（正逆查询树）", Snesim测试)
            .Add("统计", 统计)
+           .Add("从很大数组里等间距取值（例如等份100份）", 从很大数组里等间距取值)
            ;
 
             menu.Display();
+        }
+
+        private void 从很大数组里等间距取值()
+        {
+            MyDataFrame df = MyDataFrame.read_from_excel();
+            df.show_win("", true);
+            var start = 0;
+            var end = df.N_Record - 1;
+            var sample_indexes = MyGenerator.linespace(start, end, 101);
+
+            MyDataFrame df_sample = MyDataFrame.create(df.series_names);
+            var record = df_sample.new_record();
+            foreach (var series_name in df_sample.series_names)
+            {
+                record[series_name] = 0;
+            }
+            df_sample.add_record(record);
+
+            for (int i = 1; i < sample_indexes.Length; i++)
+            {
+                var idx = (int)sample_indexes[i];
+                df_sample.add_record(df.get_record(idx));
+            }
+
+            df_sample.show_win();
         }
 
         private void 统计()
@@ -102,7 +128,9 @@ namespace JAM8.Console.Pages
             //手动测试
             int progress_for_inverse_retrieve = EasyConsole.Input.ReadInt("逆向查询占比", 0, 100);
             Snesim snesim = Snesim.create();
-            var (re, time) = snesim.run(ti, null, GridStructure.create_simple(100, 100, 1), 1001, mould, 1, progress_for_inverse_retrieve);
+            GridStructure re_gs = ti.gridStructure;
+            //re_gs = GridStructure.create_simple(100, 100, 1);
+            var (re, time) = snesim.run(ti, null, re_gs, 1001, mould, 1, progress_for_inverse_retrieve);
             //re?.showGrid_win();
             Output.WriteLine(ConsoleColor.Red, $"{time}毫秒");
 

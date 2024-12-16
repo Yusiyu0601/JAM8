@@ -71,13 +71,18 @@ namespace JAM8.Algorithms.Geometry
             MyDataFrame df_time = MyDataFrame.create(["progress", "ElapsedMilliseconds", "totalElapsedTime"]);
             // 累计时长变量（单位：毫秒）
             long totalElapsedTime = 0;
+            //避免重复进度
+            double progress_preview = -1;
             while (path.is_visit_over() == false)
             {
-                if (path.progress % 1 == 0)
+                if (path.progress % 1 == 0 && path.progress != progress_preview)
                 {
+                    progress_preview = path.progress;
                     sw.Stop();
-                    totalElapsedTime += sw.ElapsedMilliseconds;  // 累加时长
-                    df_time.add_record([path.progress, sw.ElapsedMilliseconds, totalElapsedTime]);
+                    // 将 tick 转换为毫秒
+                    double elapsedMicroseconds = (sw.ElapsedTicks / (double)Stopwatch.Frequency) * 1_000;
+                    totalElapsedTime += (long)elapsedMicroseconds;  // 累加时长
+                    df_time.add_record([path.progress, elapsedMicroseconds, totalElapsedTime]);
                     sw.Restart();
                 }
                 MyConsoleProgress.Print(path.progress, "snesim");
