@@ -6,7 +6,7 @@ namespace JAM8.Console.Pages
     {
         public Research(EasyConsole.Program program)
        : base("Research", program,
-             new Option("Modeling_Estimate", () => program.NavigateTo<Modeling_Estimate>())
+             new Option("Research_NonStationary", () => program.NavigateTo<Research_NonStationary>())
              )
         {
         }

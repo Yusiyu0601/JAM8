@@ -37,6 +37,7 @@ namespace JAM8.Console.Pages
             AddPage(new Test_Utils(this));
 
             AddPage(new Research(this));
+            AddPage(new Research_NonStationary(this));
 
             AddPage(new Help(this));
 

@@ -13,9 +13,6 @@ namespace JAM8.Console.Pages
         {
         }
 
-        //new Option("kriging空间插值", () => program.NavigateTo<Modeling_Estimate_Kriging>()),
-        //new Option("IDW空间插值", () => program.NavigateTo<Modeling_Estimate_IDW>())
-
         public override void Display()
         {
             base.Display();
