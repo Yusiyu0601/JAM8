@@ -100,10 +100,10 @@ namespace JAM8.Algorithms.Geometry
                 //if (path.progress % 5 == 0)
                 //    g["模型"].deep_clone().show_win($"{path.progress}");
             }
-            df_time.show_win("time vs progress");
+            //df_time.show_win("time vs progress");
             sw.Stop();
-            tree.df.show_win("访问节点总数", true);
-            return (g, sw.ElapsedMilliseconds);
+            //tree.df.show_win("访问节点总数", true);
+            return (g, totalElapsedTime);
         }
 
         Dictionary<float?, float> get_cpdf(MouldInstance dataEvent, STree tree, double progress,

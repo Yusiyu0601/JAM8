@@ -742,7 +742,7 @@ namespace JAM8.SpecificApps.研究方法
             Console.Write("\tradius = ");
             int radius = int.Parse(Console.ReadLine());
 
-            MyDataFrame df = MyDataFrame.create(new string[] { "name", "value" });
+            MyDataFrame df = MyDataFrame.create(["name", "value"]);
 
             var choice = MyConsoleHelper.read_int_from_console("选择TI集文件类型", "0-litedb;1-gslib(TI尺寸要求相同)");
 
@@ -777,10 +777,10 @@ namespace JAM8.SpecificApps.研究方法
             {
                 #region 计算所有位置的实验变差函数
 
-                Dictionary<int, List<double>> lags_different_locs = new();
-                var locs_random = MyGenerator.range(1, gs.N, 1, true);
+                Dictionary<int, List<double>> lags_different_locs = [];
+                var locs_random = MyGenerator.range(0, gs.N, 1);
                 int flag = 0;
-                Dictionary<int, Bitmap> images = new();
+                Dictionary<int, Bitmap> images = [];
                 foreach (var n in locs_random)
                 {
                     flag++;
@@ -788,14 +788,16 @@ namespace JAM8.SpecificApps.研究方法
 
                     var (region, index_out_of_bounds) = ti.get_region_by_center(gs.get_spatialIndex(n), radius, radius);
                     int N_lag = radius;
-                    //if (index_out_of_bounds)//丢弃不完整的region
-                    //    continue;
+                    if (index_out_of_bounds)//丢弃不完整的region
+                        continue;
 
-                    List<double> lags_loc = new();
-                    lags_loc.AddRange(Variogram.calc_experiment_variogram(region, 0, N_lag, 1).gamma);
-                    lags_loc.AddRange(Variogram.calc_experiment_variogram(region, 45, N_lag, 1).gamma);
-                    lags_loc.AddRange(Variogram.calc_experiment_variogram(region, 90, N_lag, 1).gamma);
-                    lags_loc.AddRange(Variogram.calc_experiment_variogram(region, 135, N_lag, 1).gamma);
+                    List<double> lags_loc =
+                    [
+                        .. Variogram.calc_experiment_variogram(region, 0, N_lag, 1).gamma,
+                        .. Variogram.calc_experiment_variogram(region, 45, N_lag, 1).gamma,
+                        .. Variogram.calc_experiment_variogram(region, 90, N_lag, 1).gamma,
+                        .. Variogram.calc_experiment_variogram(region, 135, N_lag, 1).gamma,
+                    ];
                     lags_different_locs.Add(n, lags_loc);
                 }
 
@@ -805,10 +807,10 @@ namespace JAM8.SpecificApps.研究方法
 
                 #region 并行计算
 
-                ConcurrentBag<double> measures = new();
+                ConcurrentBag<double> measures = [];
                 Parallel.ForEach(lags_different_locs.Keys, n1 =>
                 {
-                    List<(double, double)> ordered = new();
+                    List<(double, double)> ordered = [];
                     foreach (var n2 in lags_different_locs.Keys)
                     {
                         if (n1 != n2)

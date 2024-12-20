@@ -5,6 +5,7 @@ using JAM8.Algorithms.Geometry;
 using JAM8.Algorithms.Numerics;
 using JAM8.SpecificApps.常用工具;
 using JAM8.Utilities;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 namespace JAM8.Console.Pages
 {
@@ -122,32 +123,67 @@ namespace JAM8.Console.Pages
 
             var ti = g.first_gridProperty();
             Mould mould = ti.gridStructure.dim == Dimension.D2 ? Mould.create_by_ellipse(10, 10, 1) :
-                Mould.create_by_ellipse(7, 7, 2, 1);
+                Mould.create_by_ellipse(7, 7, 3, 1);
             mould = Mould.create_by_mould(mould, 60);
 
             //手动测试
-            int progress_for_inverse_retrieve = EasyConsole.Input.ReadInt("逆向查询占比", 0, 100);
-            Snesim snesim = Snesim.create();
-            GridStructure re_gs = ti.gridStructure;
-            //re_gs = GridStructure.create_simple(100, 100, 1);
-            var (re, time) = snesim.run(ti, null, re_gs, 1001, mould, 1, progress_for_inverse_retrieve);
-            //re?.showGrid_win();
-            Output.WriteLine(ConsoleColor.Red, $"{time}毫秒");
+            //int progress_for_inverse_retrieve = EasyConsole.Input.ReadInt("逆向查询占比", 0, 100);
+            //Snesim snesim = Snesim.create();
+            //GridStructure re_gs = ti.gridStructure;
+            ////re_gs = GridStructure.create_simple(100, 100, 1);
+            //var (re, time) = snesim.run(ti, null, re_gs, 1001, mould, 1, progress_for_inverse_retrieve);
+            ////re?.showGrid_win();
+            //Output.WriteLine(ConsoleColor.Red, $"{time}毫秒");
 
-            //批量测试
-            //MyDataFrame df = MyDataFrame.create(["占比", "时间"]);
+            //批量测试 反向查询占比 vs 加速比
+            //MyDataFrame df = MyDataFrame.create(["占比", "时间(秒)", "加速比"]);
+            //double first = 0;
             //for (int i = 0; i <= 100; i += 5)
             //{
+            //    if (i != 35 && i != 0)
+            //        continue;
             //    int progress_for_inverse_retrieve = i;
 
             //    Snesim snesim = Snesim.create();
-            //    var (re, time) = snesim.run(ti, null, ti.gridStructure, 1001, mould, 1, progress_for_inverse_retrieve);
+            //    GridStructure re_gs = ti.gridStructure;
+            //    GridStructure re_gs_2d = GridStructure.create_simple(300, 300, 1);
+            //    GridStructure re_gs_3d = GridStructure.create_simple(80, 80, 30);
+            //    re_gs = ti.gridStructure.dim == Dimension.D2 ? re_gs_2d : re_gs_3d;
+            //    var (re, time) = snesim.run(ti, null, re_gs, 1001, mould, 1, progress_for_inverse_retrieve);
+            //    if (i == 0)
+            //        first = time;
             //    //re?.showGrid_win();
-            //    Output.WriteLine(ConsoleColor.Red, $"{time}毫秒");
+            //    //加速比
+            //    double 加速比 = first / time;
+            //    Output.WriteLine(ConsoleColor.Red, $"[{i}] {time / 1000.0}秒  加速比:{加速比}");
 
-            //    df.add_record([i, time]);
+            //    df.add_record([i, time / 1000.0, 加速比]);
             //}
             //df.show_win("逆向查询占比与时间", true);
+
+            //批量测试cpu vs 加速比
+            double first = 0;
+            double sum_35percent = 0;
+
+            Snesim snesim = Snesim.create();
+            GridStructure re_gs = ti.gridStructure;
+            GridStructure re_gs_2d = GridStructure.create_simple(300, 300, 1);
+            GridStructure re_gs_3d = GridStructure.create_simple(80, 80, 30);
+            re_gs = ti.gridStructure.dim == Dimension.D2 ? re_gs_2d : re_gs_3d;
+
+            //(var _, first) = snesim.run(ti, null, re_gs, 1001, mould, 1, 0);
+            Output.WriteLine(ConsoleColor.Red, $"时间:{first}");
+            for (int j = 0; j < 10; j++)
+            {
+                var (_, time) = snesim.run(ti, null, re_gs, 1001, mould, 1, 35);
+                sum_35percent += time;
+                Output.WriteLine(ConsoleColor.Red, $"时间:{time}");
+            }
+            //加速比
+            double 加速比 = first / (sum_35percent / 10.0);
+            Output.WriteLine(ConsoleColor.Red, $"使用时间:{(sum_35percent / 10.0)}");
+            Output.WriteLine(ConsoleColor.Red, $"加速比:{加速比}");
+
         }
     }
 }
