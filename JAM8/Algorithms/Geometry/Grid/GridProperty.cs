@@ -585,10 +585,10 @@ namespace JAM8.Algorithms.Geometry
             int extent_x = ix_max - ix_min;
             int extent_y = iy_max - iy_min;
 
-            ix_min = Math.Max(ix_min, 1);
-            ix_max = Math.Min(ix_max, gridStructure.nx);
-            iy_min = Math.Max(iy_min, 1);
-            iy_max = Math.Min(iy_max, gridStructure.ny);
+            ix_min = Math.Max(ix_min, 0);
+            ix_max = Math.Min(ix_max, gridStructure.nx - 1);
+            iy_min = Math.Max(iy_min, 0);
+            iy_max = Math.Min(iy_max, gridStructure.ny - 1);
 
             if (extent_x != ix_max - ix_min || extent_y != iy_max - iy_min)
                 index_out_of_bounds = true;
@@ -599,7 +599,7 @@ namespace JAM8.Algorithms.Geometry
 
             for (int iy = iy_min; iy <= iy_max; iy++)
                 for (int ix = ix_min; ix <= ix_max; ix++)
-                    region.set_value(ix - ix_min + 1, iy - iy_min + 1, get_value(ix, iy));
+                    region.set_value(ix - ix_min, iy - iy_min, get_value(ix, iy));
 
             return (region, index_out_of_bounds);
         }

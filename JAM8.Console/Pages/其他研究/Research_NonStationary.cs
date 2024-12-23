@@ -34,6 +34,7 @@ namespace JAM8.Console.Pages
             var menu = new EasyConsole.Menu()
             .Add("Back", CommonFunctions.Cancel)
             .Add("直接计算方法2d", Quantitative_NonStationary.直接计算方法2d)
+            .Add("step1_模式相似度", Quantitative_NonStationary.step1_模式相似度)
            ;
 
             menu.Display();

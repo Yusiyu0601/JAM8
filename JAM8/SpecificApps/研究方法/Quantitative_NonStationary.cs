@@ -14,18 +14,11 @@ namespace JAM8.SpecificApps.研究方法
     /// </summary>
     public class Quantitative_NonStationary
     {
-        public static void run()
-        {
-            //step1_模式相似度();
-            step1_实验变差函数();
-            //直接计算方法2d();
-        }
-
         #region 分步计算方法
 
         #region step1 模式相似度
 
-        static void step1_模式相似度()
+        public static void step1_模式相似度()
         {
             #region 加载TI
 
@@ -48,12 +41,12 @@ namespace JAM8.SpecificApps.研究方法
             int flag = 0;
 
             Console.WriteLine();
-            for (int iy = 10; iy < gs.ny; iy += 24)//锚点(Current)间距
+            for (int iy = 9; iy < gs.ny; iy += 24)//锚点(Current)间距
             {
-                for (int ix = 10; ix < gs.nx; ix += 24)
+                for (int ix = 9; ix < gs.nx; ix += 24)
                 {
                     flag++;
-                    var temp_x = MyGenerator.range(10, gs.nx, 24);
+                    var temp_x = MyGenerator.range(9, gs.nx, 24);
                     MyConsoleProgress.Print(flag, temp_x.Count * temp_x.Count, "");
 
                     g_anchors.add_gridProperty(SpatialIndex.create(ix, iy).view_text());
@@ -87,7 +80,7 @@ namespace JAM8.SpecificApps.研究方法
 
             double measure = 0;
 
-            List<double> distance_average = new();
+            List<double> distance_average = [];
             for (int n1 = 0; n1 < gs.N; n1++)
             {
                 for (int n2 = 0; n2 < gs.N; n2++)
@@ -101,7 +94,7 @@ namespace JAM8.SpecificApps.研究方法
             //step2_平稳性度量(anchor_grid);
             foreach (var n1 in pats.Keys)
             {
-                List<(double, double)> ordered = new();
+                List<(double, double)> ordered = [];
                 foreach (var n2 in pats.Keys)
                 {
                     if (n1 == n2)
@@ -744,7 +737,7 @@ namespace JAM8.SpecificApps.研究方法
 
             MyDataFrame df = MyDataFrame.create(["name", "value"]);
 
-            var choice = MyConsoleHelper.read_int_from_console("选择TI集文件类型", "0-litedb;1-gslib(TI尺寸要求相同)");
+            var choice = MyConsoleHelper.read_int_from_console("选择TI集文件类型", "0-GridCatalog;1-gslib(TI尺寸要求相同)");
 
             GridStructure gs = GridStructure.create_simple(100, 100, 1);
             Grid g = Grid.create(gs);
@@ -754,13 +747,14 @@ namespace JAM8.SpecificApps.研究方法
                 Form_GridCatalog frm = new();
                 if (frm.ShowDialog() != DialogResult.OK)
                     return;
-                foreach (var selected_grid in frm.selected_grids)
+                var grids = frm.selected_grids;
+
+                foreach (var selected_grid in grids)
                 {
                     GridProperty ti = (GridProperty)selected_grid.first_gridProperty();
                     ti = ti.resize(gs);
                     g.add_gridProperty(selected_grid.grid_name, ti);
                 }
-
             }
             if (choice == 1)
             {
@@ -788,8 +782,8 @@ namespace JAM8.SpecificApps.研究方法
 
                     var (region, index_out_of_bounds) = ti.get_region_by_center(gs.get_spatialIndex(n), radius, radius);
                     int N_lag = radius;
-                    if (index_out_of_bounds)//丢弃不完整的region
-                        continue;
+                    //if (index_out_of_bounds)//丢弃不完整的region
+                    //    continue;
 
                     List<double> lags_loc =
                     [
@@ -804,6 +798,17 @@ namespace JAM8.SpecificApps.研究方法
                 #endregion
 
                 #region 计算平稳系数
+
+                List<double> distance_average = [];
+                for (int n1 = 0; n1 < gs.N; n1++)
+                {
+                    for (int n2 = 0; n2 < gs.N; n2++)
+                    {
+                        var world_distance = SpatialIndex.calc_dist(gs.get_spatialIndex(n1), gs.get_spatialIndex(n2));
+                        distance_average.Add(world_distance);
+                    }
+                }
+                double distance_average1 = distance_average.Average();
 
                 #region 并行计算
 
@@ -821,12 +826,16 @@ namespace JAM8.SpecificApps.研究方法
                         }
                     }
 
+                    //方案1
+                    int n = (int)(lags_different_locs.Count * 0.1);
+                    measures.Add(ordered.OrderByDescending(a => a.Item1).Take(n).Average(a => a.Item2));
+
                     //方案2
-                    var tmp = ordered.OrderByDescending(a => a.Item1).ToList();
-                    for (int i = 0; i < tmp.Count; i++)
-                    {
-                        measures.Add(tmp[i].Item2 * Math.Pow(1 - (float)i / tmp.Count, 2.0));
-                    }
+                    //var tmp = ordered.OrderByDescending(a => a.Item1).ToList();
+                    //for (int i = 0; i < tmp.Count; i++)
+                    //{
+                    //    measures.Add(tmp[i].Item2 * Math.Pow(1 - (float)i / tmp.Count, 2.0));
+                    //}
                 });
                 double measure = measures.Average();
 
@@ -849,10 +858,11 @@ namespace JAM8.SpecificApps.研究方法
                 //        }
                 //    }
 
-                //    //方案1
-                //    //int n = (int)(lags_different_locs.Count * 0.1);
-                //    //measure += ordered.OrderByDescending(a => a.Item1).Take(n).Average(a => a.Item2);
-                //    //方案2
+                //    方案1
+                //    int n = (int)(lags_different_locs.Count * 0.1);
+                //    measure += ordered.OrderByDescending(a => a.Item1).Take(n).Average(a => a.Item2);
+
+                //    方案2
                 //    var tmp = ordered.OrderByDescending(a => a.Item1).ToList();
                 //    for (int i = 0; i < tmp.Count; i++)
                 //    {
@@ -864,7 +874,7 @@ namespace JAM8.SpecificApps.研究方法
 
                 #endregion
 
-                Console.WriteLine($"{name}={measure}");
+                Console.WriteLine($"{name}={measure/ distance_average1}");
                 var record = df.new_record();
                 record["name"] = name;
                 record["value"] = measure;
@@ -876,8 +886,5 @@ namespace JAM8.SpecificApps.研究方法
         }
 
         #endregion
-
     }
-
-
 }
