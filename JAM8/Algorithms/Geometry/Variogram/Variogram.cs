@@ -249,9 +249,9 @@ namespace JAM8.Algorithms.Geometry
                 int dx = (int)Math.Ceiling(lag_idx * dx_lag_unit);
                 int dy = (int)Math.Ceiling(lag_idx * dy_lag_unit);
 
-                Parallel.For(1, gs.ny + 1, iy =>
+                Parallel.For(0, gs.ny, iy =>
                 {
-                    for (int ix = 1; ix <= gs.nx; ix++)
+                    for (int ix = 0; ix < gs.nx; ix++)
                     {
                         double? head = gp.get_value(ix, iy);
                         double? tail = gp.get_value(ix + dx, iy + dy);

@@ -812,10 +812,42 @@ namespace JAM8.SpecificApps.研究方法
 
                 #region 并行计算
 
-                ConcurrentBag<double> measures = [];
-                Parallel.ForEach(lags_different_locs.Keys, n1 =>
+                //ConcurrentBag<double> measures = [];
+                //Parallel.ForEach(lags_different_locs.Keys, n1 =>
+                //{
+                //    List<(double, double)> ordered = [];
+                //    foreach (var n2 in lags_different_locs.Keys)
+                //    {
+                //        if (n1 != n2)
+                //        {
+                //            var distance = MyDistance.calc_hsim(lags_different_locs[n1], lags_different_locs[n2]);
+                //            var world_distance = SpatialIndex.calc_dist(gs.get_spatialIndex(n1), gs.get_spatialIndex(n2));
+                //            ordered.Add((distance, world_distance));
+                //        }
+                //    }
+
+                //    //方案1
+                //    int n = (int)(lags_different_locs.Count * 0.1);
+                //    measures.Add(ordered.OrderByDescending(a => a.Item1).Take(n).Average(a => a.Item2));
+
+                //    //方案2
+                //    //var tmp = ordered.OrderByDescending(a => a.Item1).ToList();
+                //    //for (int i = 0; i < tmp.Count; i++)
+                //    //{
+                //    //    measures.Add(tmp[i].Item2 * Math.Pow(1 - (float)i / tmp.Count, 2.0));
+                //    //}
+                //});
+                //double measure = measures.Average();
+
+
+                #endregion
+
+                #region 串行计算
+
+                double measure = 0;
+                foreach (var n1 in lags_different_locs.Keys)
                 {
-                    List<(double, double)> ordered = [];
+                    List<(double, double)> ordered = new();
                     foreach (var n2 in lags_different_locs.Keys)
                     {
                         if (n1 != n2)
@@ -828,53 +860,24 @@ namespace JAM8.SpecificApps.研究方法
 
                     //方案1
                     int n = (int)(lags_different_locs.Count * 0.1);
-                    measures.Add(ordered.OrderByDescending(a => a.Item1).Take(n).Average(a => a.Item2));
+                    var list = ordered.OrderByDescending(a => a.Item1).Take(n);
+                    int count = ordered.Count(a => a.Item1 == 1);
+
+                    measure += list.Average(a => a.Item2);
 
                     //方案2
                     //var tmp = ordered.OrderByDescending(a => a.Item1).ToList();
                     //for (int i = 0; i < tmp.Count; i++)
                     //{
-                    //    measures.Add(tmp[i].Item2 * Math.Pow(1 - (float)i / tmp.Count, 2.0));
+                    //    measure += tmp[i].Item2 * Math.Pow(1 - (float)i / tmp.Count, 2.0);
                     //}
-                });
-                double measure = measures.Average();
 
-
-                #endregion
-
-                #region 串行计算
-
-                //double measure = 0;
-                //foreach (var n1 in lags_different_locs.Keys)
-                //{
-                //    List<(double, double)> ordered = new();
-                //    foreach (var n2 in lags_different_locs.Keys)
-                //    {
-                //        if (n1 != n2)
-                //        {
-                //            var distance = MyDistance.calc_hsim(lags_different_locs[n1], lags_different_locs[n2]);
-                //            var world_distance = SpatialIndex.calc_dist(gs.get_spatialIndex(n1), gs.get_spatialIndex(n2));
-                //            ordered.Add((distance, world_distance));
-                //        }
-                //    }
-
-                //    方案1
-                //    int n = (int)(lags_different_locs.Count * 0.1);
-                //    measure += ordered.OrderByDescending(a => a.Item1).Take(n).Average(a => a.Item2);
-
-                //    方案2
-                //    var tmp = ordered.OrderByDescending(a => a.Item1).ToList();
-                //    for (int i = 0; i < tmp.Count; i++)
-                //    {
-                //        measure += tmp[i].Item2 * Math.Pow(1 - (float)i / tmp.Count, 2.0);
-                //    }
-
-                //}
-                //measure /= (lags_different_locs.Count);
+                }
+                measure /= (lags_different_locs.Count);
 
                 #endregion
 
-                Console.WriteLine($"{name}={measure/ distance_average1}");
+                Console.WriteLine($"{name}={measure / distance_average1}");
                 var record = df.new_record();
                 record["name"] = name;
                 record["value"] = measure;

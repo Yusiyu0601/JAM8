@@ -721,11 +721,11 @@ namespace JAM8.Algorithms.Geometry
             GridProperty resized_gp = create(resized_gs);//创建缩放后的gp
 
             DataMapper mapper_x = new();
-            mapper_x.Reset(1, gridStructure.nx, 1, resized_gs.nx);
+            mapper_x.Reset(0, gridStructure.nx - 1, 0, resized_gs.nx - 1);
             DataMapper mapper_y = new();
-            mapper_y.Reset(1, gridStructure.ny, 1, resized_gs.ny);
+            mapper_y.Reset(0, gridStructure.ny - 1, 0, resized_gs.ny - 1);
             DataMapper mapper_z = new();
-            mapper_z.Reset(1, gridStructure.nz, 1, resized_gs.nz);
+            mapper_z.Reset(0, gridStructure.nz - 1, 0, resized_gs.nz - 1);
 
             for (int n = 0; n < resized_gs.N; n++)
             {
@@ -742,86 +742,6 @@ namespace JAM8.Algorithms.Geometry
             }
             return resized_gp;
         }
-
-        /// <summary>
-        /// 近邻取样插值方法(重采样) 2D & 3D 维度
-        /// </summary>
-        /// <param name="SpaceCount">抽样节点之间的间距</param>
-        /// <returns></returns>
-        //public static GridProperty NearestNeighborResample(GridProperty grid, int SpaceCount = 1)
-        //{
-        //    /// 名称：近邻取样插值方法(重采样) 2D & 3D 维度
-        //    /// 作用：最简单的插值算法，输出像素等于距离它映射的位置最近的输入像素的值
-        //    /// 作者：喻思羽
-        //    /// 编写时间：2016-5-13
-        //    /// 
-        //    /// 方法示意图，节点用“*”表示
-        //    /// ICount=10 JCount=7
-        //    /// **********    0123456789
-        //    /// **********    1
-        //    /// **********    2
-        //    /// **********    3
-        //    /// **********    4
-        //    /// **********    5
-        //    /// **********    6
-        //    /// 
-        //    /// 经过计算后得到新的网格，去掉的节点用“0”表示
-        //    /// ICount=5 JCount=4
-        //    /// *0*0*0*0*0    0 2 4 6 8 
-        //    /// 0000000000
-        //    /// *0*0*0*0*0    2
-        //    /// 0000000000
-        //    /// *0*0*0*0*0    4
-        //    /// 0000000000
-        //    /// *0*0*0*0*0    6
-
-        //    int Increment = SpaceCount + 1;//增量
-        //    if (grid.Dimension == DimensionEnum._2D)
-        //    {
-        //        int desICount = 0, desJCount = 0;
-        //        for (int preJ = 0; preJ < grid.JCount; preJ += Increment)
-        //            desJCount += 1;
-        //        for (int preI = 0; preI < grid.ICount; preI += Increment)
-        //            desICount += 1;
-
-        //        baseGrid<T> desGrid = baseGrid<T>.SimpleGrid(desICount, desJCount);
-
-        //        for (int preJ = 0; preJ < grid.ICount; preJ += Increment)//destination(目的) ——> previous(原始) 的反向坐标映射
-        //        {
-        //            for (int preI = 0; preI < grid.JCount; preI += Increment)
-        //            {
-        //                desGrid.SetCell(preI / Increment, preJ / Increment, grid.GetCell(preI, preJ));//取样赋值
-        //            }
-        //        }
-
-        //        return desGrid;
-        //    }
-        //    else if (grid.Dimension == DimensionEnum._3D)
-        //    {
-        //        int desICount = 0, desJCount = 0, desKCount = 0;
-        //        for (int preK = 0; preK < grid.KCount; preK += Increment)
-        //            desKCount += 1;
-        //        for (int preJ = 0; preJ < grid.JCount; preJ += Increment)
-        //            desJCount += 1;
-        //        for (int preI = 0; preI < grid.ICount; preI += Increment)
-        //            desICount += 1;
-
-        //        baseGrid<T> desGrid = baseGrid<T>.SimpleGrid(desICount, desJCount, desKCount);
-
-        //        for (int preK = 0; preK < grid.KCount; preK += Increment)//destination(目的) ——> previous(原始) 的反向坐标映射
-        //        {
-        //            for (int preJ = 0; preJ < grid.JCount; preJ += Increment)
-        //            {
-        //                for (int preI = 0; preI < grid.JCount; preI += Increment)
-        //                {
-        //                    desGrid.SetCell(preI / Increment, preJ / Increment, preK / Increment, grid.GetCell(preI, preJ, preK));//取样赋值
-        //                }
-        //            }
-        //        }
-        //        return desGrid;
-        //    }
-        //    return null;
-        //}
 
         #endregion
 
