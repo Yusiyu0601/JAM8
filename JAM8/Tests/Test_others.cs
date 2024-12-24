@@ -18,9 +18,10 @@ namespace JAM8.Tests
         public static void Test_提取kriging里的条件数据和粗网格点()
         {
             Grid g = Grid.create_from_gslibwin().grid;
-            GridProperty gp = g.select_gridProperty_win().grid_property;
-            gp = gp.less_equal_than(0.5f, 0);
-            gp = gp.greater_than(0.5f, 1);
+            GridProperty gp = GridProperty.create(g.select_gridProperty_win().grid_property,
+                (0.5f, 0, CompareType.LessThan),
+                (0.5f, 1, CompareType.GreaterThan)
+                );
             gp.show_win();
 
         }

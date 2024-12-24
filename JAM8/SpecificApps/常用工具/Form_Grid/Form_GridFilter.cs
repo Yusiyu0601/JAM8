@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using JAM8.Algorithms.Geometry;
+using JAM8.Algorithms.Numerics;
 
 namespace JAM8.SpecificApps.常用工具
 {
@@ -64,17 +65,17 @@ namespace JAM8.SpecificApps.常用工具
                         gp_filtered = g[gp_name].deep_clone();
                 }
                 if (rb_大于.Checked)
-                    gp_filtered.set_values(MyCompareType.greater_than, 阈值, 新数值);
+                    gp_filtered.set_values_by_condition(阈值, 新数值, CompareType.GreaterThan);
                 if (rb_大于等于.Checked)
-                    gp_filtered.set_values(MyCompareType.greater_equal_than, 阈值, 新数值);
+                    gp_filtered.set_values_by_condition(阈值, 新数值, CompareType.GreaterEqualsThan);
                 if (rb_小于.Checked)
-                    gp_filtered.set_values(MyCompareType.less_than, 阈值, 新数值);
+                    gp_filtered.set_values_by_condition(阈值, 新数值, CompareType.LessThan);
                 if (rb_小于等于.Checked)
-                    gp_filtered.set_values(MyCompareType.less_equal_than, 阈值, 新数值);
+                    gp_filtered.set_values_by_condition(阈值, 新数值, CompareType.LessEqualsThan);
                 if (rb_等于.Checked)
-                    gp_filtered.set_values(MyCompareType.equal, 阈值, 新数值);
+                    gp_filtered.set_values_by_condition(阈值, 新数值, CompareType.Equals);
                 if (rb_不等于.Checked)
-                    gp_filtered.set_values(MyCompareType.not_equal, 阈值, 新数值);
+                    gp_filtered.set_values_by_condition(阈值, 新数值, CompareType.NotEqual);
 
                 scottplot4GridProperty2.update_gridProperty(gp_filtered);
             }

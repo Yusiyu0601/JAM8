@@ -1,11 +1,8 @@
-﻿using System.Collections.Generic;
-using EasyConsole;
+﻿using EasyConsole;
 using JAM8.Algorithms.Forms;
 using JAM8.Algorithms.Geometry;
 using JAM8.Algorithms.Numerics;
-using JAM8.SpecificApps.常用工具;
 using JAM8.Utilities;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 namespace JAM8.Console.Pages
 {
@@ -35,9 +32,35 @@ namespace JAM8.Console.Pages
            .Add("Snesim测试（正逆查询树）", Snesim测试)
            .Add("统计", 统计)
            .Add("从很大数组里等间距取值（例如等份100份）", 从很大数组里等间距取值)
+           .Add("GridProperty_replace_with_threshold", GridProperty_replace_with_threshold)
            ;
 
             menu.Display();
+        }
+
+        private void GridProperty_replace_with_threshold()
+        {
+            Form_GridCatalog frm = new();
+            if (frm.ShowDialog() != DialogResult.OK)
+                return;
+            var g = frm.selected_gridProperty;
+            g.show_win("原始");
+
+            var g1 = GridProperty.create(g,
+                (g.Min, 0.2f, null),
+                (0.5f, g.Max, null)
+                );
+            g1.show_win("测试1");
+
+            var (a, b) = g.get_values_by_condition(0.2f, CompareType.GreaterThan);
+            g.set_values_by_range(0.2f, 0.5f, null);
+            g.show_win("测试2");
+
+            //g.set_values_by_condition((float?)0.5, null, CompareType.GreaterThan);
+            //g.set_values_by_condition((float?)0.2, null, CompareType.LessThan);
+            //g.show_win("测试4");
+
+
         }
 
         private void 从很大数组里等间距取值()

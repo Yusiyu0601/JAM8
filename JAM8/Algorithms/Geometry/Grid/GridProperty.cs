@@ -178,6 +178,78 @@ namespace JAM8.Algorithms.Geometry
             return gp;
         }
 
+        /// <summary>
+        /// 根据指定的多个条件判断网格节点值，返回新的修改后的 GridProperty。
+        /// 条件按顺序执行，只有前一个条件满足，后续条件才会继续判断。
+        /// 每个条件使用其自己的 NewValue 更新值，后续条件基于之前的修改值计算。
+        /// </summary>
+        /// <param name="gp">原始 GridProperty 对象</param>
+        /// <param name="conditions">条件列表，每个条件包含比较值、目标值和比较类型</param>
+        /// <returns>修改后的新的 GridProperty 对象</returns>
+        public static GridProperty create(GridProperty gp, params (float? ComparedValue, float? NewValue, CompareType CompareType)[] conditions)
+        {
+            GridProperty clone = gp.deep_clone();
+
+            for (int n = 0; n < clone.gridStructure.N; n++)
+            {
+                float? currentValue = clone.get_value(n);
+
+                foreach (var (comparedValue, newValue, compareType) in conditions)
+                {
+                    // 判断当前条件是否满足
+                    bool shouldReplace = compareType switch
+                    {
+                        CompareType.NoCompared => true,
+                        CompareType.Equals => currentValue == comparedValue,
+                        CompareType.NotEqual => currentValue != comparedValue,
+                        CompareType.GreaterThan => currentValue > comparedValue,
+                        CompareType.GreaterEqualsThan => currentValue >= comparedValue,
+                        CompareType.LessThan => currentValue < comparedValue,
+                        CompareType.LessEqualsThan => currentValue <= comparedValue,
+                        _ => false
+                    };
+
+                    // 如果当前条件满足，更新值，并使用该条件的 NewValue
+                    if (shouldReplace)
+                    {
+                        currentValue = newValue; // 更新当前值为当前条件的 NewValue
+                        clone.set_value(n, currentValue); // 更新节点值
+                    }
+                }
+            }
+
+            return clone;
+        }
+
+        /// <summary>
+        /// 根据指定的多个区间条件判断网格节点值，返回新的修改后的 GridProperty。
+        /// 每个区间条件使用其自己的 NewValue 更新值，后续条件基于之前的修改值计算。
+        /// </summary>
+        /// <param name="gp">原始 GridProperty 对象</param>
+        /// <param name="conditions">区间条件列表，每个条件包含区间的起始值、结束值和目标值</param>
+        /// <returns>修改后的新的 GridProperty 对象</returns>
+        public static GridProperty create(GridProperty gp, params (float? MinValue, float? MaxValue, float? NewValue)[] conditions)
+        {
+            GridProperty clone = gp.deep_clone();
+
+            for (int n = 0; n < clone.gridStructure.N; n++)
+            {
+                float? currentValue = clone.get_value(n);
+
+                foreach (var (minValue, maxValue, newValue) in conditions)
+                {
+                    // 判断当前值是否在区间内
+                    if (currentValue >= minValue && currentValue <= maxValue)
+                    {
+                        clone.set_value(n, newValue); // 更新值
+                        break; // 找到匹配的区间后，跳出当前条件判断
+                    }
+                }
+            }
+
+            return clone;
+        }
+
         #endregion
 
         #region + - * /
@@ -290,90 +362,67 @@ namespace JAM8.Algorithms.Geometry
         /// <param name="compare_type">比较类型(等于、不等于、大于、大于等于、小于、小于等于)</param>
         /// <param name="compare_value">参与比较的数值</param>
         /// <returns></returns>
-        public (List<int>, List<float?>) get_values(MyCompareType compare_type, float? compare_value)
+        public (List<int>, List<float?>) get_values_by_condition(float? compare_value, CompareType compare_type)
         {
             List<int> idx = [];
             List<float?> values = [];
-            switch (compare_type)
+
+            // 遍历网格节点并进行条件判断
+            for (int n = 0; n < gridStructure.N; n++)
             {
-                case MyCompareType.no_compare:
-                    break;
-                case MyCompareType.equal:
-                    {
-                        for (int n = 0; n < gridStructure.N; n++)
-                        {
-                            if (get_value(n) == compare_value)
-                            {
-                                idx.Add(n);
-                            }
-                        }
-                        break;
-                    }
-                case MyCompareType.not_equal:
-                    {
-                        for (int n = 0; n < gridStructure.N; n++)
-                        {
-                            if (get_value(n) != compare_value)
-                            {
-                                idx.Add(n);
-                                values.Add(get_value(n));
-                            }
-                        }
-                        break;
-                    }
-                case MyCompareType.greater_than:
-                    {
-                        for (int n = 0; n < gridStructure.N; n++)
-                        {
-                            if (get_value(n) > compare_value)
-                            {
-                                idx.Add(n);
-                                values.Add(get_value(n));
-                            }
-                        }
-                        break;
-                    }
-                case MyCompareType.greater_equal_than:
-                    {
-                        for (int n = 0; n < gridStructure.N; n++)
-                        {
-                            if (get_value(n) >= compare_value)
-                            {
-                                idx.Add(n);
-                                values.Add(get_value(n));
-                            }
-                        }
-                        break;
-                    }
-                case MyCompareType.less_than:
-                    {
-                        for (int n = 0; n < gridStructure.N; n++)
-                        {
-                            if (get_value(n) < compare_value)
-                            {
-                                idx.Add(n);
-                                values.Add(get_value(n));
-                            }
-                        }
-                        break;
-                    }
-                case MyCompareType.less_equal_than:
-                    {
-                        for (int n = 0; n < gridStructure.N; n++)
-                        {
-                            if (get_value(n) <= compare_value)
-                            {
-                                idx.Add(n);
-                                values.Add(get_value(n));
-                            }
-                        }
-                        break;
-                    }
-                default:
-                    break;
+                float? currentValue = get_value(n);
+
+                // 使用通用方法来进行比较
+                bool shouldAdd = compare_type switch
+                {
+                    CompareType.NoCompared => true,
+                    CompareType.Equals => currentValue == compare_value,
+                    CompareType.NotEqual => currentValue != compare_value,
+                    CompareType.GreaterThan => currentValue > compare_value,
+                    CompareType.GreaterEqualsThan => currentValue >= compare_value,
+                    CompareType.LessThan => currentValue < compare_value,
+                    CompareType.LessEqualsThan => currentValue <= compare_value,
+                    _ => false
+                };
+
+                // 如果满足条件，添加索引和值
+                if (shouldAdd)
+                {
+                    idx.Add(n);
+                    values.Add(currentValue);
+                }
             }
+
             return (idx, values);
         }
+
+        /// <summary>
+        /// 获取满足区间范围条件的values
+        /// </summary>
+        /// <param name="minValue">区间下限（包含）</param>
+        /// <param name="maxValue">区间上限（包含）</param>
+        /// <returns>符合条件的索引和对应值</returns>
+        public (List<int>, List<float?>) get_values_by_range(float? minValue, float? maxValue)
+        {
+            List<int> idx = [];
+            List<float?> values = [];
+
+            // 遍历网格节点并进行区间判断
+            for (int n = 0; n < gridStructure.N; n++)
+            {
+                float? currentValue = get_value(n);
+
+                // 判断值是否在区间范围内
+                if (currentValue >= minValue && currentValue <= maxValue)
+                {
+                    idx.Add(n);
+                    values.Add(currentValue);
+                }
+            }
+
+            return (idx, values);
+        }
+
 
         #endregion
 
@@ -396,8 +445,9 @@ namespace JAM8.Algorithms.Geometry
                 buffer[arrayIndex] = value;
             }
         }
+
         /// <summary>
-        /// 根据spatial索引对网格单元赋值value，spatial index的ix、iy、iz从1开始，到gs.N结束
+        /// 根据spatial索引对网格单元赋值value，spatial_index的ix、iy、iz从1开始，到gs.N结束
         /// </summary>
         /// <param name="si"></param>
         /// <param name="value"></param>
@@ -405,6 +455,7 @@ namespace JAM8.Algorithms.Geometry
         {
             set_value(gridStructure.get_arrayIndex(si), value);
         }
+
         /// <summary>
         /// 根据ix、iy对网格单元赋值value，ix、iy从0开始，到N-1结束
         /// </summary>
@@ -415,6 +466,7 @@ namespace JAM8.Algorithms.Geometry
         {
             set_value(gridStructure.get_arrayIndex(ix, iy, 0), value);
         }
+
         /// <summary>
         /// 根据ix、iy、iz对网格单元赋值value，ix、iy、iz从0开始，到N-1结束
         /// </summary>
@@ -426,8 +478,9 @@ namespace JAM8.Algorithms.Geometry
         {
             set_value(gridStructure.get_arrayIndex(ix, iy, iz), value);
         }
+
         /// <summary>
-        /// 对所有网格单元赋值value
+        /// 对所有网格单元均赋值为value
         /// </summary>
         /// <param name="value"></param>
         public void set_value(float? value)
@@ -436,97 +489,6 @@ namespace JAM8.Algorithms.Geometry
             {
                 set_value(n, value);
             }
-        }
-
-        /// <summary>
-        /// 对满足判断条件的values进行修改
-        /// </summary>
-        /// <param name="compare_type">比较类型(等于、不等于、大于、大于等于、小于、小于等于)</param>
-        /// <param name="compare_value">参与比较的数值</param>
-        /// <param name="value">修改替换的数值</param>
-        public List<int> set_values(MyCompareType compare_type, float? compare_value, float? value)
-        {
-            List<int> idx = [];
-            switch (compare_type)
-            {
-                case MyCompareType.no_compare:
-                    break;
-                case MyCompareType.equal:
-                    {
-                        for (int n = 0; n < gridStructure.N; n++)
-                        {
-                            if (get_value(n) == compare_value)
-                            {
-                                idx.Add(n);
-                                set_value(n, value);
-                            }
-                        }
-                        break;
-                    }
-                case MyCompareType.not_equal:
-                    {
-                        for (int n = 0; n < gridStructure.N; n++)
-                        {
-                            if (get_value(n) != compare_value)
-                            {
-                                idx.Add(n);
-                                set_value(n, value);
-                            }
-                        }
-                        break;
-                    }
-                case MyCompareType.greater_than:
-                    {
-                        for (int n = 0; n < gridStructure.N; n++)
-                        {
-                            if (get_value(n) > compare_value)
-                            {
-                                idx.Add(n);
-                                set_value(n, value);
-                            }
-                        }
-                        break;
-                    }
-                case MyCompareType.greater_equal_than:
-                    {
-                        for (int n = 0; n < gridStructure.N; n++)
-                        {
-                            if (get_value(n) >= compare_value)
-                            {
-                                idx.Add(n);
-                                set_value(n, value);
-                            }
-                        }
-                        break;
-                    }
-                case MyCompareType.less_than:
-                    {
-                        for (int n = 0; n < gridStructure.N; n++)
-                        {
-                            if (get_value(n) < compare_value)
-                            {
-                                idx.Add(n);
-                                set_value(n, value);
-                            }
-                        }
-                        break;
-                    }
-                case MyCompareType.less_equal_than:
-                    {
-                        for (int n = 0; n < gridStructure.N; n++)
-                        {
-                            if (get_value(n) <= compare_value)
-                            {
-                                idx.Add(n);
-                                set_value(n, value);
-                            }
-                        }
-                        break;
-                    }
-                default:
-                    break;
-            }
-            return idx;
         }
 
         /// <summary>
@@ -547,6 +509,7 @@ namespace JAM8.Algorithms.Geometry
             }
 
         }
+
         /// <summary>
         /// 给网格赋值，服从高斯分布
         /// </summary>
@@ -560,6 +523,69 @@ namespace JAM8.Algorithms.Geometry
             {
                 set_value(i, (float)norm.Sample(rnd));
             }
+        }
+
+        /// <summary>
+        /// 根据指定条件在原先网格属性上修改网格节点值
+        /// </summary>
+        /// <param name="compared_value">用于比较的值</param>
+        /// <param name="new_value">需要设置的新值</param>
+        /// <param name="compare_type">比较条件</param>
+        /// <returns>发生修改的网格节点的array_index集合</returns>
+        public List<int> set_values_by_condition(float? compared_value, float? new_value, CompareType compare_type)
+        {
+            List<int> idx = [];
+            for (int n = 0; n < gridStructure.N; n++)
+            {
+                float? currentValue = get_value(n);
+
+                // 在循环中直接实现比较逻辑
+                bool shouldReplace = compare_type switch
+                {
+                    CompareType.NoCompared => true,
+                    CompareType.Equals => currentValue == compared_value,
+                    CompareType.NotEqual => currentValue != compared_value,
+                    CompareType.GreaterThan => currentValue > compared_value,
+                    CompareType.GreaterEqualsThan => currentValue >= compared_value,
+                    CompareType.LessThan => currentValue < compared_value,
+                    CompareType.LessEqualsThan => currentValue <= compared_value,
+                    _ => false
+                };
+
+                if (shouldReplace)
+                {
+                    idx.Add(n);
+                    set_value(n, new_value);
+                }
+            }
+            return idx;
+        }
+
+        /// <summary>
+        /// 根据指定区间范围修改网格节点值
+        /// </summary>
+        /// <param name="minValue">区间下限（包含）</param>
+        /// <param name="maxValue">区间上限（包含）</param>
+        /// <param name="newValue">需要设置的新值</param>
+        /// <returns>发生修改的网格节点的 array_index 集合</returns>
+        public List<int> set_values_by_range(float? minValue, float? maxValue, float? newValue)
+        {
+            List<int> idx = [];
+
+            // 遍历所有网格节点并判断是否在区间范围内
+            for (int n = 0; n < gridStructure.N; n++)
+            {
+                float? currentValue = get_value(n);
+
+                // 判断值是否在区间范围内
+                if (currentValue >= minValue && currentValue <= maxValue)
+                {
+                    idx.Add(n);
+                    set_value(n, newValue); // 更新值
+                }
+            }
+
+            return idx;
         }
 
         #endregion
@@ -745,157 +771,7 @@ namespace JAM8.Algorithms.Geometry
 
         #endregion
 
-        #region 值替换
-
-        /// <summary>
-        /// 将所有old_value替换为new_value
-        /// </summary>
-        /// <param name="old_value"></param>
-        /// <param name="new_value"></param>
-        public void replace_value(float? old_value, float? new_value)
-        {
-            for (int n = 0; n < this.gridStructure.N; n++)
-            {
-                if (buffer[n] == old_value)
-                    buffer[n] = new_value;
-            }
-        }
-
-        /// <summary>
-        /// 替换值
-        /// 从网格里查找满足比较条件（等于、不等于、大于、大于等于、小于、小于等于）
-        /// </summary>
-        /// <param name="NewValue">替换的新值</param>
-        /// <param name="CompareValue">用于比较的值</param>
-        /// <param name="CompareType">比较条件</param>
-        /// <returns></returns>
-        public GridProperty replace_with_threshold(float? compared_value, CompareType compare_type, float? new_value)
-        {
-            switch (compare_type)
-            {
-                case CompareType.NoCompared:
-                    GridProperty gp = deep_clone();
-                    for (int n = 0; n < gp.gridStructure.N; n++)
-                        gp.set_value(n, new_value);
-                    return gp;
-
-                case CompareType.Equals:
-                    return equal_than(compared_value, new_value);
-
-                case CompareType.NotEqual:
-                    return not_equal_than(compared_value, new_value);
-
-                case CompareType.GreaterThan:
-                    return greater_than(compared_value, new_value);
-
-                case CompareType.GreaterEqualsThan:
-                    return greater_equal_than(compared_value, new_value);
-
-                case CompareType.LessThan:
-                    return less_than(compared_value, new_value);
-
-                case CompareType.LessEqualsThan:
-                    return less_equal_than(compared_value, new_value);
-
-                default:
-                    return null;
-            }
-        }
-
-        /// <summary>
-        /// 等于Threshold的值替换为value
-        /// </summary>
-        /// <param name="Threshold"></param>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        public GridProperty equal_than(float? threshold, float? new_value)
-        {
-
-            GridProperty gp = deep_clone();
-            for (int n = 0; n < gp.gridStructure.N; n++)
-                if (gp.get_value(n) == threshold)
-                    gp.set_value(n, new_value);
-            return gp;
-        }
-
-        /// <summary>
-        /// 不等于Threshold的值替换为value
-        /// </summary>
-        /// <param name="Threshold"></param>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        public GridProperty not_equal_than(float? threshold, float? new_value)
-        {
-            GridProperty gp = deep_clone();
-            for (int n = 0; n < gp.gridStructure.N; n++)
-                if (gp.get_value(n) != threshold)
-                    gp.set_value(n, new_value);
-            return gp;
-        }
-
-        /// <summary>
-        /// 大于Threshold的值替换为value
-        /// </summary>
-        /// <param name="Threshold"></param>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        public GridProperty greater_than(float? threshold, float? new_value)
-        {
-            GridProperty gp = deep_clone();
-            for (int n = 0; n < gp.gridStructure.N; n++)
-                if (gp.get_value(n) > threshold)
-                    gp.set_value(n, new_value);
-            return gp;
-        }
-
-        /// <summary>
-        /// 大于等于Threshold的值替换为value
-        /// </summary>
-        /// <param name="Threshold"></param>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        public GridProperty greater_equal_than(float? threshold, float? new_value)
-        {
-            GridProperty gp = deep_clone();
-            for (int n = 0; n < gp.gridStructure.N; n++)
-                if (gp.get_value(n) >= threshold)
-                    gp.set_value(n, new_value);
-            return gp;
-        }
-
-        /// <summary>
-        /// 小于Threshold的值替换为value
-        /// </summary>
-        /// <param name="Threshold"></param>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        public GridProperty less_than(float? threshold, float? new_value)
-        {
-            GridProperty gp = deep_clone();
-            for (int n = 0; n < gp.gridStructure.N; n++)
-                if (gp.get_value(n) < threshold)
-                    gp.set_value(n, new_value);
-            return gp;
-        }
-
-        /// <summary>
-        /// 小于等于Threshold的值替换为value
-        /// </summary>
-        /// <param name="Threshold"></param>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        public GridProperty less_equal_than(float? threshold, float? new_value)
-        {
-            GridProperty gp = deep_clone();
-            for (int n = 0; n < gp.gridStructure.N; n++)
-                if (gp.get_value(n) <= threshold)
-                    gp.set_value(n, new_value);
-            return gp;
-        }
-
-        #endregion
-
-        #region 三维切片操作
+        #region 三维的切片操作
 
         /// <summary>
         /// 从三维里获取切片

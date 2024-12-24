@@ -6,6 +6,13 @@ using System.Threading.Tasks;
 
 namespace JAM8.Algorithms.Numerics
 {
+    // 枚举类型，用于表示条件判断的逻辑
+    public enum ConditionLogic
+    {
+        AND, // 所有条件都必须满足
+        OR   // 满足任意一个条件即可
+    }
+
     /// <summary>
     /// 数值比较类型
     /// </summary>

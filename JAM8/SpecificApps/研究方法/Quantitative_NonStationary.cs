@@ -591,7 +591,9 @@ namespace JAM8.SpecificApps.研究方法
                             float left = (float)data[index_left];
                             float right = (float)data[index_right];
 
-                            var fragment = Property.greater_than(right, null).less_than(left, null);
+                            var fragment = GridProperty.create(Property,
+                                (right, null, CompareType.GreaterThan),
+                                (left, null, CompareType.LessThan));
                             if (fragment.N_Nulls < fragment.gridStructure.N * 0.99)
                                 fragments.Add($"[{i}] : {left}-{right}", fragment);
                         }
@@ -601,8 +603,10 @@ namespace JAM8.SpecificApps.研究方法
                         Grid temp_fragments = Grid.create(gs);
                         for (int i = 0; i < N; i++)
                         {
-                            var temp_property = fragments[i].not_equal_than(null, 1);
-                            temp_property = temp_property.equal_than(null, 0);
+                            var temp_property = GridProperty.create(fragments[i],
+                                (null, 1, CompareType.NotEqual),
+                                (null, 0, CompareType.Equals)
+                                );
                             temp_fragments.Add($"{i}", temp_property);
                         }
                         //temp_fragments.Show();
@@ -626,9 +630,10 @@ namespace JAM8.SpecificApps.研究方法
                             decimal left = (decimal)Property.Min.Value + interval * i;
                             decimal right = left + interval;
 
-                            var fragment = Property.
-                                    greater_than((float?)right, null).
-                                    less_than((float?)left, null);
+                            var fragment = GridProperty.create(Property,
+                                ((float?)right, null, CompareType.GreaterThan),
+                                ((float?)left, null, CompareType.LessThan)
+                                );
                             if (fragment.N_Nulls < fragment.gridStructure.N * 0.99)
                                 fragments.Add($"[{i}] : {left}-{right}", fragment);
                         }
