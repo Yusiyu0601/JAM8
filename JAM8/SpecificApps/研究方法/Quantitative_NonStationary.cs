@@ -6,6 +6,7 @@ using JAM8.Algorithms.Geometry;
 using JAM8.Algorithms.MachineLearning;
 using JAM8.Algorithms.Numerics;
 using JAM8.Utilities;
+using ScottPlot.Drawing.Colormaps;
 
 namespace JAM8.SpecificApps.研究方法
 {
@@ -772,6 +773,28 @@ namespace JAM8.SpecificApps.研究方法
 
             Console.WriteLine("*************分界线*************");
 
+            static double[] CalculateGaussianWeights(int N, double sigma)
+            {
+                double[] weights = new double[N];
+                double sumWeights = 0;
+
+                // 计算每个点的半高斯权重
+                for (int i = 0; i < N; i++)
+                {
+                    // 计算半个高斯分布的权重
+                    weights[i] = Math.Exp(-Math.Pow(i, 2) / (2 * Math.Pow(sigma, 2)));
+                    sumWeights += weights[i];
+                }
+
+                // 归一化权重，使得所有权重之和为1
+                for (int i = 0; i < N; i++)
+                {
+                    weights[i] /= sumWeights;
+                }
+
+                return weights;
+            }
+
             foreach (var (name, ti) in g)
             {
                 #region 计算所有位置的实验变差函数
@@ -805,22 +828,61 @@ namespace JAM8.SpecificApps.研究方法
                 #region 计算平稳系数
 
                 List<double> distance_average = [];
+                // 计算高斯衰减权重
+                double[] gaussianWeights1 = CalculateGaussianWeights(gs.N, 300);
                 for (int n1 = 0; n1 < gs.N; n1++)
                 {
+                    List<double> dists = [];
                     for (int n2 = 0; n2 < gs.N; n2++)
                     {
                         var world_distance = SpatialIndex.calc_dist(gs.get_spatialIndex(n1), gs.get_spatialIndex(n2));
-                        distance_average.Add(world_distance);
+                        dists.Add(world_distance);
                     }
+
                 }
                 double distance_average1 = distance_average.Average();
 
                 #region 并行计算
 
-                //ConcurrentBag<double> measures = [];
-                //Parallel.ForEach(lags_different_locs.Keys, n1 =>
+                ConcurrentBag<double> measures = [];
+                Parallel.ForEach(lags_different_locs.Keys, n1 =>
+                {
+                    List<(double, double)> ordered = [];
+                    foreach (var n2 in lags_different_locs.Keys)
+                    {
+                        if (n1 != n2)
+                        {
+                            var distance = MyDistance.calc_hsim(lags_different_locs[n1], lags_different_locs[n2]);
+                            var world_distance = SpatialIndex.calc_dist(gs.get_spatialIndex(n1), gs.get_spatialIndex(n2));
+                            ordered.Add((distance, world_distance));
+                        }
+                    }
+
+                    //方案1
+                    //int n = (int)(lags_different_locs.Count * 0.1);
+                    //measures.Add(ordered.OrderByDescending(a => a.Item1).Take(n).Average(a => a.Item2));
+
+                    //方案2
+                    var tmp = ordered.OrderByDescending(a => a.Item1).ToList();
+
+                    // 计算高斯衰减权重
+                    double[] gaussianWeights = CalculateGaussianWeights(tmp.Count, 300);
+                    for (int i = 0; i < tmp.Count; i++)
+                    {
+                        measures.Add(tmp[i].Item2 * gaussianWeights[i]);
+                    }
+                });
+                double measure = measures.Average();
+
+
+                #endregion
+
+                #region 串行计算
+
+                //double measure = 0;
+                //foreach (var n1 in lags_different_locs.Keys)
                 //{
-                //    List<(double, double)> ordered = [];
+                //    List<(double, double)> ordered = new();
                 //    foreach (var n2 in lags_different_locs.Keys)
                 //    {
                 //        if (n1 != n2)
@@ -833,52 +895,20 @@ namespace JAM8.SpecificApps.研究方法
 
                 //    //方案1
                 //    int n = (int)(lags_different_locs.Count * 0.1);
-                //    measures.Add(ordered.OrderByDescending(a => a.Item1).Take(n).Average(a => a.Item2));
+                //    var list = ordered.OrderByDescending(a => a.Item1).Take(n);
+                //    int count = ordered.Count(a => a.Item1 == 1);
+
+                //    measure += list.Average(a => a.Item2);
 
                 //    //方案2
                 //    //var tmp = ordered.OrderByDescending(a => a.Item1).ToList();
                 //    //for (int i = 0; i < tmp.Count; i++)
                 //    //{
-                //    //    measures.Add(tmp[i].Item2 * Math.Pow(1 - (float)i / tmp.Count, 2.0));
+                //    //    measure += tmp[i].Item2 * Math.Pow(1 - (float)i / tmp.Count, 2.0);
                 //    //}
-                //});
-                //double measure = measures.Average();
 
-
-                #endregion
-
-                #region 串行计算
-
-                double measure = 0;
-                foreach (var n1 in lags_different_locs.Keys)
-                {
-                    List<(double, double)> ordered = new();
-                    foreach (var n2 in lags_different_locs.Keys)
-                    {
-                        if (n1 != n2)
-                        {
-                            var distance = MyDistance.calc_hsim(lags_different_locs[n1], lags_different_locs[n2]);
-                            var world_distance = SpatialIndex.calc_dist(gs.get_spatialIndex(n1), gs.get_spatialIndex(n2));
-                            ordered.Add((distance, world_distance));
-                        }
-                    }
-
-                    //方案1
-                    int n = (int)(lags_different_locs.Count * 0.1);
-                    var list = ordered.OrderByDescending(a => a.Item1).Take(n);
-                    int count = ordered.Count(a => a.Item1 == 1);
-
-                    measure += list.Average(a => a.Item2);
-
-                    //方案2
-                    //var tmp = ordered.OrderByDescending(a => a.Item1).ToList();
-                    //for (int i = 0; i < tmp.Count; i++)
-                    //{
-                    //    measure += tmp[i].Item2 * Math.Pow(1 - (float)i / tmp.Count, 2.0);
-                    //}
-
-                }
-                measure /= (lags_different_locs.Count);
+                //}
+                //measure /= (lags_different_locs.Count);
 
                 #endregion
 

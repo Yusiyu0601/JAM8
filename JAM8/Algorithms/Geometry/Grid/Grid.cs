@@ -179,7 +179,7 @@ namespace JAM8.Algorithms.Geometry
         /// 计算所有GridProperty的点对点平均数
         /// </summary>
         /// <returns></returns>
-        public GridProperty get_AverageP2P()
+        public GridProperty get_EType()
         {
             var result = GridProperty.create(gridStructure);
             for (int n = 0; n < gridStructure.N; n++)//逐网格单元计算

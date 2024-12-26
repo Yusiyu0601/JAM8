@@ -8,7 +8,8 @@ namespace JAM8.Console.Pages
     : base(
           "Test", program,
           new Option("Test_Algs", () => program.NavigateTo<Test_Algs>()),
-          new Option("Test_Utils", () => program.NavigateTo<Test_Utils>())
+          new Option("Test_Utils", () => program.NavigateTo<Test_Utils>()),
+          new Option("Test_Somethings", () => program.NavigateTo<Test_Somethings>())
           )
         {
         }

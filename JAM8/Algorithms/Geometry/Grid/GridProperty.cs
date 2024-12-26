@@ -325,6 +325,7 @@ namespace JAM8.Algorithms.Geometry
             // 根据索引返回对应的 Buffer 值
             return buffer[arrayIndex];
         }
+
         /// <summary>
         /// 根据spatial索引获取value，spatial index的ix、iy、iz从0开始，到N-1结束
         /// </summary>
@@ -334,6 +335,7 @@ namespace JAM8.Algorithms.Geometry
         {
             return get_value(gridStructure.get_arrayIndex(si));
         }
+
         /// <summary>
         /// 根据二维spatial索引的ix、iy获取value，ix、iy从0开始，到N-1结束
         /// </summary>
@@ -344,6 +346,7 @@ namespace JAM8.Algorithms.Geometry
         {
             return get_value(gridStructure.get_arrayIndex(ix, iy, 0));
         }
+
         /// <summary>
         /// 根据三维spatial索引的ix、iy、iz获取value，ix、iy、iz从0开始，到N-1结束
         /// </summary>

@@ -5,11 +5,16 @@ namespace JAM8.Algorithms.Geometry
 {
     public partial class Scottplot4Grid : UserControl
     {
-        public Grid _g { get; internal set; }//输入Grid,2D 或者 3D
-        public GridProperty _gp { get; internal set; }//选中的GridProperty，2D或者3D
-        GridProperty _view_2d_gp;//实际显示GridProperty，只能是2D(2D模型的深度复制体、或者3D模型切片)
-        string _filter_string = null;//过滤字符串
-        readonly ScottPlot.Drawing.Colormap[] _colormaps = ScottPlot.Drawing.Colormap.GetColormaps();
+        //输入Grid,2D 或者 3D
+        public Grid _g { get; internal set; }
+        //选中的GridProperty，2D或者3D
+        public GridProperty _gp { get; internal set; }
+        //实际显示GridProperty，只能是2D(2D模型的深度复制体、或者3D模型切片)
+        GridProperty _view_2d_gp;
+        //过滤字符串
+        string _filter_string = null;
+        readonly ScottPlot.Drawing.Colormap[] _colormaps =
+            ScottPlot.Drawing.Colormap.GetColormaps();
 
         public delegate void MouseMoveHandler(int view_ix, int view_iy);
         /// <summary>
@@ -361,7 +366,8 @@ namespace JAM8.Algorithms.Geometry
 
         private void eTypeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            var EType = _g.get_EType();
+            EType.show_win();
         }
 
         private void 缩放ToolStripMenuItem_Click(object sender, EventArgs e)

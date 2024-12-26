@@ -2,6 +2,7 @@
 using JAM8.Algorithms.Forms;
 using JAM8.Algorithms.Geometry;
 using JAM8.SpecificApps.常用工具;
+using JAM8.Utilities;
 
 namespace JAM8.Console.Pages
 {
@@ -42,9 +43,42 @@ namespace JAM8.Console.Pages
            .Add("Grid转换为CData", Grid转换为CData)
            .Add("Grid过滤替换数值", Grid过滤替换数值)
            .Add("Grid采样点", Grid采样点)
+           .Add("多个GridProperty合并为一个Grid", 多个GridProperty合并为一个Grid)
            ;
 
             menu.Display();
+        }
+
+        private void 多个GridProperty合并为一个Grid()
+        {
+            try
+            {
+                GridStructure gs = GridStructure.create_win();
+                Grid g = Grid.create(gs);
+                OpenFileDialog ofd = new()
+                {
+                    Multiselect = true
+                };
+
+                if (ofd.ShowDialog() != DialogResult.OK)
+                    return;
+
+                var split_code = EasyConsole.Input.ReadInt("输入split_code:", 0, 4);
+                var null_value = EasyConsole.Input.ReadString("输入null_value:");
+                foreach (var fileName in ofd.FileNames)
+                {
+                    System.Console.WriteLine(fileName);
+
+                    var g1 = Grid.create(gs);
+                    g1.read_from_gslib(fileName, split_code, Convert.ToSingle(null_value));
+                    g.add_gridProperty(FileHelper.GetFileName(fileName, false), g1.first_gridProperty());
+                }
+                g.showGrid_win();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
         }
 
         private void Grid采样点()

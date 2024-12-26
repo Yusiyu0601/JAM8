@@ -118,7 +118,7 @@ namespace JAM8.Algorithms.Geometry
             txt_OriginCellZ.Name = "txt_OriginCellZ";
             txt_OriginCellZ.Size = new Size(340, 30);
             txt_OriginCellZ.TabIndex = 132;
-            txt_OriginCellZ.Text = "0";
+            txt_OriginCellZ.Text = "0.5";
             // 
             // txt_OriginCellY
             // 
@@ -127,7 +127,7 @@ namespace JAM8.Algorithms.Geometry
             txt_OriginCellY.Name = "txt_OriginCellY";
             txt_OriginCellY.Size = new Size(340, 30);
             txt_OriginCellY.TabIndex = 131;
-            txt_OriginCellY.Text = "0";
+            txt_OriginCellY.Text = "0.5";
             // 
             // txt_OriginCellX
             // 
@@ -136,7 +136,7 @@ namespace JAM8.Algorithms.Geometry
             txt_OriginCellX.Name = "txt_OriginCellX";
             txt_OriginCellX.Size = new Size(340, 30);
             txt_OriginCellX.TabIndex = 130;
-            txt_OriginCellX.Text = "0";
+            txt_OriginCellX.Text = "0.5";
             // 
             // txt_KCount
             // 
@@ -172,7 +172,7 @@ namespace JAM8.Algorithms.Geometry
             txt_KSize.Name = "txt_KSize";
             txt_KSize.Size = new Size(340, 30);
             txt_KSize.TabIndex = 126;
-            txt_KSize.Text = "1";
+            txt_KSize.Text = "1.0";
             // 
             // txt_JSize
             // 
@@ -181,7 +181,7 @@ namespace JAM8.Algorithms.Geometry
             txt_JSize.Name = "txt_JSize";
             txt_JSize.Size = new Size(340, 30);
             txt_JSize.TabIndex = 125;
-            txt_JSize.Text = "1";
+            txt_JSize.Text = "1.0";
             // 
             // txt_ISize
             // 
@@ -190,7 +190,7 @@ namespace JAM8.Algorithms.Geometry
             txt_ISize.Name = "txt_ISize";
             txt_ISize.Size = new Size(340, 30);
             txt_ISize.TabIndex = 124;
-            txt_ISize.Text = "1";
+            txt_ISize.Text = "1.0";
             // 
             // txt_GridName
             // 
