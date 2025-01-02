@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Diagnostics;
+using Google.Protobuf.WellKnownTypes;
 using JAM8.Algorithms;
 using JAM8.Algorithms.Forms;
 using JAM8.Algorithms.Geometry;
@@ -7,6 +8,8 @@ using JAM8.Algorithms.MachineLearning;
 using JAM8.Algorithms.Numerics;
 using JAM8.Utilities;
 using ScottPlot.Drawing.Colormaps;
+using static JAM8.SpecificApps.研究方法.Quantitative_NonStationary;
+using static TorchSharp.torch.utils;
 
 namespace JAM8.SpecificApps.研究方法
 {
@@ -15,6 +18,315 @@ namespace JAM8.SpecificApps.研究方法
     /// </summary>
     public class Quantitative_NonStationary
     {
+        /// <summary>
+        /// 计算锚点距离模型
+        /// </summary>
+        public static void Test_GetAnchorsDistanceModel()
+        {
+            //加载TI
+            Form_GridCatalog frm = new();
+            if (frm.ShowDialog() != DialogResult.OK)
+                return;
+            var TI = frm.selected_grids[0].select_gridProperty_win("选择TI").grid_property;
+
+            //缩放到固定尺寸
+            var gs = GridStructure.create_simple(100, 100, 1);
+            TI = TI.resize(gs);
+
+            Grid g = get_anchors_distance_model_2d(TI, "变差函数");
+            g.showGrid_win();
+
+            foreach (var propertyName in g.propertyNames)
+            {
+                var array = g[propertyName].convert_to_array();
+                MyConsoleHelper.write_string_to_console($"{CalculateEntropy(array)}");
+            }
+        }
+        public static double CalculateEntropy(double[,] grid)
+        {
+            // 将网格数据离散化为若干区间
+            int bins = 10; // 分成10个区间
+            double min = grid.Cast<double>().Min();
+            double max = grid.Cast<double>().Max();
+            double binSize = (max - min) / bins;
+
+            // 统计每个区间的频率
+            var frequencies = new int[bins];
+            foreach (var value in grid)
+            {
+                int binIndex = Math.Min((int)((value - min) / binSize), bins - 1);
+                frequencies[binIndex]++;
+            }
+
+            // 转换为概率分布
+            int totalCount = grid.Length;
+            var probabilities = frequencies.Select(f => (double)f / totalCount).ToArray();
+
+            // 计算熵值
+            double entropy = 0;
+            foreach (var p in probabilities)
+            {
+                if (p > 0)
+                    entropy -= p * Math.Log(p);
+            }
+
+            return entropy;
+        }
+
+        static Grid get_anchors_distance_model_2d(GridProperty TI, string distance_type = "模式")
+        {
+            var gs = TI.gridStructure;
+
+            //锚点距离模型
+            var g_anchors = Grid.create(gs);
+
+            Console.WriteLine();
+
+            if (distance_type == "模式")
+            {
+                //预先提取所有样式
+                var m = Mould.create_by_ellipse(4, 4, 1);
+                var pats = Patterns.create(m, TI, true, false);
+
+                //锚点(Current)间距
+                for (int iy = 0; iy < gs.ny; iy += 15)
+                {
+                    for (int ix = 0; ix < gs.nx; ix += 15)
+                    {
+                        //锚点位置
+                        var anchor_array_index = gs.get_arrayIndex(SpatialIndex.create(ix, iy));
+                        var anchor_neighbors = find_neighbors(gs, pats, anchor_array_index, 4, 4);
+
+                        MyConsoleHelper.write_string_to_console(anchor_array_index.ToString());
+
+                        if (anchor_neighbors.Count == 0)
+                            continue;
+
+                        //添加锚点位置的距离
+                        g_anchors.add_gridProperty(SpatialIndex.create(ix, iy).view_text());
+
+                        Parallel.ForEach(pats, item =>
+                        {
+                            var other_neighbors = find_neighbors(gs, pats, item.Value.core_arrayIndex, 4, 4);
+                            g_anchors.last_gridProperty().set_value(item.Value.core_arrayIndex, calc_distance(anchor_neighbors, other_neighbors));
+                        });
+
+                    }
+                }
+            }
+            else if (distance_type == "变差函数")
+            {
+                //设置参数
+                int radius = MyConsoleHelper.read_int_from_console("设置Region的半径尺寸");
+
+                //计算所有位置的实验变差函数
+                Dictionary<int, List<double>> lags_locs = [];
+                var array_indexes = MyGenerator.range(0, gs.N, 1);
+                int flag = 0;
+                Dictionary<int, Bitmap> images = [];
+                foreach (var n in array_indexes)
+                {
+                    flag++;
+                    MyConsoleProgress.Print(flag, array_indexes.Count, "计算所有位置的实验变差函数");
+
+                    var (region, index_out_of_bounds) = TI.get_region_by_center(gs.get_spatialIndex(n), radius, radius);
+                    int N_lag = radius;
+                    //if (index_out_of_bounds)//丢弃不完整的region
+                    //    continue;
+
+                    List<double> lags_loc =
+                    [
+                        .. Variogram.calc_experiment_variogram(region, 0, N_lag, 1).gamma,
+                        .. Variogram.calc_experiment_variogram(region, 45, N_lag, 1).gamma,
+                        .. Variogram.calc_experiment_variogram(region, 90, N_lag, 1).gamma,
+                        .. Variogram.calc_experiment_variogram(region, 135, N_lag, 1).gamma
+                    ];
+                    lags_locs.Add(n, lags_loc);
+                }
+
+                //锚点(Current)间距
+                for (int iy = 0; iy < gs.ny; iy += 15)
+                {
+                    for (int ix = 0; ix < gs.nx; ix += 15)
+                    {
+                        //添加锚点位置的距离
+                        g_anchors.add_gridProperty(SpatialIndex.create(ix, iy).view_text());
+
+                        var anchor_loc = gs.get_arrayIndex(SpatialIndex.create(ix, iy));
+                        var anchor_lags = lags_locs[anchor_loc];
+
+                        foreach (var (idx, lags) in lags_locs)
+                        {
+                            var neighbor_lags = lags_locs[idx];
+                            var hsim = MyDistance.calc_hsim(anchor_lags, neighbor_lags);
+                            g_anchors.last_gridProperty().set_value(idx, (float?)hsim);
+                        }
+                        MyConsoleProgress.Print(1, g_anchors.propertyNames.Last());
+                    }
+                }
+            }
+
+            #region 归一化到0~1之间
+
+            //DataMapper mapper = new();
+            //mapper.Reset(g_anchors.last_gridProperty().Min.Value, g_anchors.last_gridProperty().Max.Value, 0, 1);
+            //for (int n = 0; n < gs.N; n++)
+            //{
+            //    var value = g_anchors.last_gridProperty().get_value(n);
+            //    if (value != null)
+            //    {
+            //        g_anchors.last_gridProperty().set_value(n, (float)mapper.MapAToB(value.Value));
+            //    }
+            //}
+
+            #endregion
+
+            return g_anchors;
+        }
+
+        static List<MouldInstance> find_neighbors(GridStructure gs, Patterns pats, int core_arrayIndex, int rx, int ry)
+        {
+            List<MouldInstance> neighbors = [];
+            SpatialIndex core_si = gs.get_spatialIndex(core_arrayIndex);
+            for (int dx = -rx; dx <= rx; dx++)
+            {
+                for (int dy = -ry; dy <= ry; dy++)
+                {
+                    var neighbor_arrayIndex = gs.get_arrayIndex(core_si.offset(dx, dy));
+                    if (pats.ContainsKey(neighbor_arrayIndex))
+                        neighbors.Add(pats[neighbor_arrayIndex]);
+                }
+            }
+            return neighbors;
+        }
+
+        static float calc_distance(List<MouldInstance> pats1, List<MouldInstance> pats2)
+        {
+            List<float> distances = [];
+
+            foreach (var pat1 in pats1)
+            {
+                List<float> d = [];
+                foreach (var pat2 in pats2)
+                {
+                    if (pat1 != null && pat2 != null)
+                        d.Add(MyDistance.calc_hsim(pat1.neighbor_values, pat2.neighbor_values));
+                }
+                if (d.Count != 0)
+                    distances.Add(d.Max());
+            }
+
+            return distances.Average();
+        }
+
+        /// <summary>
+        /// 计算局部区域的相似性矩阵
+        /// </summary>
+        public static void Test_GetSimilarityMatrix()
+        {
+            get_similarity_matrix();
+        }
+
+        static double[,] get_similarity_matrix(string distance_type = "模式")
+        {
+            //加载TI
+            Form_GridCatalog frm = new();
+            if (frm.ShowDialog() != DialogResult.OK)
+                return null;
+            var TI = frm.selected_grids[0].select_gridProperty_win("选择TI").grid_property;
+
+            //缩放到固定尺寸
+            var gs = GridStructure.create_simple(100, 100, 1);
+            TI = TI.resize(gs);
+
+            double[,] similarityMatrix = new double[gs.N, gs.N];
+
+            Console.WriteLine();
+
+            if (distance_type == "模式")
+            {
+                //预先提取所有样式
+                var m = Mould.create_by_ellipse(4, 4, 1);
+                var pats = Patterns.create(m, TI, true, false);
+
+                //锚点(Current)间距
+                for (int iy = 0; iy < gs.ny; iy += 15)
+                {
+                    for (int ix = 0; ix < gs.nx; ix += 15)
+                    {
+                        //锚点位置
+                        var anchor_array_index = gs.get_arrayIndex(SpatialIndex.create(ix, iy));
+                        var anchor_neighbors = find_neighbors(gs, pats, anchor_array_index, 4, 4);
+
+                        MyConsoleHelper.write_string_to_console(anchor_array_index.ToString());
+
+                        if (anchor_neighbors.Count == 0)
+                            continue;
+
+                        Parallel.ForEach(pats, item =>
+                        {
+                            var other_neighbors = find_neighbors(gs, pats, item.Value.core_arrayIndex, 4, 4);
+                            //g_anchors.last_gridProperty().set_value(item.Value.core_arrayIndex, calc_distance(anchor_neighbors, other_neighbors));
+                        });
+
+                    }
+                }
+            }
+            else if (distance_type == "变差函数")
+            {
+                //设置参数
+                int radius = MyConsoleHelper.read_int_from_console("设置Region的半径尺寸");
+
+                //计算所有位置的实验变差函数
+                Dictionary<int, List<double>> lags_locs = [];
+                var array_indexes = MyGenerator.range(0, gs.N, 1);
+                int flag = 0;
+                Dictionary<int, Bitmap> images = [];
+                foreach (var n in array_indexes)
+                {
+                    flag++;
+                    MyConsoleProgress.Print(flag, array_indexes.Count, "计算所有位置的实验变差函数");
+
+                    var (region, index_out_of_bounds) = TI.get_region_by_center(gs.get_spatialIndex(n), radius, radius);
+                    int N_lag = radius;
+                    //if (index_out_of_bounds)//丢弃不完整的region
+                    //    continue;
+
+                    List<double> lags_loc =
+                    [
+                        .. Variogram.calc_experiment_variogram(region, 0, N_lag, 1).gamma,
+                        .. Variogram.calc_experiment_variogram(region, 45, N_lag, 1).gamma,
+                        .. Variogram.calc_experiment_variogram(region, 90, N_lag, 1).gamma,
+                        .. Variogram.calc_experiment_variogram(region, 135, N_lag, 1).gamma
+                    ];
+                    lags_locs.Add(n, lags_loc);
+                }
+
+                //锚点(Current)间距
+                for (int iy = 0; iy < gs.ny; iy += 15)
+                {
+                    for (int ix = 0; ix < gs.nx; ix += 15)
+                    {
+                        //添加锚点位置的距离
+                        //g_anchors.add_gridProperty(SpatialIndex.create(ix, iy).view_text());
+
+                        var anchor_loc = gs.get_arrayIndex(SpatialIndex.create(ix, iy));
+                        var anchor_lags = lags_locs[anchor_loc];
+
+                        foreach (var (idx, lags) in lags_locs)
+                        {
+                            var neighbor_lags = lags_locs[idx];
+                            var hsim = MyDistance.calc_hsim(anchor_lags, neighbor_lags);
+                            //g_anchors.last_gridProperty().set_value(idx, (float?)hsim);
+                        }
+                        //MyConsoleProgress.Print(1, g_anchors.propertyNames.Last());
+                    }
+                }
+            }
+
+            return similarityMatrix;
+        }
+
         #region 分步计算方法
 
         #region step1 模式相似度
@@ -113,40 +425,7 @@ namespace JAM8.SpecificApps.研究方法
             #endregion
         }
 
-        static List<MouldInstance> find_neighbors(GridStructure gs, Patterns pats, int core_arrayIndex, int rx, int ry)
-        {
-            List<MouldInstance> neighbors = new();
-            SpatialIndex core_si = gs.get_spatialIndex(core_arrayIndex);
-            for (int dx = -rx; dx <= rx; dx++)
-            {
-                for (int dy = -ry; dy <= ry; dy++)
-                {
-                    var neighbor_arrayIndex = gs.get_arrayIndex(core_si.offset(dx, dy));
-                    if (pats.ContainsKey(neighbor_arrayIndex))
-                        neighbors.Add(pats[neighbor_arrayIndex]);
-                }
-            }
-            return neighbors;
-        }
 
-        static float calc_distance(List<MouldInstance> pats1, List<MouldInstance> pats2)
-        {
-            List<float> distances = new();
-
-            foreach (var pat1 in pats1)
-            {
-                List<float> d = new();
-                foreach (var pat2 in pats2)
-                {
-                    if (pat1 != null && pat2 != null)
-                        d.Add(MyDistance.calc_hsim(pat1.neighbor_values, pat2.neighbor_values));
-                }
-                if (d.Count != 0)
-                    distances.Add(d.Max());
-            }
-
-            return distances.Average();
-        }
 
         #endregion
 
@@ -736,13 +1015,10 @@ namespace JAM8.SpecificApps.研究方法
 
         public static void 直接计算方法2d()
         {
-            //设置参数
-            Console.WriteLine("设置Region的尺寸");
-            Console.Write("\tradius = ");
-            int radius = int.Parse(Console.ReadLine());
-
             MyDataFrame df = MyDataFrame.create(["name", "value"]);
 
+            //设置参数
+            int radius = MyConsoleHelper.read_int_from_console("设置Region的半径尺寸");
             var choice = MyConsoleHelper.read_int_from_console("选择TI集文件类型", "0-GridCatalog;1-gslib(TI尺寸要求相同)");
 
             GridStructure gs = GridStructure.create_simple(100, 100, 1);
@@ -771,29 +1047,9 @@ namespace JAM8.SpecificApps.研究方法
                 }
             }
 
-            Console.WriteLine("*************分界线*************");
+            MyConsoleHelper.write_string_to_console("*************分界线*************");
 
-            static double[] CalculateGaussianWeights(int N, double sigma)
-            {
-                double[] weights = new double[N];
-                double sumWeights = 0;
-
-                // 计算每个点的半高斯权重
-                for (int i = 0; i < N; i++)
-                {
-                    // 计算半个高斯分布的权重
-                    weights[i] = Math.Exp(-Math.Pow(i, 2) / (2 * Math.Pow(sigma, 2)));
-                    sumWeights += weights[i];
-                }
-
-                // 归一化权重，使得所有权重之和为1
-                for (int i = 0; i < N; i++)
-                {
-                    weights[i] /= sumWeights;
-                }
-
-                return weights;
-            }
+            MyConsoleHelper.write_string_to_console();
 
             foreach (var (name, ti) in g)
             {
@@ -827,20 +1083,17 @@ namespace JAM8.SpecificApps.研究方法
 
                 #region 计算平稳系数
 
-                List<double> distance_average = [];
-                // 计算高斯衰减权重
-                double[] gaussianWeights1 = CalculateGaussianWeights(gs.N, 300);
+                List<double> dists = [];
+
                 for (int n1 = 0; n1 < gs.N; n1++)
                 {
-                    List<double> dists = [];
                     for (int n2 = 0; n2 < gs.N; n2++)
                     {
                         var world_distance = SpatialIndex.calc_dist(gs.get_spatialIndex(n1), gs.get_spatialIndex(n2));
                         dists.Add(world_distance);
                     }
-
                 }
-                double distance_average1 = distance_average.Average();
+                double distance_average1 = dists.Average();
 
                 #region 并行计算
 
@@ -859,18 +1112,8 @@ namespace JAM8.SpecificApps.研究方法
                     }
 
                     //方案1
-                    //int n = (int)(lags_different_locs.Count * 0.1);
-                    //measures.Add(ordered.OrderByDescending(a => a.Item1).Take(n).Average(a => a.Item2));
-
-                    //方案2
-                    var tmp = ordered.OrderByDescending(a => a.Item1).ToList();
-
-                    // 计算高斯衰减权重
-                    double[] gaussianWeights = CalculateGaussianWeights(tmp.Count, 300);
-                    for (int i = 0; i < tmp.Count; i++)
-                    {
-                        measures.Add(tmp[i].Item2 * gaussianWeights[i]);
-                    }
+                    int n = (int)(lags_different_locs.Count * 0.1);
+                    measures.Add(ordered.OrderByDescending(a => a.Item1).Take(n).Average(a => a.Item2));
                 });
                 double measure = measures.Average();
 
@@ -899,20 +1142,13 @@ namespace JAM8.SpecificApps.研究方法
                 //    int count = ordered.Count(a => a.Item1 == 1);
 
                 //    measure += list.Average(a => a.Item2);
-
-                //    //方案2
-                //    //var tmp = ordered.OrderByDescending(a => a.Item1).ToList();
-                //    //for (int i = 0; i < tmp.Count; i++)
-                //    //{
-                //    //    measure += tmp[i].Item2 * Math.Pow(1 - (float)i / tmp.Count, 2.0);
-                //    //}
-
                 //}
                 //measure /= (lags_different_locs.Count);
 
                 #endregion
 
-                Console.WriteLine($"{name}={measure / distance_average1}");
+                //Console.WriteLine($"{name}={measure / distance_average1}");
+                Console.WriteLine($"{name}={measure}");
                 var record = df.new_record();
                 record["name"] = name;
                 record["value"] = measure;

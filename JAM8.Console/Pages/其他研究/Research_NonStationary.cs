@@ -35,6 +35,7 @@ namespace JAM8.Console.Pages
             .Add("Back", CommonFunctions.Cancel)
             .Add("直接计算方法2d", Quantitative_NonStationary.直接计算方法2d)
             .Add("step1_模式相似度", Quantitative_NonStationary.step1_模式相似度)
+            .Add("Test_GetAnchorsDistanceModel", Quantitative_NonStationary.Test_GetAnchorsDistanceModel)
            ;
 
             menu.Display();

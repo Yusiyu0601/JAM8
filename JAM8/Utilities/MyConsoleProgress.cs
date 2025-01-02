@@ -63,17 +63,19 @@
 
             lock (lockObj) // 确保线程安全
             {
+                // 如果进度已达到最大值并且 nextline_at_end 为 true，换行
                 if (current == max && nextline_at_end)
                 {
                     Console.WriteLine($"\r [{text}] 进度 = {progressStr} %");
                     return;
                 }
-
+                // 如果进度未变化，则不进行更新
                 if (preview == progressStr) return;
 
                 // 更新静态预览值
                 preview = progressStr;
 
+                // 根据是否有标签，格式化输出
                 string output = tag == null
                     ? $"\r [{text}] 进度 = {progressStr} %   "
                     : $"\r [{text}] 进度 = {progressStr} %  [{tag}]   ";

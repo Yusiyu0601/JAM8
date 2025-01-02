@@ -16,7 +16,7 @@ namespace JAM8.Algorithms.Geometry
 
         public Grid run(int random_seed, int multigrid, int max_number, (int rx, int ry, int rz) template, GridProperty TI, CData cd, GridStructure gs_model)
         {
-            var cd1 = cd.deep_clone();
+            var cd1 = cd?.deep_clone();
             for (int multi_grid = multigrid; multi_grid >= 1; multi_grid--)
             {
                 var mould = gs_model.dim == Dimension.D2 ?

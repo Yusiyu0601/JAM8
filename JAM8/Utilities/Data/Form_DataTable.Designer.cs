@@ -31,9 +31,9 @@
             menuStrip1 = new MenuStrip();
             文件ToolStripMenuItem = new ToolStripMenuItem();
             保存ToolStripMenuItem = new ToolStripMenuItem();
-            advancedDataGridView1 = new Zuby.ADGV.AdvancedDataGridView();
+            dataGridView1 = new DataGridView();
             menuStrip1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)advancedDataGridView1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             SuspendLayout();
             // 
             // menuStrip1
@@ -56,39 +56,34 @@
             // 保存ToolStripMenuItem
             // 
             保存ToolStripMenuItem.Name = "保存ToolStripMenuItem";
-            保存ToolStripMenuItem.Size = new Size(270, 34);
+            保存ToolStripMenuItem.Size = new Size(146, 34);
             保存ToolStripMenuItem.Text = "保存";
             保存ToolStripMenuItem.Click += 保存ToolStripMenuItem_Click;
             // 
-            // advancedDataGridView1
+            // dataGridView1
             // 
-            advancedDataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            advancedDataGridView1.Dock = DockStyle.Fill;
-            advancedDataGridView1.FilterAndSortEnabled = true;
-            advancedDataGridView1.FilterStringChangedInvokeBeforeDatasourceUpdate = true;
-            advancedDataGridView1.Location = new Point(0, 32);
-            advancedDataGridView1.MaxFilterButtonImageHeight = 23;
-            advancedDataGridView1.Name = "advancedDataGridView1";
-            advancedDataGridView1.RightToLeft = RightToLeft.No;
-            advancedDataGridView1.RowHeadersWidth = 62;
-            advancedDataGridView1.Size = new Size(1313, 685);
-            advancedDataGridView1.SortStringChangedInvokeBeforeDatasourceUpdate = true;
-            advancedDataGridView1.TabIndex = 2;
-            advancedDataGridView1.RowPostPaint += advancedDataGridView1_RowPostPaint;
+            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridView1.Dock = DockStyle.Fill;
+            dataGridView1.Location = new Point(0, 32);
+            dataGridView1.Name = "dataGridView1";
+            dataGridView1.RowHeadersWidth = 62;
+            dataGridView1.Size = new Size(1313, 685);
+            dataGridView1.TabIndex = 3;
+            dataGridView1.RowPostPaint += dataGridView1_RowPostPaint;
             // 
             // Form_DataTable
             // 
             AutoScaleDimensions = new SizeF(11F, 24F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1313, 717);
-            Controls.Add(advancedDataGridView1);
+            Controls.Add(dataGridView1);
             Controls.Add(menuStrip1);
             Name = "Form_DataTable";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Form_DataTable";
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)advancedDataGridView1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -97,6 +92,6 @@
         private MenuStrip menuStrip1;
         private ToolStripMenuItem 文件ToolStripMenuItem;
         private ToolStripMenuItem 保存ToolStripMenuItem;
-        private Zuby.ADGV.AdvancedDataGridView advancedDataGridView1;
+        private DataGridView dataGridView1;
     }
 }

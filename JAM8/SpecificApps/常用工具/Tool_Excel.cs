@@ -142,8 +142,7 @@ namespace JAM8.SpecificApps.常用工具
 
         public static void xls与xlsx格式互相转换()
         {
-            Console.Write("\n(输入1:xls => xlsx 输入2:xlsx => xls) 输入值 = ");
-            var operate_type = Console.ReadLine();
+            var operate_type = MyConsoleHelper.read_string_from_console("\n输入1:xls => xlsx \n输入2:xlsx => xls");
             OpenFileDialog ofd = new();
             if (operate_type == "1")
             {

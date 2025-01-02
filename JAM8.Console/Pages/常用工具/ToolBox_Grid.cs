@@ -20,7 +20,7 @@ namespace JAM8.Console.Pages
         {
             base.Display();
 
-            Output.WriteLine(ConsoleColor.Green, "Test1 功能：");
+            Output.WriteLine(ConsoleColor.Green, "ToolBox_Grid 功能：");
 
             Perform();
 

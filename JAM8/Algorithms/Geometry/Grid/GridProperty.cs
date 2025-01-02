@@ -1008,5 +1008,18 @@ namespace JAM8.Algorithms.Geometry
             g.add_gridProperty("gp_name", deep_clone());
             return g;
         }
+
+        public double[,] convert_to_array()
+        {
+            double[,] array = new double[gridStructure.nx, gridStructure.ny];
+            for (int iy = 0; iy < gridStructure.ny; iy++)
+            {
+                for (int ix = 0; ix < gridStructure.nx; ix++)
+                {
+                    array[ix, iy] = get_value(ix, iy).Value;
+                }
+            }
+            return array;
+        }
     }
 }

@@ -8,27 +8,24 @@ namespace JAM8.Utilities
         public Form_DataTable(DataTable dt)
         {
             InitializeComponent();
-            this.advancedDataGridView1.DataSource = dt;
+            this.dataGridView1.DataSource = dt;
         }
 
-        private void advancedDataGridView1_RowPostPaint(object sender, DataGridViewRowPostPaintEventArgs e)
+        private void dataGridView1_RowPostPaint(object sender, DataGridViewRowPostPaintEventArgs e)
         {
             //自动编号，与数据无关
-            Rectangle rectangle = new Rectangle(e.RowBounds.Location.X,
-               e.RowBounds.Location.Y,
-               advancedDataGridView1.RowHeadersWidth - 4,
-               e.RowBounds.Height);
-            TextRenderer.DrawText(e.Graphics,
-                  (e.RowIndex + 1).ToString(),
-                   advancedDataGridView1.RowHeadersDefaultCellStyle.Font,
+            Rectangle rectangle = new(e.RowBounds.Location.X, e.RowBounds.Location.Y,
+               dataGridView1.RowHeadersWidth - 4, e.RowBounds.Height);
+            TextRenderer.DrawText(e.Graphics, (e.RowIndex + 1).ToString(),
+                   dataGridView1.RowHeadersDefaultCellStyle.Font,
                    rectangle,
-                   advancedDataGridView1.RowHeadersDefaultCellStyle.ForeColor,
+                   dataGridView1.RowHeadersDefaultCellStyle.ForeColor,
                    TextFormatFlags.VerticalCenter | TextFormatFlags.Right);
         }
 
         private void 保存ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ExcelHelper.dataTable_to_excel(FileDialogHelper.SaveExcel(), advancedDataGridView1.DataSource as DataTable);
+            ExcelHelper.dataTable_to_excel(FileDialogHelper.SaveExcel(), dataGridView1.DataSource as DataTable);
         }
     }
 }

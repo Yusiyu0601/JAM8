@@ -219,12 +219,15 @@ namespace JAM8.Algorithms.Geometry
         /// <param name="grid_name"></param>
         public void read_from_gslib(string file_name, int split_code, float null_value, string grid_name = null)
         {
+            // 输出空行，便于视觉分隔
+            Console.WriteLine();
+
             string[] split_strs = new Dictionary<int, string[]>
             {
-                { 0, new string[] { "\t" } },
-                { 1, new string[] { " " } },
-                { 2, new string[] { ";" } },
-                { 3, new string[] { "," } }
+                { 0, ["\t"] },
+                { 1, [" "] },
+                { 2, [";"] },
+                { 3, [","] }
             }.GetValueOrDefault(split_code, null);
 
             // 获取文件总字节数
@@ -435,7 +438,6 @@ namespace JAM8.Algorithms.Geometry
             //根据快速窗体的信息读取Grid数据
             GridStructure gs = GridStructure.create(nx, ny, nz, xsiz, ysiz, zsiz, xmn, ymn, zmn);
             Grid g = create(gs, gridName);
-            //g.read_from_gslib(fileName, 1, nullValue, gridName);
             g.read_from_gslib(fileName, 1, nullValue, gridName);
             return new(g, fileName);
         }

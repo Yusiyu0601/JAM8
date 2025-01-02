@@ -43,68 +43,88 @@ namespace JAM8.Algorithms.Geometry
         }
 
         /// <summary>
-        /// 创建样式库(并行)
+        /// 创建样式库
+        /// 支持并行处理和去重功能
         /// </summary>
         /// <param name="mould">给定样板</param>
         /// <param name="gp_source">网格属性</param>
-        /// <returns></returns>
-        public static Patterns create(Mould mould, GridProperty gp_source)
+        /// <param name="parallel">是否使用并行处理</param>
+        /// <param name="distinct">是否去重</param>
+        /// <returns>生成的 Patterns</returns>
+        public static Patterns create(Mould mould, GridProperty gp_source, bool parallel = true, bool distinct = true)
         {
-            //并行
-            //ConcurrentBag<MouldInstance> patterns_cb = [];
-            //ConcurrentBag<int> flag = [];//计数器
-            //GridStructure gs = gp_source.gridStructure;
-
-            //// 使用 Parallel.For 提取 patterns
-            //Parallel.For(0, gp_source.gridStructure.N, n =>
-            //{
-            //    var pattern = MouldInstance.create_from_gridProperty(mould, gs.get_spatialIndex(n), gp_source);
-            //    if (pattern.neighbor_not_nulls_ids.Count == pattern.mould.neighbors_number)
-            //        patterns_cb.Add(pattern);
-
-            //    flag.Add(1);// 更新进度，仅记录索引
-            //    MyConsoleProgress.Print(flag.Count, gp_source.gridStructure.N, "提取patterns");
-
-            //});
-
-            //串行
-            List<MouldInstance> patterns_list = new(); // 用于存储结果
             GridStructure gs = gp_source.gridStructure;
+            ConcurrentBag<MouldInstance> patterns_list = [];
 
-            int progress = 0; // 进度计数器
-            for (int n = 0; n < gs.N; n++)
+            if (parallel)
             {
-                // 创建模式
-                var pattern = MouldInstance.create_from_gridProperty(mould, gs.get_spatialIndex(n), gp_source);
+                // 使用并行提取 Patterns
+                ConcurrentBag<int> flag = [];//计数器
+                // 使用 Parallel.For 提取 patterns
+                Parallel.For(0, gp_source.gridStructure.N, n =>
+                {
+                    var pattern = MouldInstance.create_from_gridProperty(mould, gs.get_spatialIndex(n), gp_source);
+                    if (pattern.neighbor_not_nulls_ids.Count == pattern.mould.neighbors_number)
+                        patterns_list.Add(pattern);
 
-                // 仅记录所有邻居非空的模式
-                if (pattern.neighbor_not_nulls_ids.Count == pattern.mould.neighbors_number)
-                    patterns_list.Add(pattern);
+                    flag.Add(1);// 更新进度，仅记录索引
+                    MyConsoleProgress.Print(flag.Count, gs.N, "提取patterns");
+                });
+            }
+            else
+            {
+                // 使用串行提取 Patterns
+                int progress = 0; // 进度计数器
+                for (int n = 0; n < gs.N; n++)
+                {
+                    // 创建模式
+                    var pattern = MouldInstance.create_from_gridProperty(mould, gs.get_spatialIndex(n), gp_source);
 
-                // 更新进度
-                progress++;
-                MyConsoleProgress.Print(progress, gs.N, "提取Patterns（去重）");
+                    // 仅记录所有邻居非空的模式
+                    if (pattern.neighbor_not_nulls_ids.Count == pattern.mould.neighbors_number)
+                        patterns_list.Add(pattern);
+
+                    // 更新进度
+                    progress++;
+                    MyConsoleProgress.Print(progress, gs.N, "提取Patterns（去重）");
+                }
             }
 
-            // 准备最终输出的 Patterns 结构
+            // 输出结果
             Patterns patterns = new()
             {
                 arrayIndexes = []
             };
-            Dictionary<string, int> unicodes = [];
-            foreach (var item in patterns_list)
+
+            
+            if (!distinct)
             {
-                string unicode = item.view_text();
-                if (!unicodes.TryGetValue(unicode, out int value))
+                //不去重，直接返回结果
+                foreach (var item in patterns_list)
                 {
-                    unicodes.Add(unicode, 1);
                     patterns.arrayIndexes.Add(item.core_arrayIndex);
                     patterns.Add(item.core_arrayIndex, item);
                 }
-                else
-                    unicodes[unicode] = value + 1;
+                return patterns;
             }
-            return patterns;
+            else
+            {
+                //去重复
+                Dictionary<string, int> unicodes = [];
+                foreach (var item in patterns_list)
+                {
+                    string unicode = item.view_text();
+                    if (!unicodes.TryGetValue(unicode, out int value))
+                    {
+                        unicodes.Add(unicode, 1);
+                        patterns.arrayIndexes.Add(item.core_arrayIndex);
+                        patterns.Add(item.core_arrayIndex, item);
+                    }
+                    else
+                        unicodes[unicode] = value + 1;
+                }
+                return patterns;
+            }
         }
     }
 }

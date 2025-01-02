@@ -26,6 +26,7 @@ namespace JAM8.Console.Pages
             AddPage(new ToolBox(this));
             AddPage(new ToolBox_Grid(this));
             AddPage(new ToolBox_Variogram(this));
+            AddPage(new ToolBox_Excel(this));
 
             AddPage(new Modeling(this));
             AddPage(new Modeling_Estimate(this));
