@@ -39,7 +39,7 @@ namespace JAM8.SpecificApps.研究方法
             foreach (var propertyName in g.propertyNames)
             {
                 var array = g[propertyName].convert_to_array();
-                MyConsoleHelper.write_string_to_console($"{CalculateEntropy(array)}");
+                MyConsoleHelper.write_string_to_console($"{CalculateEntropy((double[,])array)}");
             }
         }
         public static double CalculateEntropy(double[,] grid)

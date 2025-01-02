@@ -1009,17 +1009,42 @@ namespace JAM8.Algorithms.Geometry
             return g;
         }
 
-        public double[,] convert_to_array()
+        /// <summary>
+        /// 根据 gridStructure 的维度（二维或三维）转换数据为相应的数组类型。
+        /// </summary>
+        /// <returns></returns>
+        public Array convert_to_array()
         {
-            double[,] array = new double[gridStructure.nx, gridStructure.ny];
-            for (int iy = 0; iy < gridStructure.ny; iy++)
+            if (gridStructure.dim == Dimension.D2)
             {
-                for (int ix = 0; ix < gridStructure.nx; ix++)
+                // 二维情况
+                double[,] array = new double[gridStructure.nx, gridStructure.ny];
+                for (int iy = 0; iy < gridStructure.ny; iy++)
                 {
-                    array[ix, iy] = get_value(ix, iy).Value;
+                    for (int ix = 0; ix < gridStructure.nx; ix++)
+                    {
+                        array[ix, iy] = get_value(ix, iy).Value;
+                    }
                 }
+                return array; // 返回二维数组
             }
-            return array;
+            if (gridStructure.dim == Dimension.D3)
+            {
+                // 三维情况
+                double[,,] array = new double[gridStructure.nx, gridStructure.ny, gridStructure.nz];
+                for (int iz = 0; iz < gridStructure.nz; iz++)
+                {
+                    for (int iy = 0; iy < gridStructure.ny; iy++)
+                    {
+                        for (int ix = 0; ix < gridStructure.nx; ix++)
+                        {
+                            array[ix, iy, iz] = get_value(ix, iy, iz).Value;
+                        }
+                    }
+                }
+                return array; // 返回三维数组
+            }
+            return null;
         }
     }
 }
