@@ -62,7 +62,6 @@ namespace JAM8.Algorithms.Geometry
             sw.Start();
 
             GridStructure gs_model = model.gridStructure;
-            Grid g = Grid.create(model.gridStructure);
 
             Mould mo_scan_model = gs_model.dim == Dimension.D2 ?//扫描模型的模板
                 Mould.create_by_ellipse(search_radius, search_radius, 1) :
@@ -159,10 +158,11 @@ namespace JAM8.Algorithms.Geometry
                         if (m == M)
                             break;
                         var si_ti = ti.gridStructure.get_spatialIndex(ti_random_idx);
-                        mi_ti.update(si_ti, ti);
+                        mi_ti.update_from_gridProperty(si_ti, ti);
                         if (mi_ti.neighbor_not_nulls_ids.Count == mi_ti.mould.neighbors_number)
                         {
                             var hsim = 1 - calc_hsim(mi_ti.neighbor_values, data);
+                            //正确代码
                             if (hsim < min_dist)
                             {
                                 min_dist = hsim;

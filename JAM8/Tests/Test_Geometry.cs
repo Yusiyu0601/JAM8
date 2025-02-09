@@ -371,17 +371,6 @@ namespace JAM8.Tests
             cd.to_dataFrame().show_console();
         }
 
-        public static void SnesimNoTree_Test()
-        {
-            var mould = Mould.create_by_ellipse(3, 3, 1);
-            var g = Grid.create_from_gslibwin().grid;
-            g.first_gridProperty().set_value(100, null);
-            var snesim_nt = SnesimNoTree.create(mould, g.first_gridProperty());
-            var model = snesim_nt.Run();
-            g.add_gridProperty("model", model);
-            g.showGrid_win();
-        }
-
         public static void STree_Test()
         {
             Grid g = Grid.create_from_gslibwin().grid;

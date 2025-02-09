@@ -33,9 +33,38 @@ namespace JAM8.Console.Pages
            .Add("统计", 统计)
            .Add("从很大数组里等间距取值（例如等份100份）", 从很大数组里等间距取值)
            .Add("GridProperty_replace_with_threshold", GridProperty_replace_with_threshold)
+           .Add("ENESIM测试", ENESIM测试)
            ;
 
             menu.Display();
+        }
+
+        private void ENESIM测试()
+        {
+            Output.WriteLine(ConsoleColor.Yellow, "加载训练图像");
+            Grid g = null;
+            Form_GridCatalog frm = new();
+            if (frm.ShowDialog() != DialogResult.OK)
+            {
+                g = Grid.create_from_gslibwin().grid;
+            }
+            else
+            {
+                g = frm.selected_grids.FirstOrDefault();
+            }
+
+            if (g == null)
+                return;
+
+            var ti = g.first_gridProperty();
+            Mould mould = ti.gridStructure.dim == Dimension.D2 ? Mould.create_by_ellipse(10, 10, 1) :
+                Mould.create_by_ellipse(7, 7, 3, 1);
+            mould = Mould.create_by_mould(mould, 4);
+
+            GridStructure re_gs = ti.gridStructure;
+            ENESIM enesim = ENESIM.create(re_gs, ti);
+
+            var re = enesim.run(15, 10);
         }
 
         private void GridProperty_replace_with_threshold()
@@ -147,7 +176,7 @@ namespace JAM8.Console.Pages
             var ti = g.first_gridProperty();
             Mould mould = ti.gridStructure.dim == Dimension.D2 ? Mould.create_by_ellipse(10, 10, 1) :
                 Mould.create_by_ellipse(7, 7, 3, 1);
-            mould = Mould.create_by_mould(mould, 60);
+            mould = Mould.create_by_mould(mould, 4);
 
             //手动测试
             //int progress_for_inverse_retrieve = EasyConsole.Input.ReadInt("逆向查询占比", 0, 100);

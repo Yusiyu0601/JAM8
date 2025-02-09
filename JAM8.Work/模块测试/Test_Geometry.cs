@@ -8,7 +8,6 @@
 
                 .Add("退出", CommonFunctions.Cancel)
                 .Add("STree_Test", Tests.Test_Geometry.STree_Test)
-                .Add("SnesimNoTree_Test", Tests.Test_Geometry.SnesimNoTree_Test)
                 .Add("CData_Test", Tests.Test_Geometry.CData_Test)
                 .Add("GridProperty get_region_by_range", Tests.Test_Geometry.get_region_by_range)
                 .Add("calc_weights_ok", Tests.Test_Geometry.calc_weights_ok)

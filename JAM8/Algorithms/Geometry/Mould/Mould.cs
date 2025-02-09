@@ -1,4 +1,5 @@
 ﻿using Easy.Common.Extensions;
+using JAM8.Algorithms.Numerics;
 using JAM8.Utilities;
 using static System.Math;
 

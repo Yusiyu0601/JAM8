@@ -1,15 +1,11 @@
 ﻿using System.Collections.Concurrent;
 using System.Diagnostics;
-using Google.Protobuf.WellKnownTypes;
 using JAM8.Algorithms;
 using JAM8.Algorithms.Forms;
 using JAM8.Algorithms.Geometry;
 using JAM8.Algorithms.MachineLearning;
 using JAM8.Algorithms.Numerics;
 using JAM8.Utilities;
-using ScottPlot.Drawing.Colormaps;
-using static JAM8.SpecificApps.研究方法.Quantitative_NonStationary;
-using static TorchSharp.torch.utils;
 
 namespace JAM8.SpecificApps.研究方法
 {
@@ -35,42 +31,6 @@ namespace JAM8.SpecificApps.研究方法
 
             Grid g = get_anchors_distance_model_2d(TI, "变差函数");
             g.showGrid_win();
-
-            foreach (var propertyName in g.propertyNames)
-            {
-                var array = g[propertyName].convert_to_array();
-                MyConsoleHelper.write_string_to_console($"{CalculateEntropy((double[,])array)}");
-            }
-        }
-        public static double CalculateEntropy(double[,] grid)
-        {
-            // 将网格数据离散化为若干区间
-            int bins = 10; // 分成10个区间
-            double min = grid.Cast<double>().Min();
-            double max = grid.Cast<double>().Max();
-            double binSize = (max - min) / bins;
-
-            // 统计每个区间的频率
-            var frequencies = new int[bins];
-            foreach (var value in grid)
-            {
-                int binIndex = Math.Min((int)((value - min) / binSize), bins - 1);
-                frequencies[binIndex]++;
-            }
-
-            // 转换为概率分布
-            int totalCount = grid.Length;
-            var probabilities = frequencies.Select(f => (double)f / totalCount).ToArray();
-
-            // 计算熵值
-            double entropy = 0;
-            foreach (var p in probabilities)
-            {
-                if (p > 0)
-                    entropy -= p * Math.Log(p);
-            }
-
-            return entropy;
         }
 
         static Grid get_anchors_distance_model_2d(GridProperty TI, string distance_type = "模式")
@@ -117,7 +77,8 @@ namespace JAM8.SpecificApps.研究方法
             else if (distance_type == "变差函数")
             {
                 //设置参数
-                int radius = MyConsoleHelper.read_int_from_console("设置Region的半径尺寸");
+                //int radius = MyConsoleHelper.read_int_from_console("设置Region的半径尺寸");
+                int radius = 10;
 
                 //计算所有位置的实验变差函数
                 Dictionary<int, List<double>> lags_locs = [];
