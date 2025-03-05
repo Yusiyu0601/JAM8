@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JAM8.Work", "JAM8.Work\JAM8
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JAM8.Console", "JAM8.Console\JAM8.Console.csproj", "{130BB37B-DA5A-4C4E-AF54-2229F9CF8CFA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastSnesim", "FastSnesim\FastSnesim.csproj", "{033FBF85-28C8-4917-BCD5-D4551AF5D2F7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastSnesim", "FastSnesim\FastSnesim.csproj", "{B7B9201F-9714-4946-9EAF-1480BA4ADCEA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,10 +29,10 @@ Global
 		{130BB37B-DA5A-4C4E-AF54-2229F9CF8CFA}.Debug|x64.Build.0 = Debug|x64
 		{130BB37B-DA5A-4C4E-AF54-2229F9CF8CFA}.Release|x64.ActiveCfg = Release|x64
 		{130BB37B-DA5A-4C4E-AF54-2229F9CF8CFA}.Release|x64.Build.0 = Release|x64
-		{033FBF85-28C8-4917-BCD5-D4551AF5D2F7}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{033FBF85-28C8-4917-BCD5-D4551AF5D2F7}.Debug|x64.Build.0 = Debug|Any CPU
-		{033FBF85-28C8-4917-BCD5-D4551AF5D2F7}.Release|x64.ActiveCfg = Release|Any CPU
-		{033FBF85-28C8-4917-BCD5-D4551AF5D2F7}.Release|x64.Build.0 = Release|Any CPU
+		{B7B9201F-9714-4946-9EAF-1480BA4ADCEA}.Debug|x64.ActiveCfg = Debug|x64
+		{B7B9201F-9714-4946-9EAF-1480BA4ADCEA}.Debug|x64.Build.0 = Debug|x64
+		{B7B9201F-9714-4946-9EAF-1480BA4ADCEA}.Release|x64.ActiveCfg = Release|x64
+		{B7B9201F-9714-4946-9EAF-1480BA4ADCEA}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
