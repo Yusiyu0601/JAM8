@@ -42,27 +42,48 @@ namespace JAM8.Console.Pages
         private void ENESIM测试()
         {
             Output.WriteLine(ConsoleColor.Yellow, "加载训练图像");
-            Grid g = null;
+
+            GridProperty ti = null;
             Form_GridCatalog frm = new();
             if (frm.ShowDialog() != DialogResult.OK)
             {
-                g = Grid.create_from_gslibwin().grid;
+                ti = Grid.create_from_gslibwin().grid.first_gridProperty();
             }
             else
             {
-                g = frm.selected_grids.FirstOrDefault();
+                ti = frm.selected_grids.FirstOrDefault().first_gridProperty();
             }
 
-            if (g == null)
+            if (ti == null)
                 return;
 
-            var ti = g.first_gridProperty();
+            GridStructure re_gs = ti.gridStructure;
+            Grid sim_grid = Grid.create(re_gs);//包含概率体数据、硬数据（赋值在模拟网格中）
+
+            Output.WriteLine(ConsoleColor.Yellow, "打开cd");
+            CData cd = CData.read_from_gslibwin("打开cd").cdata;
+            if (cd != null)
+            {
+                var gp_cd = cd.assign_to_grid(re_gs).grid_assigned.select_gridProperty_win().grid_property;
+                sim_grid.add_gridProperty("re", gp_cd);//将cd赋值给grid
+            }
+            else
+            {
+                sim_grid.add_gridProperty("re");//将cd赋值给grid
+            }
+
+            Output.WriteLine(ConsoleColor.Yellow, "加载软数据（概率体模型）");
+            var soft_cd = Grid.create_from_gslibwin().grid.select_gridProperty_win("选择软条件数据").grid_property;
+            sim_grid.add_gridProperty("soft_cd", soft_cd);//将cd赋值给grid
+
             Mould mould = ti.gridStructure.dim == Dimension.D2 ? Mould.create_by_ellipse(10, 10, 1) :
                 Mould.create_by_ellipse(7, 7, 3, 1);
             mould = Mould.create_by_mould(mould, 4);
 
-            GridStructure re_gs = ti.gridStructure;
-            ENESIM enesim = ENESIM.create(re_gs, ti);
+
+            sim_grid.showGrid_win();
+
+            ENESIM enesim = ENESIM.create(sim_grid, ti);
 
             var re = enesim.run(15, 10);
         }

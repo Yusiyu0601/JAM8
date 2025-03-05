@@ -17,29 +17,16 @@ namespace JAM8.Algorithms.Geometry
         private ENESIM() { }
         Grid model { get; set; }
         GridProperty ti { get; set; }
-        public static ENESIM create(GridStructure gs_re, GridProperty ti, CData cd = null, string propertyName = null)
+        public static ENESIM create(Grid sim_grid, GridProperty ti)
         {
             ENESIM ds = new();
-
-            if (cd != null)
-            {
-                var gp_cd = cd.assign_to_grid(gs_re).grid_assigned[propertyName];
-                ds.model = Grid.create(gs_re);
-                ds.model.add_gridProperty("cd", gp_cd);//将cd赋值给grid
-                ds.model.add_gridProperty("re", gp_cd.deep_clone());//将cd赋值给grid
-            }
-            else
-            {
-                ds.model = Grid.create(gs_re);
-                ds.model.add_gridProperty("re");//将cd赋值给grid
-            }
-
+            ds.model = sim_grid;
             ds.ti = ti;
 
             return ds;
         }
 
-        public Grid run(int search_radius = 20, int maximum_number = 25)
+        public Grid run(int search_radius = 20, int maximum_number = 10)
         {
             MersenneTwister mt = new(1111);//随机数生成器
             Stopwatch sw = new();
@@ -114,8 +101,10 @@ namespace JAM8.Algorithms.Geometry
                         //条件约束相概率
                         var cpdf = get_cpdf(scan_re_mi, ti, categories);
 
+                        //抽样
                         var value = cdf_sampler.sample(cpdf, (float)mt.NextDouble());
 
+                        //赋值
                         g_result["re"].set_value(model_random_idx, value);
                     }
                 }
@@ -124,8 +113,6 @@ namespace JAM8.Algorithms.Geometry
             return null;
         }
 
-        //
-        //
         /// <summary>
         /// 用来自模拟网格的数据事件，创建扫描训练图像的模板。然后用该模板扫描训练图像，
         /// 要求实现一次扫描，将由近到远的条件点重复情况都记录下来

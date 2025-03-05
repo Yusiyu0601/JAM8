@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Text;
 using JAM8.Utilities;
-using Tensorboard;
 
 namespace JAM8.Algorithms.Geometry
 {
