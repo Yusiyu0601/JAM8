@@ -328,7 +328,7 @@ namespace JAM8.Algorithms.Geometry
 
                     #region 并行计算
 
-                    int NumberOfThreads = 1;
+                    int NumberOfThreads = -1;
                     if (NumberOfThreads == -1) //如果线程数等于默认的-1,则表示使用所有线程数
                         NumberOfThreads = Environment.ProcessorCount;
                     Parallel.ForEach(nodes_matched,

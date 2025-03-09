@@ -97,12 +97,8 @@ namespace JAM8.Algorithms.Geometry
                     g["模型"].set_value(si, value);
                     nod_cut[value]++;
                 }
-                //if (path.progress % 5 == 0)
-                //    g["模型"].deep_clone().show_win($"{path.progress}");
             }
-            //df_time.show_win("time vs progress");
             sw.Stop();
-            //tree.df.show_win("访问节点总数", true);
             return (g, totalElapsedTime);
         }
 

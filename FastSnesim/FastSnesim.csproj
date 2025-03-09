@@ -11,6 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="EasyConsole" Version="1.1.0" />
     <PackageReference Include="WinFormsComInterop" Version="0.5.0" />
   </ItemGroup>
 
