@@ -33,16 +33,17 @@ namespace FastSnesim
             if (b == "2d")
             {
                 Output.WriteLine(ConsoleColor.Yellow, "Load Training Image(2d)");
-                GridProperty TI = Grid.create_from_gslibwin("Load Training Image").grid.select_gridProperty_win().grid_property;
+                GridProperty TI = Grid.create_from_gslibwin("Load Training Image").grid
+                    .select_gridProperty_win("Select Property as Training Image").grid_property;
                 string is_use_cd = EasyConsole.Input.ReadString("use conditional data(2d) or not? (input Y or N) => ");
                 CData cd = null;
                 if (is_use_cd == "Y")
                     (cd, var _) = CData.read_from_gslibwin();
-                Mould mould = Mould.create_by_ellipse(7, 7, 1);
-                mould = Mould.create_by_mould(mould, 45);
-                GridStructure gs = GridStructure.create_simple(250, 250, 1);
+                Output.WriteLine(ConsoleColor.Yellow, "Set Simulation Grid Size");
+                GridStructure gs = GridStructure.create_simple(500, 500, 1);
+                gs = GridStructure.create_win(gs, "Set Simulation Grid Size");
                 Snesim snesim = Snesim.create();
-                var (re, time) = snesim.run(TI, cd, gs, 1001, mould, 1, ratio_inverseRetrieve);
+                var (re, time) = snesim.run(1001, 1, 60, (7, 7, 0), TI, cd, gs, ratio_inverseRetrieve);
                 re.showGrid_win("realization");
                 Output.WriteLine(ConsoleColor.Red, $"使用时间:{time}");
             }
@@ -54,18 +55,24 @@ namespace FastSnesim
             if (b == "3d")
             {
                 Output.WriteLine(ConsoleColor.Yellow, "Load Training Image(3d)");
-
-                GridProperty TI = Grid.create_from_gslibwin("Load Training Image").grid.select_gridProperty_win().grid_property;
-                Mould mould = Mould.create_by_ellipse(15, 15, 3, 1);
-                mould = Mould.create_by_mould(mould, 100);
-                GridStructure gs = GridStructure.create_simple(100, 100, 50);
+                GridProperty TI = Grid.create_from_gslibwin("Load Training Image").grid
+                    .select_gridProperty_win("Select Property as Training Image").grid_property;
+                string is_use_cd = EasyConsole.Input.ReadString("use conditional data(3d) or not? (input Y or N) => ");
+                CData cd = null;
+                if (is_use_cd == "Y")
+                    (cd, var _) = CData.read_from_gslibwin();
+                Output.WriteLine(ConsoleColor.Yellow, "Set Simulation Grid Size");
+                GridStructure gs = GridStructure.create_simple(100, 100, 30);
+                gs = GridStructure.create_win(gs, "Set Simulation Grid Size");
                 Snesim snesim = Snesim.create();
-                var (re, time) = snesim.run(TI, null, gs, 1001, mould, 1, ratio_inverseRetrieve);
+                var (re, time) = snesim.run(1001, 1, 85, (7, 7, 3), TI, cd, gs, ratio_inverseRetrieve);
                 re.showGrid_win("realization");
                 Output.WriteLine(ConsoleColor.Red, $"使用时间:{time}");
             }
 
             #endregion
+
+            Console.ReadKey();
 
             FreeConsole();
         }

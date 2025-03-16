@@ -1,14 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Accord.Collections;
+﻿using System.Diagnostics;
 using JAM8.Algorithms.Numerics;
 using JAM8.Utilities;
-using static JAM8.Algorithms.MachineLearning.MySVM;
 
 namespace JAM8.Algorithms.Geometry
 {
@@ -84,7 +76,7 @@ namespace JAM8.Algorithms.Geometry
                     }
                     else
                     {
-                        List<float?> neighbor_values = new(scan_re_mi.neighbor_values);
+                        List<float?> neighbor_values = [.. scan_re_mi.neighbor_values];
                         int count = 0;// 记录已保留的非null数量
                         //根据设定最大条件点数，对数据事件的模板实例进行处理，只保留要求的最大数量的条件点，超出范围的设置为null
                         for (int i = 0; i < scan_re_mi.mould.neighbors_number; i++)

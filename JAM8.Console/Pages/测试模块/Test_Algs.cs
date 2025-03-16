@@ -34,9 +34,17 @@ namespace JAM8.Console.Pages
            .Add("从很大数组里等间距取值（例如等份100份）", 从很大数组里等间距取值)
            .Add("GridProperty_replace_with_threshold", GridProperty_replace_with_threshold)
            .Add("ENESIM测试", ENESIM测试)
+           .Add("CData2测试", CData2测试)
            ;
 
             menu.Display();
+        }
+
+        private void CData2测试()
+        {
+            CData2 cd2 = CData2.read_from_gslib_win().cdata;
+            var (coarsend, g) = cd2.coarsened(GridStructure.create_simple(20, 25, 1));
+            var value = cd2[10, 1];
         }
 
         private void ENESIM测试()

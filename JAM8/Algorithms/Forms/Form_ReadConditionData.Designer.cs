@@ -202,11 +202,11 @@
             // 
             label6.AutoSize = true;
             label6.ForeColor = Color.Red;
-            label6.Location = new Point(536, 120);
+            label6.Location = new Point(375, 117);
             label6.Name = "label6";
-            label6.Size = new Size(230, 24);
+            label6.Size = new Size(365, 24);
             label6.TabIndex = 22;
-            label6.Text = "注意:每行分隔符只能是空格";
+            label6.Text = "注意:1.列序从0开始;2.每行分隔符只能是空格";
             // 
             // label5
             // 

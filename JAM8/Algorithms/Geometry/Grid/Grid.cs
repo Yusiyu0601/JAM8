@@ -414,6 +414,27 @@ namespace JAM8.Algorithms.Geometry
         }
 
         /// <summary>
+        /// 创建Grid，并使用property_names初始化
+        /// </summary>
+        /// <param name="gs"></param>
+        /// <param name="property_names"></param>
+        /// <param name="grid_name"></param>
+        /// <returns></returns>
+        public static Grid create(GridStructure gs, IEnumerable<string> property_names, string grid_name)
+        {
+            Grid g = new()
+            {
+                gridStructure = gs,
+                grid_name = grid_name ?? "grid_name"
+            };
+            foreach (var property_name in property_names)
+            {
+                g.add_gridProperty(property_name, null);
+            }
+            return g;
+        }
+
+        /// <summary>
         /// 从GSLIB里读取Grid
         /// </summary>
         public static (Grid grid, string fileName) create_from_gslibwin(string title = null)

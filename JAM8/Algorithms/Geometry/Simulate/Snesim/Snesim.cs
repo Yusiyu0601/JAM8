@@ -14,29 +14,38 @@ namespace JAM8.Algorithms.Geometry
 
         private Snesim() { }
 
-        public Grid run(int random_seed, int multigrid, int max_number, (int rx, int ry, int rz) template, GridProperty TI, CData cd, GridStructure gs_model)
+        public (Grid, double time) run(int random_seed, int multigrid_count, int max_number,
+            (int rx, int ry, int rz) template, GridProperty TI, CData cd, GridStructure gs_re,
+            int progress_for_retrieve_inverse = 0)
         {
+            Stopwatch sw = new();//模拟时间
+            sw.Start();
+
             var cd1 = cd?.deep_clone();
-            for (int multi_grid = multigrid; multi_grid >= 1; multi_grid--)
+            for (int multi_grid = multigrid_count; multi_grid >= 1; multi_grid--)
             {
-                var mould = gs_model.dim == Dimension.D2 ?
+                var mould = gs_re.dim == Dimension.D2 ?
                     Mould.create_by_ellipse(template.rx, template.ry, multi_grid) :
                     Mould.create_by_ellipse(template.rx, template.ry, template.rz, multi_grid);
                 mould = Mould.create_by_mould(mould, max_number);
-                var (re_mg, time_) = run(TI, cd1, gs_model, random_seed, mould, multi_grid);
+                var (re_mg, time_) = run(TI, cd1, gs_re, random_seed, mould, multi_grid, progress_for_retrieve_inverse);
                 re_mg.showGrid_win();
                 cd1 = CData.create_from_gridProperty(re_mg, "模型", null, false);
                 MyConsoleHelper.write_string_to_console("时间", time_.ToString());
                 if (multi_grid == 1)
-                    return re_mg;
+                {
+                    sw.Stop();
+                    return (re_mg, sw.ElapsedMilliseconds);
+                }
             }
-            return null;
+
+            return (null, 0);
         }
 
-        public (Grid re, double time) run(GridProperty ti, CData cd, GridStructure gs_re, int seed,
+        public (Grid re, double time) run(GridProperty TI, CData cd, GridStructure gs_re, int random_seed,
             Mould mould, int multi_grid = 1, int progress_for_retrieve_inverse = 0)
         {
-            Random rnd = new(seed);
+            Random rnd = new(random_seed);
             Grid g = Grid.create(gs_re);//根据gs_model创建grid工区
 
             //把cd赋值到模型中
@@ -46,7 +55,7 @@ namespace JAM8.Algorithms.Geometry
             else
                 g.add_gridProperty("模型", cd.assign_to_grid(gs_re).grid_assigned[0]);
 
-            STree tree = STree.create(mould, ti);
+            STree tree = STree.create(mould, TI);
             if (tree == null)
                 return (null, 0.0);
 
@@ -55,7 +64,7 @@ namespace JAM8.Algorithms.Geometry
             Dictionary<float?, float> cpdf = [];//条件约束相概率
             List<float?> categories = [];//离散变量的取值范围
 
-            var category_freq = ti.discrete_category_freq(false);
+            var category_freq = TI.discrete_category_freq(false);
             for (int i = 0; i < category_freq.Count; i++)
             {
                 nod_cut.Add(category_freq[i].value, 0);

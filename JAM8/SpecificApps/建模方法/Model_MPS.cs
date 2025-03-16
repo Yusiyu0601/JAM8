@@ -33,7 +33,7 @@ namespace JAM8.SpecificApps.建模方法
             GridStructure gs_model = g.gridStructure;
 
             var snesim = Snesim.create();
-            var model = snesim.run(1, 1, 60, (7, 7, 1), g.first_gridProperty(), cd, gs_model);
+            var (model,_) = snesim.run(1, 1, 60, (7, 7, 1), g.first_gridProperty(), cd, gs_model);
             model.showGrid_win();
             //MyConsoleHelper.write_string_to_console("计算时间", (time / 1000.0).ToString());
         }

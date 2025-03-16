@@ -5,6 +5,63 @@ using JAM8.Utilities;
 namespace JAM8.Algorithms.Geometry
 {
     /// <summary>
+    /// 条件数据项，(属性名称=>属性值)
+    /// </summary>
+    public class CDataItem : Dictionary<string, float?>
+    {
+        private CDataItem() { }
+
+        /// <summary>
+        /// 维度
+        /// </summary>
+        public Dimension dim { get { return coord.dim; } }
+
+        /// <summary>
+        /// 坐标
+        /// </summary>
+        public Coord coord { get; internal set; }
+
+        /// <summary>
+        /// 创建新cd_item
+        /// </summary>
+        /// <param name="c"></param>
+        /// <param name="values"></param>
+        /// <returns></returns>
+        public static CDataItem create(Coord coord, Dictionary<string, float?> values)
+        {
+            CDataItem cdi = new()
+            {
+                coord = coord
+            };
+            foreach (var (key, value) in values)
+                cdi.Add(key, value);
+
+            return cdi;
+        }
+
+        public override string ToString()
+        {
+            return $"{coord.view_text()} {this.Count}";
+        }
+
+        /// <summary>
+        /// 深度复制
+        /// </summary>
+        /// <returns></returns>
+        public CDataItem deep_clone()
+        {
+            CDataItem cdi = new()
+            {
+                coord = coord.deep_clone()
+            };
+            foreach (var (key, value) in this)
+                cdi.Add(key, value);
+
+            return cdi;
+        }
+    }
+
+    /// <summary>
     /// condition data
     /// </summary>
     public class CData : List<CDataItem>
@@ -86,6 +143,8 @@ namespace JAM8.Algorithms.Geometry
             return df.view_text(N_first_lines);
         }
 
+        #region 粗化方法
+
         /// <summary>
         /// 将CData赋值于指定GridStructure(注意：可能出现多个cdi位于同一个网格节点中)，
         /// 所有CDataItem的Coord调整到指定GridStructure框架中，越界的cdi，直接删除。
@@ -128,6 +187,147 @@ namespace JAM8.Algorithms.Geometry
         }
 
         /// <summary>
+        /// 将CData赋值于指定GridStructure(注意：可能出现多个cdi位于同一个网格节点中)，
+        /// 所有CDataItem的Coord调整到指定GridStructure框架中，越界的cdi，直接删除。
+        /// </summary>
+        /// <param name="gs"></param>
+        /// <param name="grid_name"></param>
+        /// <returns></returns>
+        public (Grid grid_assigned, CData cd_assigned) coarsened_to_grid(GridStructure target_gs, string grid_name = "cdata")
+        {
+            Grid grid_assigned = Grid.create(target_gs, propertyNames, grid_name);//根据目标gs创建grid
+
+            CData cd_assigned = new() { propertyNames = [] };   //创建粗化后的cdata对象
+            for (int i = 0; i < propertyNames.Count; i++)
+                cd_assigned.propertyNames.Add(propertyNames[i]);
+
+            List<int> arrayIndex_cdi = [];//创建粗化后条件数据在网格中的arrayIndex
+
+            //遍历所有cdi,计算是否落在目标网格范围内
+            foreach (var cdi in this)
+            {
+                SpatialIndex si = target_gs.coord_to_spatialIndex(cdi.coord);
+                if (si != null)//保留落在grid范围内的cdi
+                {
+                    var cdi_adjust = cdi.deep_clone();
+
+                    cdi_adjust.coord = target_gs.spatialIndex_to_coord(si);
+
+                    cd_assigned.Add(cdi_adjust);
+
+                    foreach (var propertyName in propertyNames)
+                    {
+                        grid_assigned[propertyName].set_value(si, cdi[propertyName]);
+                    }
+                }
+            }
+
+            return (grid_assigned, cd_assigned);
+        }
+
+        #endregion
+
+        #region 读写与转换
+
+        /// <summary>
+        /// 保存至gslib
+        /// </summary>
+        /// <param name="fileName"></param>
+        public void save_to_gslib(string fileName, float null_value)
+        {
+            GSLIB.df_to_gslib(fileName, null_value, to_dataFrame());
+        }
+
+        /// <summary>
+        /// 保存至gslib
+        /// </summary>
+        public void save_to_gslibwin(string title = null)
+        {
+            Form_WriteConditionData frm = new(this, title);
+            if (frm.ShowDialog() != DialogResult.OK)
+                return;
+            var paras = frm.paras;
+            var fileName = paras[0];
+            var null_value = float.Parse(paras[1]);//null值
+            save_to_gslib(fileName, null_value);
+        }
+
+        /// <summary>
+        /// 转换为MyDataFrame
+        /// </summary>
+        /// <returns></returns>
+        public MyDataFrame to_dataFrame()
+        {
+            List<string> series_names = new();
+            if (dim == Dimension.D2)
+                series_names.AddRange(new List<string>() { "X", "Y" });
+            if (dim == Dimension.D3)
+                series_names.AddRange(new List<string>() { "X", "Y", "Z" });
+            series_names.AddRange(propertyNames);
+            var df = MyDataFrame.create(series_names.ToArray());
+            foreach (var cdi in this)
+            {
+                var record = df.new_record();
+                record["X"] = cdi.coord.x;
+                record["Y"] = cdi.coord.y;
+                if (dim == Dimension.D3)
+                    record["Z"] = cdi.coord.z;
+                foreach (var (key, value) in cdi)
+                    record[key] = value;
+                df.add_record(record);
+            }
+            return df;
+        }
+
+        #endregion
+
+        /// <summary>
+        /// 计算与Coord的距离，返回结果距离由小到大
+        /// </summary>
+        /// <param name="c"></param>
+        /// <returns></returns>
+        public List<(double distance, CDataItem cdi)> order_by_distance(Coord c)
+        {
+            List<(double distance, CDataItem)> ordered = new();
+            foreach (var item in this)
+                ordered.Add((Coord.get_distance(item.coord, c), item));
+            var result = ordered.OrderBy(a => a.distance).ToList();
+            return result;
+        }
+
+        /// <summary>
+        /// 深度复制
+        /// </summary>
+        /// <returns></returns>
+        public CData deep_clone()
+        {
+            CData cd = new()
+            {
+                propertyNames = new()
+            };
+
+            for (int i = 0; i < propertyNames.Count; i++)
+                cd.propertyNames.Add(propertyNames[i]);
+            for (int i = 0; i < N; i++)
+                cd.Add(this[i].deep_clone());
+
+            return cd;
+        }
+
+        /// <summary>
+        /// 窗体模式选择cd_propertyName
+        /// </summary>
+        public string select_cd_propertyName_win(string title = null)
+        {
+            Form_SelectPropertyFromCData frm = new(this, title);
+            if (frm.ShowDialog() != DialogResult.OK)
+                return null;
+            return frm.selected_property_name;
+        }
+
+        #region 静态方法
+
+        /// <summary>
         /// 从gslib里读取CData
         /// </summary>
         /// <param name="fileName"></param>
@@ -139,8 +339,7 @@ namespace JAM8.Algorithms.Geometry
         /// <param name="enable_nullValue"></param>
         /// <param name="nullValue"></param>
         /// <returns></returns>
-        public static CData read_from_gslib(string fileName, Dimension dim,
-            int col_x, int col_y, int col_z,
+        public static CData read_from_gslib(string fileName, Dimension dim, int col_x, int col_y, int col_z,
             bool enable_nullValue, float nullValue)
         {
             MyDataFrame df = GSLIB.gslib_to_df(fileName);
@@ -190,7 +389,7 @@ namespace JAM8.Algorithms.Geometry
         }
 
         /// <summary>
-        /// 从gslib里读取CData
+        /// 从gslib里读取CData（窗体模式）
         /// </summary>
         /// <returns></returns>
         public static (CData cdata, string file_name) read_from_gslibwin(string title = null)
@@ -307,98 +506,6 @@ namespace JAM8.Algorithms.Geometry
             return cd;
         }
 
-        /// <summary>
-        /// 保存至gslib
-        /// </summary>
-        /// <param name="fileName"></param>
-        public void save_to_gslib(string fileName, float null_value)
-        {
-            GSLIB.df_to_gslib(fileName, null_value, to_dataFrame());
-        }
-
-        /// <summary>
-        /// 保存至gslib
-        /// </summary>
-        public void save_to_gslibwin(string title = null)
-        {
-            Form_WriteConditionData frm = new(this, title);
-            if (frm.ShowDialog() != DialogResult.OK)
-                return;
-            var paras = frm.paras;
-            var fileName = paras[0];
-            var null_value = float.Parse(paras[1]);//null值
-            save_to_gslib(fileName, null_value);
-        }
-
-        /// <summary>
-        /// 转换为MyDataFrame
-        /// </summary>
-        /// <returns></returns>
-        public MyDataFrame to_dataFrame()
-        {
-            List<string> series_names = new();
-            if (dim == Dimension.D2)
-                series_names.AddRange(new List<string>() { "X", "Y" });
-            if (dim == Dimension.D3)
-                series_names.AddRange(new List<string>() { "X", "Y", "Z" });
-            series_names.AddRange(propertyNames);
-            var df = MyDataFrame.create(series_names.ToArray());
-            foreach (var cdi in this)
-            {
-                var record = df.new_record();
-                record["X"] = cdi.coord.x;
-                record["Y"] = cdi.coord.y;
-                if (dim == Dimension.D3)
-                    record["Z"] = cdi.coord.z;
-                foreach (var (key, value) in cdi)
-                    record[key] = value;
-                df.add_record(record);
-            }
-            return df;
-        }
-
-        /// <summary>
-        /// 计算与Coord的距离，返回结果距离由小到大
-        /// </summary>
-        /// <param name="c"></param>
-        /// <returns></returns>
-        public List<(double distance, CDataItem cdi)> order_by_distance(Coord c)
-        {
-            List<(double distance, CDataItem)> ordered = new();
-            foreach (var item in this)
-                ordered.Add((Coord.get_distance(item.coord, c), item));
-            var result = ordered.OrderBy(a => a.distance).ToList();
-            return result;
-        }
-
-        /// <summary>
-        /// 深度复制
-        /// </summary>
-        /// <returns></returns>
-        public CData deep_clone()
-        {
-            CData cd = new()
-            {
-                propertyNames = new()
-            };
-
-            for (int i = 0; i < propertyNames.Count; i++)
-                cd.propertyNames.Add(propertyNames[i]);
-            for (int i = 0; i < N; i++)
-                cd.Add(this[i].deep_clone());
-
-            return cd;
-        }
-
-        /// <summary>
-        /// 窗体模式选择cd_propertyName
-        /// </summary>
-        public string select_cd_propertyName_win(string title = null)
-        {
-            Form_SelectPropertyFromCData frm = new(this, title);
-            if (frm.ShowDialog() != DialogResult.OK)
-                return null;
-            return frm.selected_property_name;
-        }
+        #endregion
     }
 }

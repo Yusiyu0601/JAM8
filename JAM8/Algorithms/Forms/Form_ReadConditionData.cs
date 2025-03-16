@@ -112,19 +112,18 @@ namespace JAM8.Algorithms.Geometry
 
         private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
+            //提醒，这里修改后，其他之前用1 2 3地方会出错！！！
+            t_ColX.Text = "0";
+            t_ColY.Text = "1";
+            t_ColZ.Text = "2";
             if (comboBox2.SelectedIndex == 0)
             {
-                t_ColX.Text = "1";
-                t_ColY.Text = "2";
                 label4.Visible = false;
                 t_ColZ.Visible = false;
                 Dim = Dimension.D2.ToString();
             }
             if (comboBox2.SelectedIndex == 1)
             {
-                t_ColX.Text = "1";
-                t_ColY.Text = "2";
-                t_ColZ.Text = "3";
                 label4.Visible = true;
                 t_ColZ.Visible = true;
                 Dim = Dimension.D3.ToString();
