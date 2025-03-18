@@ -23,6 +23,7 @@ namespace snesim_with_reverse_query_search_tree
             ComWrappers.RegisterForMarshalling(WinFormsComInterop.WinFormsComWrappers.Instance);
             AllocConsole();//开启控制台
 
+            //start FastSnesim simulation by using inverse retrieve search tree
             Output.WriteLine("start FastSnesim simulation by using inverse retrieve search tree");
             string b = EasyConsole.Input.ReadString("Choose Example Dimension (input 2d or 3d) => ");
 
