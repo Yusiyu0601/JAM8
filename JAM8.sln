@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JAM8.Work", "JAM8.Work\JAM8
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JAM8.Console", "JAM8.Console\JAM8.Console.csproj", "{130BB37B-DA5A-4C4E-AF54-2229F9CF8CFA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastSnesim", "FastSnesim\FastSnesim.csproj", "{B7B9201F-9714-4946-9EAF-1480BA4ADCEA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "snesim_with_reverse_query_search_tree", "snesim_with_reverse_query_search_tree\snesim_with_reverse_query_search_tree.csproj", "{933FB600-D590-AEA3-AB3E-3E8D0F7E67AB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,12 +29,15 @@ Global
 		{130BB37B-DA5A-4C4E-AF54-2229F9CF8CFA}.Debug|x64.Build.0 = Debug|x64
 		{130BB37B-DA5A-4C4E-AF54-2229F9CF8CFA}.Release|x64.ActiveCfg = Release|x64
 		{130BB37B-DA5A-4C4E-AF54-2229F9CF8CFA}.Release|x64.Build.0 = Release|x64
-		{B7B9201F-9714-4946-9EAF-1480BA4ADCEA}.Debug|x64.ActiveCfg = Debug|x64
-		{B7B9201F-9714-4946-9EAF-1480BA4ADCEA}.Debug|x64.Build.0 = Debug|x64
-		{B7B9201F-9714-4946-9EAF-1480BA4ADCEA}.Release|x64.ActiveCfg = Release|x64
-		{B7B9201F-9714-4946-9EAF-1480BA4ADCEA}.Release|x64.Build.0 = Release|x64
+		{933FB600-D590-AEA3-AB3E-3E8D0F7E67AB}.Debug|x64.ActiveCfg = Debug|x64
+		{933FB600-D590-AEA3-AB3E-3E8D0F7E67AB}.Debug|x64.Build.0 = Debug|x64
+		{933FB600-D590-AEA3-AB3E-3E8D0F7E67AB}.Release|x64.ActiveCfg = Release|x64
+		{933FB600-D590-AEA3-AB3E-3E8D0F7E67AB}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2A16C652-A388-4966-80FA-AE4623AEDA8E}
 	EndGlobalSection
 EndGlobal
