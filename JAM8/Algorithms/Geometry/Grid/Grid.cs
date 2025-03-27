@@ -7,13 +7,13 @@ using LiteDB;
 namespace JAM8.Algorithms.Geometry
 {
     /// <summary>
-    /// Grid类
+    /// Grid Class
     /// </summary>
     public class Grid : Dictionary<string, GridProperty>
     {
         private Grid() { }
 
-        #region 属性
+        #region attribute 属性
 
         public string grid_name { get; set; } = "grid_name";
 
@@ -45,7 +45,7 @@ namespace JAM8.Algorithms.Geometry
         public object tag { get; set; }
 
         /// <summary>
-        /// GridProperty数量
+        /// Number of GridProperties
         /// </summary>
         public int N_gridProperties
         {
@@ -57,7 +57,7 @@ namespace JAM8.Algorithms.Geometry
 
         #endregion
 
-        #region 实例函数
+        #region instance function 实例函数
 
         #region add_gridProperty & delete_gridProperty & replace_propertyName
 
@@ -395,7 +395,7 @@ namespace JAM8.Algorithms.Geometry
 
         #endregion
 
-        #region 静态函数
+        #region static function 静态函数
 
         /// <summary>
         /// 创建Grid
