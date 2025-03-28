@@ -73,6 +73,6 @@ set ratio of inverse retrieve search tree (input 0 ~ 100) =>
 ```
 此时输入的是将模拟进度的前多少百分比部分采用反向搜索树查询方法，其余部分是采用传统的正向查询。建议设置为35。<br>
 此时提示输入Load Training Image(2d)，并弹出一个对话框，用于选取待模拟用的训练图像
-![测试图](/images/select training image(2d).jpg)
+![select training image](/images/select training image 2d.jpeg)
 
 
