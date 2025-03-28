@@ -57,7 +57,22 @@ public (Grid re, double time) run(GridProperty TI, CData cd, GridStructure gs_re
 public (Grid, double time) run(int random_seed, int multigrid_count, int max_number,(int rx, int ry, int rz) template, 
 GridProperty TI, CData cd, GridStructure gs_re,int progress_for_retrieve_inverse = 0)
 ```
+## 2.3 运行项目snesim_with_reverse_query_search_tree，需要按照输入指定参数，具体流程如下：<br>
+-- 运行提示:
+```
+start FastSnesim simulation by using inverse retrieve search tree
+```
+-- 第1步要求输入: 
+```
+Choose Example Dimension (input 2d or 3d) =>
+```
+此时，如果根据模拟对象的维度，输入2d或者3d，现假设输入2d，按下回车键。<br>
+此时进入第2步的输入
+```
+set ratio of inverse retrieve search tree (input 0 ~ 100) =>
+```
+此时输入的是将模拟进度的前多少百分比部分采用反向搜索树查询方法，其余部分是采用传统的正向查询。建议设置为35。<br>
+此时提示输入Load Training Image(2d)，并弹出一个对话框，用于选取待模拟用的训练图像
+![测试图](/images/select training image(2d).png)
 
 
-public (Grid, double time) run(int random_seed, int multigrid_count, int max_number,(int rx, int ry, int rz) template, 
-GridProperty TI, CData cd, GridStructure gs_re,int progress_for_retrieve_inverse = 0)
