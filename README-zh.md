@@ -58,11 +58,11 @@ public (Grid, double time) run(int random_seed, int multigrid_count, int max_num
 GridProperty TI, CData cd, GridStructure gs_re,int progress_for_retrieve_inverse = 0)
 ```
 ## 2.3 运行项目snesim_with_reverse_query_search_tree，需要按照输入指定参数，具体流程如下：<br>
--- 运行提示:
+运行提示:
 ```
 start FastSnesim simulation by using inverse retrieve search tree
 ```
--- 第1步要求输入: 
+- 第1步要求输入: 
 ```
 Choose Example Dimension (input 2d or 3d) =>
 ```
