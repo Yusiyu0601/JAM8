@@ -45,7 +45,7 @@ namespace JAM8.Algorithms.Geometry
         /// </param>
         /// <returns></returns>
         public (Grid, double time) run(int random_seed, int multigrid_count, int max_number,
-            (int rx, int ry, int rz) template, GridProperty TI, CData cd, GridStructure gs_re,
+            (int rx, int ry, int rz) template, GridProperty TI, CData2 cd, GridStructure gs_re,
             int progress_for_retrieve_inverse = 0)
         {
             Stopwatch sw = new();//检测模拟时间
@@ -60,7 +60,7 @@ namespace JAM8.Algorithms.Geometry
                 mould = Mould.create_by_mould(mould, max_number);
                 var (re_mg, time_) = run(TI, cd1, gs_re, random_seed, mould, multi_grid, progress_for_retrieve_inverse);
                 re_mg.showGrid_win();
-                cd1 = CData.create_from_gridProperty(re_mg, "模型", null, false);
+                cd1 = CData2.create_from_gridProperty(re_mg[0], "re", CompareType.NotEqual, null);
                 MyConsoleHelper.write_string_to_console("时间", time_.ToString());
                 if (multi_grid == 1)
                 {
@@ -98,17 +98,18 @@ namespace JAM8.Algorithms.Geometry
         /// In the simulation progress, the proportion of reverse query in the previous simulation progress, default is 0
         /// </param>
         /// <returns></returns>
-        public (Grid re, double time) run(GridProperty TI, CData cd, GridStructure gs_re, int random_seed,
-            Mould mould, int multi_grid = 1, int progress_for_retrieve_inverse = 0)
+        public (Grid re, double time) run(GridProperty TI, CData2 cd, GridStructure gs_re,
+            int random_seed, Mould mould, int multigrid_level = 1, int progress_for_retrieve_inverse = 0)
         {
             Random rnd = new(random_seed);
             Grid g = Grid.create(gs_re);//Create a grid based on the gs_re. 根据gs_re创建grid工区 
 
             //Assign the value of cd to the model. 把cd赋值到模型中
+            (cd, var cd_grid) = cd.coarsened(gs_re);
             if (cd == null)
-                g.add_gridProperty("模型");
+                g.add_gridProperty("re");
             else
-                g.add_gridProperty("模型", cd.assign_to_grid(gs_re).grid_assigned[0]);
+                g.add_gridProperty("re", cd_grid[0]);
 
             STree tree = STree.create(mould, TI);
             if (tree == null)
@@ -127,7 +128,7 @@ namespace JAM8.Algorithms.Geometry
                 categories.Add(category_freq[i].value);
             }
 
-            path = SimulationPath.create(gs_re, multi_grid, rnd);
+            path = SimulationPath.create(gs_re, multigrid_level, rnd);
 
             //Only the simulation time is recorded (excluding building the search tree).
             //只记录模拟时间（不包括构建搜索树）
@@ -153,14 +154,14 @@ namespace JAM8.Algorithms.Geometry
                 }
                 MyConsoleProgress.Print(path.progress, "snesim");
                 var si = path.visit_next();
-                var value_si = g["模型"].get_value(si);
+                var value_si = g["re"].get_value(si);
                 if (value_si == null)
                 {
-                    var dataEvent = MouldInstance.create_from_gridProperty(mould, si, g["模型"]);
+                    var dataEvent = MouldInstance.create_from_gridProperty(mould, si, g["re"]);
                     cpdf = get_cpdf(dataEvent, tree, path.progress, progress_for_retrieve_inverse);
                     cpdf ??= pdf;
                     var value = cdf_sampler.sample(cpdf, (float)rnd.NextDouble());
-                    g["模型"].set_value(si, value);
+                    g["re"].set_value(si, value);
                     nod_cut[value]++;
                 }
             }

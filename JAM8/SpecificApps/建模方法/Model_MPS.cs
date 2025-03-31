@@ -2,6 +2,7 @@
 using Google.Protobuf.WellKnownTypes;
 using JAM8.Algorithms.Forms;
 using JAM8.Algorithms.Geometry;
+using JAM8.Algorithms.Numerics;
 using JAM8.SpecificApps.建模方法.Forms;
 using JAM8.Utilities;
 using MathNet.Numerics.Random;
@@ -29,11 +30,11 @@ namespace JAM8.SpecificApps.建模方法
                 return;
             var g = frm.selected_grids.First();
             //var g = Grid.create_from_gslibwin().grid;
-            var (cd, _) = CData.read_from_gslibwin();
+            var (cd, _) = CData2.read_from_gslib_win();
             GridStructure gs_model = g.gridStructure;
 
             var snesim = Snesim.create();
-            var (model,_) = snesim.run(1, 1, 60, (7, 7, 1), g.first_gridProperty(), cd, gs_model);
+            var (model, _) = snesim.run(1, 1, 60, (7, 7, 1), g.first_gridProperty(), cd, gs_model);
             model.showGrid_win();
             //MyConsoleHelper.write_string_to_console("计算时间", (time / 1000.0).ToString());
         }
@@ -118,7 +119,7 @@ namespace JAM8.SpecificApps.建模方法
             //采用snesim模拟剩下网格点数据
 
             var g_cd = gp.convert_to_grid();
-            var cd = CData.create_from_gridProperty(g_cd, g_cd.propertyNames[0], null, false);
+            var cd = CData2.create_from_gridProperty(g_cd[0], g_cd.propertyNames[0], CompareType.NotEqual, null);
 
             var mould_snesim = gs.dim == Dimension.D2 ? Mould.create_by_ellipse(10, 10, 1) : Mould.create_by_ellipse(15, 15, 2, 1);
             mould = Mould.create_by_mould(mould_snesim, 50);

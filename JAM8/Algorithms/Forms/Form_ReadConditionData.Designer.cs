@@ -52,7 +52,7 @@
             // 
             // button1
             // 
-            button1.Location = new Point(183, 437);
+            button1.Location = new Point(183, 484);
             button1.Name = "button1";
             button1.Size = new Size(131, 33);
             button1.TabIndex = 0;
@@ -62,7 +62,7 @@
             // 
             // button2
             // 
-            button2.Location = new Point(461, 437);
+            button2.Location = new Point(461, 484);
             button2.Name = "button2";
             button2.Size = new Size(131, 33);
             button2.TabIndex = 1;
@@ -143,7 +143,7 @@
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new Point(366, 73);
+            label4.Location = new Point(27, 162);
             label4.Name = "label4";
             label4.Size = new Size(93, 24);
             label4.TabIndex = 14;
@@ -171,7 +171,7 @@
             // 
             // t_ColZ
             // 
-            t_ColZ.Location = new Point(478, 70);
+            t_ColZ.Location = new Point(139, 159);
             t_ColZ.Mask = "99";
             t_ColZ.Name = "t_ColZ";
             t_ColZ.Size = new Size(162, 30);
@@ -194,7 +194,7 @@
             groupBox1.Controls.Add(t_NoDataValue);
             groupBox1.Location = new Point(11, 274);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(772, 157);
+            groupBox1.Size = new Size(772, 204);
             groupBox1.TabIndex = 18;
             groupBox1.TabStop = false;
             // 
@@ -202,11 +202,11 @@
             // 
             label6.AutoSize = true;
             label6.ForeColor = Color.Red;
-            label6.Location = new Point(375, 117);
+            label6.Location = new Point(366, 95);
             label6.Name = "label6";
-            label6.Size = new Size(365, 24);
+            label6.Size = new Size(205, 72);
             label6.TabIndex = 22;
-            label6.Text = "注意:1.列序从0开始;2.每行分隔符只能是空格";
+            label6.Text = "注意:\r\n1.列序从0开始;\r\n2.每行分隔符只能是空格";
             // 
             // label5
             // 
@@ -253,7 +253,7 @@
             AllowDrop = true;
             AutoScaleDimensions = new SizeF(11F, 24F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 474);
+            ClientSize = new Size(800, 528);
             Controls.Add(textBox2);
             Controls.Add(button4);
             Controls.Add(groupBox1);

@@ -1,8 +1,6 @@
-﻿using System.Windows.Forms;
-using JAM8.Algorithms.Forms;
+﻿using JAM8.Algorithms.Forms;
 using JAM8.Algorithms.Geometry;
 using JAM8.Utilities;
-using MathNet.Numerics.Random;
 
 namespace JAM8.SpecificApps.建模方法.Forms
 {
@@ -12,6 +10,7 @@ namespace JAM8.SpecificApps.建模方法.Forms
         Grid g_re;//模拟网格
 
         CData cd;//cdata
+        CData2 cd2;
 
         string file_name_ti;
         string file_name_cd;
@@ -58,7 +57,8 @@ namespace JAM8.SpecificApps.建模方法.Forms
         //导入cdata
         private void button1_Click(object sender, EventArgs e)
         {
-            (cd, var filename) = CData.read_from_gslibwin("导入条件数据");
+            //(cd, var filename) = CData.read_from_gslibwin("导入条件数据");
+            (cd2, var filename) = CData2.read_from_gslib_win("导入条件数据");
             textBox2.Text = filename;
         }
 
@@ -120,7 +120,7 @@ namespace JAM8.SpecificApps.建模方法.Forms
             int template_rz = int.Parse(tb_template_rz.Text);
 
             var (model, _) = snesim.run(random_seed, multigrid, max_number, (template_rx, template_ry, template_rz),
-                g_ti.first_gridProperty(), cd, gs_re);
+                g_ti.first_gridProperty(), cd2, gs_re);
 
             scottplot4Grid1.update_grid(model);
         }

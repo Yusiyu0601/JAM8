@@ -37,14 +37,16 @@ namespace snesim_with_reverse_query_search_tree
                 GridProperty TI = Grid.create_from_gslibwin("Load Training Image").grid
                     .select_gridProperty_win("Select Property as Training Image").grid_property;
                 string is_use_cd = EasyConsole.Input.ReadString("use conditional data(2d) or not? (input Y or N) => ");
-                CData cd = null;
+                CData2 cd = null;
                 if (is_use_cd == "Y")
-                    (cd, var _) = CData.read_from_gslibwin();
+                    (cd, var _) = CData2.read_from_gslib_win();
                 Output.WriteLine(ConsoleColor.Yellow, "Set Simulation Grid Size");
-                GridStructure gs = GridStructure.create_simple(500, 500, 1);
-                gs = GridStructure.create_win(gs, "Set Simulation Grid Size");
+                GridStructure re_gs = GridStructure.create_simple(500, 500, 1);
+                re_gs = GridStructure.create_win(re_gs, "Set Simulation Grid Size");
                 Snesim snesim = Snesim.create();
-                var (re, time) = snesim.run(1001, 1, 60, (7, 7, 0), TI, cd, gs, ratio_inverseRetrieve);
+                var cd2 = cd.coarsened(re_gs);
+                cd2.g.showGrid_win();
+                var (re, time) = snesim.run(1001, 1, 60, (7, 7, 0), TI, cd, re_gs, ratio_inverseRetrieve);
                 re.showGrid_win("realization");
                 Output.WriteLine(ConsoleColor.Red, $"使用时间:{time}");
             }
@@ -59,9 +61,9 @@ namespace snesim_with_reverse_query_search_tree
                 GridProperty TI = Grid.create_from_gslibwin("Load Training Image").grid
                     .select_gridProperty_win("Select Property as Training Image").grid_property;
                 string is_use_cd = EasyConsole.Input.ReadString("use conditional data(3d) or not? (input Y or N) => ");
-                CData cd = null;
+                CData2 cd = null;
                 if (is_use_cd == "Y")
-                    (cd, var _) = CData.read_from_gslibwin();
+                    (cd, var _) = CData2.read_from_gslib_win();
                 Output.WriteLine(ConsoleColor.Yellow, "Set Simulation Grid Size");
                 GridStructure gs = GridStructure.create_simple(100, 100, 30);
                 gs = GridStructure.create_win(gs, "Set Simulation Grid Size");

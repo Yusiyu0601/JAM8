@@ -215,29 +215,35 @@ namespace JAM8.Algorithms.Geometry
         }
 
         /// <summary>
-        /// 从搜索树里取回数据事件的重复数
+        /// Retrieve the duplicate count of data events from the search tree. 从搜索树里取回数据事件的重复数
         /// </summary>
         /// <param name="data_event"></param>
         /// <param name="cd_min"></param>
         /// <returns></returns>
         public Dictionary<float?, int> retrieve(MouldInstance data_event, int cd_min)
         {
+            //Record the count of duplicate core_value entries at each depth level in the tree,
+            //followed by statistical comparison with cd_min
             //记录树中各深度的core_value重复数，后续还要统计与cd_min比较
             List<Dictionary<float?, int>> core_values_all_levels = [];
 
-            int node_max = 0; // 有效节点的最大数量
-            List<STreeNode> temp_level_nodes = [root];//临时节点集合，初始化为root
+            int node_max = 0; // Maximum number of valid nodes 有效节点的最大数量
+            List<STreeNode> temp_level_nodes = [root];//Temp node collection (initialized to root) 临时节点集合，初始化为root
 
             //总数与当前层
             int Sum = 0, Level = 0;
             Stopwatch sw = new();
             sw.Start();
+            //For the neighbors of the data event, search sequentially from nearest to farthest
+            //(until the last non-null node position) for nodes that meet the condition.
             //针对数据事件的邻居，由近及远（直到最后一个非空节点的位置）逐个查找满足条件的节点
             for (int neighbor_idx = 0; neighbor_idx <= data_event.neighbor_not_nulls_ids.Last(); neighbor_idx++)
             {
                 List<STreeNode> nodes_temp = [];
                 float? neighbor_value = data_event[neighbor_idx];//邻居节点取值
 
+                //At this time, if the current neighbor node set is empty, then record all the child nodes of the nodes
+                //(the previous neighbor nodes) in the temporary node set.
                 //此时当前邻居节点为空，则记录临时节点集里节点（前一个邻居节点）的所有孩子节点
                 if (neighbor_value == null)
                 {
@@ -246,6 +252,8 @@ namespace JAM8.Algorithms.Geometry
                         nodes_temp.AddRange(node.children.Values);
                     }
                 }
+                //If the neighbor node set is not empty, then make a judgment on `nodes_temp` based on its value
+                //and filter out the unmatched child nodes.
                 //如果邻居节点不为空，则根据其值对nodes_temp进行判断，过滤掉不匹配的孩子节点
                 else
                 {
@@ -280,14 +288,19 @@ namespace JAM8.Algorithms.Geometry
 
             // 输出结果
             return core_values_all_levels
-                .AsEnumerable()// 显式转换为 IEnumerable
+                .AsEnumerable()
                 .Reverse()// 反转集合的顺序
-                          // 查找第一个符合条件的元素,条件是 core_values 中所有 Value 的总和大于 cd_min。
-                          // 如果没有符合条件的元素，返回 null。
-                .FirstOrDefault(core_values => core_values.Sum(a => a.Value) > cd_min);
+                .FirstOrDefault(core_values 
+                => core_values.Sum(a => a.Value) > cd_min);// Find the first element that meets the condition,
+                                                           // which is that the sum of all 'Value' in 'core_values' is greater
+                                                           // than 'cd_min'. If there is no element that meets the condition,
+                                                           // return 'null'.
+                                                           // 查找第一个符合条件的元素,条件是 core_values 中所有 Value 的总和大于
+                                                           // cd_min。如果没有符合条件的元素，返回 null。
         }
 
         /// <summary>
+        /// Retrieve the count of duplicate events from the search tree in reverse. 
         /// 反向从搜索树里取回数据事件的重复数
         /// </summary>
         /// <param name="data_event"></param>
@@ -305,7 +318,7 @@ namespace JAM8.Algorithms.Geometry
             }
             var Guid = sb.ToString();
 
-            List<int> cd_indexes = new(data_event.neighbor_not_nulls_ids);//深度复制
+            List<int> cd_indexes = [.. data_event.neighbor_not_nulls_ids];//深度复制
             cd_indexes.Reverse();//反转，由大到小
 
             //最终统计得到的重复数结果

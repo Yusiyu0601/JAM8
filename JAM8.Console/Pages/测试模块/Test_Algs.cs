@@ -43,8 +43,12 @@ namespace JAM8.Console.Pages
         private void CData2测试()
         {
             CData2 cd2 = CData2.read_from_gslib_win().cdata;
-            var (coarsend, g) = cd2.coarsened(GridStructure.create_simple(20, 25, 1));
+            var (coarsend, g) = cd2.coarsened(GridStructure.create_simple(100, 100, 1));
+            g.showGrid_win();
+
             var value = cd2[10, 1];
+
+            var cd2_clone = cd2.deep_clone();
         }
 
         private void ENESIM测试()
@@ -205,7 +209,7 @@ namespace JAM8.Console.Pages
             var ti = g.first_gridProperty();
             Mould mould = ti.gridStructure.dim == Dimension.D2 ? Mould.create_by_ellipse(10, 10, 1) :
                 Mould.create_by_ellipse(7, 7, 3, 1);
-            mould = Mould.create_by_mould(mould, 4);
+            mould = Mould.create_by_mould(mould, 40);
 
             //手动测试
             //int progress_for_inverse_retrieve = EasyConsole.Input.ReadInt("逆向查询占比", 0, 100);
@@ -254,11 +258,15 @@ namespace JAM8.Console.Pages
 
             //(var _, first) = snesim.run(ti, null, re_gs, 1001, mould, 1, 0);
             Output.WriteLine(ConsoleColor.Red, $"时间:{first}");
+
+            CData2 cd = CData2.read_from_gslib_win().cdata;
+
             for (int j = 0; j < 10; j++)
             {
-                var (_, time) = snesim.run(ti, null, re_gs, 1001, mould, 1, 35);
+                var (result, time) = snesim.run(ti, cd, re_gs, 1001, mould, 1, 35);
                 sum_35percent += time;
                 Output.WriteLine(ConsoleColor.Red, $"时间:{time}");
+                result.showGrid_win();
             }
             //加速比
             double 加速比 = first / (sum_35percent / 10.0);
