@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Text;
+﻿using System.Text;
 using JAM8.Algorithms.Forms;
 using JAM8.Utilities;
 using LiteDB;
@@ -414,7 +413,7 @@ namespace JAM8.Algorithms.Geometry
         }
 
         /// <summary>
-        /// 创建Grid，并使用property_names初始化
+        /// Create the Grid and initialize it with property_names 创建Grid，并使用property_names初始化
         /// </summary>
         /// <param name="gs"></param>
         /// <param name="property_names"></param>
@@ -435,7 +434,7 @@ namespace JAM8.Algorithms.Geometry
         }
 
         /// <summary>
-        /// 从GSLIB里读取Grid
+        /// Read Grid from GSLIB 从GSLIB里读取Grid
         /// </summary>
         public static (Grid grid, string fileName) create_from_gslibwin(string title = null)
         {

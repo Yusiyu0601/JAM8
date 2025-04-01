@@ -25,30 +25,52 @@ namespace snesim_with_reverse_query_search_tree
 
             //start FastSnesim simulation by using inverse retrieve search tree
             Output.WriteLine("start FastSnesim simulation by using inverse retrieve search tree");
+
+            //1. Choose Example Dimension
             string b = EasyConsole.Input.ReadString("Choose Example Dimension (input 2d or 3d) => ");
 
-            int ratio_inverseRetrieve = EasyConsole.Input.ReadInt("set ratio of inverse retrieve search tree (input 0 ~ 100) => ", 0, 100);
+            //2. Set ratio of inverse retrieve search tree
+            int ratio_inverseRetrieve = Input.ReadInt("set ratio of inverse retrieve search tree (input 0 ~ 100) => ", 0, 100);
 
             #region 2d Example
 
             if (b == "2d")
             {
-                Output.WriteLine(ConsoleColor.Yellow, "Load Training Image(2d)");
-                GridProperty TI = Grid.create_from_gslibwin("Load Training Image").grid
-                    .select_gridProperty_win("Select Property as Training Image").grid_property;
+                //3. Load Training Image
+                Output.WriteLine(ConsoleColor.Yellow, "\nLoad Training Image(2d)");
+                var (input_grid, input_fileName) = Grid.create_from_gslibwin("Load Training Image");
+                GridProperty TI = input_grid.select_gridProperty_win("Select Property as Training Image").grid_property;
+                Output.WriteLine($"\n\tfileName  {input_fileName}");
+                Output.WriteLine(TI.gridStructure.view_text());
+
+                //4. Set Simulation Grid Size
+                Output.WriteLine(ConsoleColor.Yellow, "Set Simulation Grid Size");
+                GridStructure re_gs = GridStructure.create_simple(100, 100, 1);
+                re_gs = GridStructure.create_win(re_gs, "Set Simulation Grid Size");
+                Output.WriteLine(re_gs.view_text());
+
+                //5. Load Conditional Data
                 string is_use_cd = EasyConsole.Input.ReadString("use conditional data(2d) or not? (input Y or N) => ");
                 CData2 cd = null;
+                CData2 coarsened_cd = null;
+                Grid coarsened_grid = null;
                 if (is_use_cd == "Y")
-                    (cd, var _) = CData2.read_from_gslib_win();
-                Output.WriteLine(ConsoleColor.Yellow, "Set Simulation Grid Size");
-                GridStructure re_gs = GridStructure.create_simple(500, 500, 1);
-                re_gs = GridStructure.create_win(re_gs, "Set Simulation Grid Size");
+                {
+                    string cd_fileName = "";
+                    (cd, cd_fileName) = CData2.read_from_gslib_win();
+                    Output.WriteLine($"\n\tconditional data fileName  {cd_fileName}\n");
+                    //coarsened conditional data and show coarsened grid
+                    (coarsened_cd, coarsened_grid) = cd.coarsened(re_gs);
+                    coarsened_grid.showGrid_win();
+                }
+
+                //6. Run FastSnesim Simulation
                 Snesim snesim = Snesim.create();
-                var cd2 = cd.coarsened(re_gs);
-                cd2.g.showGrid_win();
                 var (re, time) = snesim.run(1001, 1, 60, (7, 7, 0), TI, cd, re_gs, ratio_inverseRetrieve);
+
+                //7. Show Simulation Result and Show Simulation Time
                 re.showGrid_win("realization");
-                Output.WriteLine(ConsoleColor.Red, $"使用时间:{time}");
+                Output.WriteLine(ConsoleColor.Red, $"\nTime {time} milliseconds");
             }
 
             #endregion
@@ -57,20 +79,41 @@ namespace snesim_with_reverse_query_search_tree
 
             if (b == "3d")
             {
-                Output.WriteLine(ConsoleColor.Yellow, "Load Training Image(3d)");
-                GridProperty TI = Grid.create_from_gslibwin("Load Training Image").grid
-                    .select_gridProperty_win("Select Property as Training Image").grid_property;
+                //3. Load Training Image
+                Output.WriteLine(ConsoleColor.Yellow, "\nLoad Training Image(3d)");
+                var (input_grid, input_fileName) = Grid.create_from_gslibwin("Load Training Image");
+                GridProperty TI = input_grid.select_gridProperty_win("Select Property as Training Image").grid_property;
+                Output.WriteLine($"\n\tfileName  {input_fileName}");
+                Output.WriteLine(TI.gridStructure.view_text());
+
+                //4. Set Simulation Grid Size
+                Output.WriteLine(ConsoleColor.Yellow, "Set Simulation Grid Size");
+                GridStructure re_gs = GridStructure.create_simple(100, 100, 30);
+                re_gs = GridStructure.create_win(re_gs, "Set Simulation Grid Size");
+                Output.WriteLine(re_gs.view_text());
+
+                //5. Load Conditional Data
                 string is_use_cd = EasyConsole.Input.ReadString("use conditional data(3d) or not? (input Y or N) => ");
                 CData2 cd = null;
+                CData2 coarsened_cd = null;
+                Grid coarsened_grid = null;
                 if (is_use_cd == "Y")
-                    (cd, var _) = CData2.read_from_gslib_win();
-                Output.WriteLine(ConsoleColor.Yellow, "Set Simulation Grid Size");
-                GridStructure gs = GridStructure.create_simple(100, 100, 30);
-                gs = GridStructure.create_win(gs, "Set Simulation Grid Size");
+                {
+                    string cd_fileName = "";
+                    (cd, cd_fileName) = CData2.read_from_gslib_win();
+                    Output.WriteLine($"\n\tconditional data fileName  {cd_fileName}\n");
+                    //coarsened conditional data and show coarsened grid
+                    (coarsened_cd, coarsened_grid) = cd.coarsened(re_gs);
+                    coarsened_grid.showGrid_win();
+                }
+
+                //6. Run FastSnesim Simulation
                 Snesim snesim = Snesim.create();
-                var (re, time) = snesim.run(1001, 1, 85, (7, 7, 3), TI, cd, gs, ratio_inverseRetrieve);
+                var (re, time) = snesim.run(1001, 3, 80, (7, 7, 3), TI, cd, re_gs, ratio_inverseRetrieve);
+
+                //7. Show Simulation Result and Show Simulation Time
                 re.showGrid_win("realization");
-                Output.WriteLine(ConsoleColor.Red, $"使用时间:{time}");
+                Output.WriteLine(ConsoleColor.Red, $"\nTime {time} milliseconds");
             }
 
             #endregion

@@ -1,11 +1,9 @@
 ﻿using System.Diagnostics;
-using Google.Protobuf.WellKnownTypes;
 using JAM8.Algorithms.Forms;
 using JAM8.Algorithms.Geometry;
 using JAM8.Algorithms.Numerics;
 using JAM8.SpecificApps.建模方法.Forms;
 using JAM8.Utilities;
-using MathNet.Numerics.Random;
 
 namespace JAM8.SpecificApps.建模方法
 {

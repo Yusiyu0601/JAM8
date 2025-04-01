@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using JAM8.Algorithms.Numerics;
+﻿using JAM8.Algorithms.Numerics;
 using JAM8.Utilities;
 
 namespace JAM8.Algorithms.Geometry
@@ -42,7 +36,7 @@ namespace JAM8.Algorithms.Geometry
         //The target grid structure, if not empty, indicates that the conditional data
         //has been coarsened to the target grid structure
         //目标网格结构，如果不为空，则表示条件数据已经粗化到目标网格结构上
-        private GridStructure target_gs { get; set; }
+        public GridStructure target_gs { get; internal set; }
 
         /// <summary>
         /// Get the numerical value of the conditional data based on the sequence number and 
@@ -90,7 +84,7 @@ namespace JAM8.Algorithms.Geometry
         /// </summary>
         /// <param name="target_gs"></param>
         /// <returns></returns>
-        public (CData2 cd, Grid g) coarsened(GridStructure target_gs)
+        public (CData2 coarsened_cd, Grid coarsened_grid) coarsened(GridStructure target_gs)
         {
             CData2 cd_coarsened = new()
             {
@@ -274,22 +268,23 @@ namespace JAM8.Algorithms.Geometry
         /// 将gridProperty中满足条件的节点，作为条件数据
         /// </summary>
         /// <param name="gp"></param>
-        /// <param name="property_name"></param>
+        /// <param name="grid_property_name"></param>
         /// <param name="compare_type"></param>
         /// <param name="compared_value"></param>
         /// <returns></returns>
-        public static CData2 create_from_gridProperty(GridProperty gp, string property_name, CompareType compare_type, float? compared_value)
+        public static CData2 create_from_gridProperty(GridProperty gp, string grid_property_name, CompareType compare_type, float? compared_value)
         {
             CData2 cd = new()
             {
-                property_names = [property_name]
+                property_names = [grid_property_name],
+                target_gs = gp.gridStructure
             };
             if (gp.gridStructure.dim == Dimension.D2)
             {
                 cd.dim = Dimension.D2;
                 cd.x_series_index = 0;
                 cd.y_series_index = 1;
-                cd.buffer = MyDataFrame.create(["x", "y", property_name]);
+                cd.buffer = MyDataFrame.create(["x", "y", grid_property_name]);
             }
             if (gp.gridStructure.dim == Dimension.D3)
             {
@@ -297,7 +292,7 @@ namespace JAM8.Algorithms.Geometry
                 cd.x_series_index = 0;
                 cd.y_series_index = 1;
                 cd.z_series_index = 2;
-                cd.buffer = MyDataFrame.create(["x", "y", "z", property_name]);
+                cd.buffer = MyDataFrame.create(["x", "y", "z", grid_property_name]);
             }
 
             //遍历所有节点，判断是否满足条件
@@ -330,6 +325,44 @@ namespace JAM8.Algorithms.Geometry
                 }
             }
             return cd;
+        }
+
+        public (int not_match_number, int[] not_match_array_index) check_match(GridProperty gp, string cd_property_name)
+        {
+            if (target_gs == null)
+            {
+                return (-1, null);
+            }
+            if (target_gs != gp.gridStructure)
+                return (-1, null);
+
+            int not_match_number = 0;
+            List<int> not_match_array_index = [];
+            for (int i_Record = 0; i_Record < buffer.N_Record; i_Record++)
+            {
+                float? value = null;
+                if (dim == Dimension.D2)
+                {
+                    int ix = Convert.ToInt32(buffer[i_Record, x_series_index]);
+                    int iy = Convert.ToInt32(buffer[i_Record, y_series_index]);
+                    value = gp.get_value(ix, iy);
+                }
+                if (dim == Dimension.D3)
+                {
+                    int ix = Convert.ToInt32(buffer[i_Record, x_series_index]);
+                    int iy = Convert.ToInt32(buffer[i_Record, y_series_index]);
+                    int iz = Convert.ToInt32(buffer[i_Record, z_series_index]);
+                    value = gp.get_value(ix, iy, iz);
+                }
+                float? cd_value = Convert.ToSingle(buffer[i_Record, cd_property_name]);
+                if (cd_value != value)
+                {
+                    not_match_number++;
+                    not_match_array_index.Add(i_Record);
+                }
+            }
+
+            return (not_match_number, not_match_array_index.ToArray());
         }
     }
 }

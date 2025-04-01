@@ -185,7 +185,9 @@ namespace JAM8.Algorithms.Geometry
         }
 
         /// <summary>
-        /// 根据椭圆Ellipse模板半径尺寸新建Mould，包含模板中心core自身)
+        /// Create a new Mould according to the radius size of the Ellipse template, 
+        /// including the center core of the template itself
+        /// 根据椭圆Ellipse模板半径尺寸新建Mould，包含模板中心core自身
         /// </summary>
         /// <param name="radius_x"></param>
         /// <param name="radius_y"></param>

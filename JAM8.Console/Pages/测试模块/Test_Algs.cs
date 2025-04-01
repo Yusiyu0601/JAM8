@@ -29,7 +29,8 @@ namespace JAM8.Console.Pages
             var menu = new EasyConsole.Menu()
 
            .Add("退出", CommonFunctions.Cancel)
-           .Add("Snesim测试（正逆查询树）", Snesim测试)
+           .Add("Snesim_Test1", Snesim_Test1)
+           .Add("Snesim_Test2", Snesim_Test2)
            .Add("统计", 统计)
            .Add("从很大数组里等间距取值（例如等份100份）", 从很大数组里等间距取值)
            .Add("GridProperty_replace_with_threshold", GridProperty_replace_with_threshold)
@@ -39,6 +40,7 @@ namespace JAM8.Console.Pages
 
             menu.Display();
         }
+
 
         private void CData2测试()
         {
@@ -189,7 +191,7 @@ namespace JAM8.Console.Pages
             new_df.show_win("NodeCountAverage", true);
         }
 
-        private void Snesim测试()
+        private void Snesim_Test1()
         {
             Output.WriteLine(ConsoleColor.Yellow, "加载训练图像");
             Grid g = null;
@@ -273,6 +275,53 @@ namespace JAM8.Console.Pages
             Output.WriteLine(ConsoleColor.Red, $"使用时间:{(sum_35percent / 10.0)}");
             Output.WriteLine(ConsoleColor.Red, $"加速比:{加速比}");
 
+        }
+
+
+        private void Snesim_Test2()
+        {
+            Output.WriteLine(ConsoleColor.Yellow, "load training image");
+            Grid g = null;
+            Form_GridCatalog frm = new();
+            if (frm.ShowDialog() != DialogResult.OK)
+            {
+                g = Grid.create_from_gslibwin().grid;
+            }
+            else
+            {
+                g = frm.selected_grids.FirstOrDefault();
+            }
+
+            if (g == null)
+                return;
+
+            var ti = g.first_gridProperty();
+            Mould mould = ti.gridStructure.dim == Dimension.D2 ?
+                Mould.create_by_ellipse(10, 10, 1) :
+                Mould.create_by_ellipse(7, 7, 3, 1);
+
+            mould = Mould.create_by_mould(mould, 40);
+
+            //手动测试
+            int progress_for_inverse_retrieve = EasyConsole.Input.ReadInt("逆向查询占比", 0, 100);
+
+            Snesim snesim = Snesim.create();
+
+            GridStructure re_gs = ti.gridStructure;
+
+            CData2 cd = CData2.read_from_gslib_win().cdata;
+
+            var corsened_cd = cd.coarsened(re_gs).coarsened_cd;
+
+            var (re, time) = snesim.run(1001, 3, 40, (10, 10, 1), ti, cd, re_gs, 0);
+
+            re.showGrid_win();
+
+            var (not_match_number, not_match_array_index) = 
+                corsened_cd.check_match(re.first_gridProperty(), corsened_cd.property_names[0]);
+
+            //re?.showGrid_win();
+            Output.WriteLine(ConsoleColor.Red, $"{time}毫秒");
         }
     }
 }

@@ -16,32 +16,25 @@ namespace JAM8.Algorithms.Geometry
         private Snesim() { }
 
         /// <summary>
-        /// snesim的多重网格模拟方法
-        /// SNESIM's multi-grid simulation method
+        /// Snesim's multi-grid simulation method
+        /// Snesim的多重网格模拟方法
         /// </summary>
-        /// <param name="random_seed">随机种子
-        /// Random seed
+        /// <param name="random_seed">Random seed
         /// </param>
-        /// <param name="multigrid_count">多重网格总数
-        /// Total number of multi-grids
+        /// <param name="multigrid_count">Total number of multi-grids
         /// </param>
-        /// <param name="max_number">实际样板的节点总数
-        /// Total number of nodes in the actual template
+        /// <param name="max_number">Total number of nodes in the actual template
         /// </param>
-        /// <param name="template">样板
-        /// Template
+        /// <param name="template">Template
         /// </param>
-        /// <param name="TI">训练图像
-        /// Training image
+        /// <param name="TI">Training image
         /// </param>
-        /// <param name="cd">条件数据
-        /// Conditional data
+        /// <param name="cd">Conditional data
         /// </param>
-        /// <param name="gs_re">模拟网格结构尺寸
-        /// Size of the simulation grid structure
+        /// <param name="gs_re">Size of the simulation grid structure
         /// </param>
-        /// <param name="progress_for_retrieve_inverse">模拟进度中，反向查询在前段模拟进度的比例，默认为0
-        /// In the simulation progress, the proportion of reverse query in the previous simulation progress, default is 0
+        /// <param name="progress_for_retrieve_inverse">In the simulation progress, the proportion of reverse query 
+        /// in the previous simulation progress, default is 0
         /// </param>
         /// <returns></returns>
         public (Grid, double time) run(int random_seed, int multigrid_count, int max_number,
@@ -51,20 +44,36 @@ namespace JAM8.Algorithms.Geometry
             Stopwatch sw = new();//检测模拟时间
             sw.Start();
 
-            var cd1 = cd?.deep_clone();
+            Grid g = Grid.create(gs_re);
+
+            var current_cd = cd?.deep_clone();
+
+            if (current_cd != null)
+            {
+                var (coarsened_cd, coarsened_grid) = current_cd.coarsened(gs_re);
+                g.add_gridProperty("cd", coarsened_grid.first_gridProperty());
+            }
+
             for (int multi_grid = multigrid_count; multi_grid >= 1; multi_grid--)
             {
                 var mould = gs_re.dim == Dimension.D2 ?
                     Mould.create_by_ellipse(template.rx, template.ry, multi_grid) :
                     Mould.create_by_ellipse(template.rx, template.ry, template.rz, multi_grid);
+
                 mould = Mould.create_by_mould(mould, max_number);
-                var (re_mg, time_) = run(TI, cd1, gs_re, random_seed, mould, multi_grid, progress_for_retrieve_inverse);
-                re_mg.showGrid_win();
-                cd1 = CData2.create_from_gridProperty(re_mg[0], "re", CompareType.NotEqual, null);
+
+                var (re_mg, time_) = run(TI, current_cd, gs_re, random_seed, mould, multi_grid, progress_for_retrieve_inverse);
+
+                g.add_gridProperty($"{multi_grid}", re_mg[0]);
+
+                current_cd = CData2.create_from_gridProperty(re_mg[0], "re", CompareType.NotEqual, null);
+
                 MyConsoleHelper.write_string_to_console("时间", time_.ToString());
+
                 if (multi_grid == 1)
                 {
                     sw.Stop();
+                    g.showGrid_win();
                     return (re_mg, sw.ElapsedMilliseconds);
                 }
             }
@@ -73,43 +82,42 @@ namespace JAM8.Algorithms.Geometry
         }
 
         /// <summary>
-        /// 模拟指定网格级别的节点
         /// Simulate the nodes of the specified grid
+        /// 模拟指定网格级别的节点
         /// </summary>
-        /// <param name="TI">训练图像
-        /// Training image
+        /// <param name="TI">Training image
         /// </param>
-        /// <param name="cd">条件数据
-        /// Conditional data
+        /// <param name="cd">Conditional data
         /// </param>
-        /// <param name="gs_re">模拟网格结构
-        /// Simulation grid structure
+        /// <param name="gs_re">Simulation grid structure
         /// </param>
-        /// <param name="random_seed">随机种子
-        /// Random seed
+        /// <param name="random_seed">Random seed
         /// </param>
-        /// <param name="mould">模拟样板
-        /// Simulation template
+        /// <param name="mould">Simulation template
         /// </param>
-        /// <param name="multi_grid">多重网格级别，默认为1
-        /// Multi-grid level, default is 1
+        /// <param name="multi_grid">Multi-grid level, default is 1
         /// </param>
-        /// <param name="progress_for_retrieve_inverse">模拟进度中，反向查询在前段模拟进度的比例，默认为0
-        /// In the simulation progress, the proportion of reverse query in the previous simulation progress, default is 0
+        /// <param name="progress_for_retrieve_inverse">In the simulation progress, the proportion of reverse query 
+        /// in the previous simulation progress, default is 0
         /// </param>
         /// <returns></returns>
         public (Grid re, double time) run(GridProperty TI, CData2 cd, GridStructure gs_re,
-            int random_seed, Mould mould, int multigrid_level = 1, int progress_for_retrieve_inverse = 0)
+            int random_seed, Mould mould, int multigrid_level = 1,
+            int progress_for_retrieve_inverse = 0)
         {
             Random rnd = new(random_seed);
-            Grid g = Grid.create(gs_re);//Create a grid based on the gs_re. 根据gs_re创建grid工区 
+            Grid result = Grid.create(gs_re);//Create a grid based on the gs_re. 根据gs_re创建grid工区 
 
             //Assign the value of cd to the model. 把cd赋值到模型中
-            (cd, var cd_grid) = cd.coarsened(gs_re);
-            if (cd == null)
-                g.add_gridProperty("re");
+            if (cd != null)
+            {
+                var (coarsened_cd, coarsened_grid) = cd.coarsened(gs_re);
+                result.add_gridProperty("re", coarsened_grid.first_gridProperty());
+            }
             else
-                g.add_gridProperty("re", cd_grid[0]);
+            {
+                result.add_gridProperty("re");
+            }
 
             STree tree = STree.create(mould, TI);
             if (tree == null)
@@ -154,19 +162,19 @@ namespace JAM8.Algorithms.Geometry
                 }
                 MyConsoleProgress.Print(path.progress, "snesim");
                 var si = path.visit_next();
-                var value_si = g["re"].get_value(si);
+                var value_si = result["re"].get_value(si);
                 if (value_si == null)
                 {
-                    var dataEvent = MouldInstance.create_from_gridProperty(mould, si, g["re"]);
+                    var dataEvent = MouldInstance.create_from_gridProperty(mould, si, result["re"]);
                     cpdf = get_cpdf(dataEvent, tree, path.progress, progress_for_retrieve_inverse);
                     cpdf ??= pdf;
                     var value = cdf_sampler.sample(cpdf, (float)rnd.NextDouble());
-                    g["re"].set_value(si, value);
+                    result["re"].set_value(si, value);
                     nod_cut[value]++;
                 }
             }
             sw.Stop();
-            return (g, totalElapsedTime);
+            return (result, totalElapsedTime);
         }
 
         Dictionary<float?, float> get_cpdf(MouldInstance dataEvent, STree tree, double progress,
