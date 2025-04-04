@@ -43,13 +43,13 @@ namespace JAM8.Algorithms.Geometry
         }
 
         /// <summary>
-        /// 创建样式库
-        /// 支持并行处理和去重功能
+        /// Create a Patterns database 创建样式库
+        /// Support parallel processing and deduplication function. 支持并行处理和去重功能
         /// </summary>
-        /// <param name="mould">给定样板</param>
+        /// <param name="mould">Given mould 给定样板</param>
         /// <param name="gp_source">网格属性</param>
-        /// <param name="parallel">是否使用并行处理</param>
-        /// <param name="distinct">是否去重</param>
+        /// <param name="parallel">Whether to use parallel processing? 是否使用并行处理</param>
+        /// <param name="distinct">Whether to deduplicate. 是否去重</param>
         /// <returns>生成的 Patterns</returns>
         public static Patterns create(Mould mould, GridProperty gp_source, bool parallel = true, bool distinct = true)
         {
@@ -58,9 +58,9 @@ namespace JAM8.Algorithms.Geometry
 
             if (parallel)
             {
-                // 使用并行提取 Patterns
+                // Use parallel extraction Patterns 使用并行提取 Patterns
                 ConcurrentBag<int> flag = [];//计数器
-                // 使用 Parallel.For 提取 patterns
+                // Extract patterns using Parallel.For. 使用 Parallel.For 提取 patterns
                 Parallel.For(0, gp_source.gridStructure.N, n =>
                 {
                     var pattern = MouldInstance.create_from_gridProperty(mould, gs.get_spatialIndex(n), gp_source);
@@ -73,18 +73,18 @@ namespace JAM8.Algorithms.Geometry
             }
             else
             {
-                // 使用串行提取 Patterns
+                // 使用串行计算提取 Patterns
                 int progress = 0; // 进度计数器
                 for (int n = 0; n < gs.N; n++)
                 {
-                    // 创建模式
+                    // Creation pattern 创建模式
                     var pattern = MouldInstance.create_from_gridProperty(mould, gs.get_spatialIndex(n), gp_source);
 
-                    // 仅记录所有邻居非空的模式
+                    // Only record patterns where all neighbors are non-empty. 仅记录所有邻居非空的模式
                     if (pattern.neighbor_not_nulls_ids.Count == pattern.mould.neighbors_number)
                         patterns_list.Add(pattern);
 
-                    // 更新进度
+                    // update progress 更新进度
                     progress++;
                     MyConsoleProgress.Print(progress, gs.N, "Extract Patterns（Remove duplicates​）");
                 }
@@ -99,7 +99,7 @@ namespace JAM8.Algorithms.Geometry
             
             if (!distinct)
             {
-                //不去重，直接返回结果
+                //Do not deduplicate and return the result directly. 不去重，直接返回结果
                 foreach (var item in patterns_list)
                 {
                     patterns.arrayIndexes.Add(item.core_arrayIndex);
@@ -109,7 +109,7 @@ namespace JAM8.Algorithms.Geometry
             }
             else
             {
-                //去重复
+                //Remove duplicates 去重复
                 Dictionary<string, int> unicodes = [];
                 foreach (var item in patterns_list)
                 {

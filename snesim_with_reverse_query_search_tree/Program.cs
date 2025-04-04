@@ -83,7 +83,7 @@ namespace snesim_with_reverse_query_search_tree
 
                 //6. Run FastSnesim Simulation
                 Snesim snesim = Snesim.create();
-                var (re, time) = snesim.run(1001, 1, 60, (7, 7, 0), TI, cd, re_gs, ratio_inverseRetrieve);
+                var (re, time) = snesim.run(1001, 3, 60, (7, 7, 0), TI, cd, re_gs, ratio_inverseRetrieve);
 
                 //7. Show Simulation Result and Show Simulation Time
                 re.showGrid_win("realization");

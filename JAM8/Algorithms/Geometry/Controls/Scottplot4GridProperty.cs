@@ -37,7 +37,7 @@ namespace JAM8.Algorithms.Geometry
             numericUpDown1.MouseWheel += NumericUpDown1_MouseWheel;
 
 
-            //根据系统语言设置按钮文字
+            //Set button text according to system language. 根据系统语言设置按钮文字
             bool IsChineseSystem = CultureInfo.CurrentCulture.Name.StartsWith("zh");
             if (IsChineseSystem)
             {
