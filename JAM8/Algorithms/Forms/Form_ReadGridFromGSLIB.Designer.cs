@@ -336,10 +336,10 @@ namespace JAM8.Algorithms.Geometry
             // button2
             // 
             button2.ForeColor = Color.Blue;
-            button2.Location = new Point(874, 529);
+            button2.Location = new Point(811, 529);
             button2.Margin = new Padding(6, 5, 6, 5);
             button2.Name = "button2";
-            button2.Size = new Size(103, 37);
+            button2.Size = new Size(166, 37);
             button2.TabIndex = 141;
             button2.Text = "示例数据";
             button2.UseVisualStyleBackColor = true;

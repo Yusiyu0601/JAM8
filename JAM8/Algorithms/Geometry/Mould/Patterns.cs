@@ -68,7 +68,7 @@ namespace JAM8.Algorithms.Geometry
                         patterns_list.Add(pattern);
 
                     flag.Add(1);// 更新进度，仅记录索引
-                    MyConsoleProgress.Print(flag.Count, gs.N, "提取patterns");
+                    MyConsoleProgress.Print(flag.Count, gs.N, "Extract Patterns");
                 });
             }
             else
@@ -86,7 +86,7 @@ namespace JAM8.Algorithms.Geometry
 
                     // 更新进度
                     progress++;
-                    MyConsoleProgress.Print(progress, gs.N, "提取Patterns（去重）");
+                    MyConsoleProgress.Print(progress, gs.N, "Extract Patterns（Remove duplicates​）");
                 }
             }
 

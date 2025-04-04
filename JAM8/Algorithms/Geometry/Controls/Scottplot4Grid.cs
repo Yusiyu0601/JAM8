@@ -1,4 +1,5 @@
-﻿using JAM8.Algorithms.Images;
+﻿using System.Globalization;
+using JAM8.Algorithms.Images;
 using ScottPlot.Plottable;
 
 namespace JAM8.Algorithms.Geometry
@@ -54,6 +55,24 @@ namespace JAM8.Algorithms.Geometry
             trackBar1.TickFrequency = 1;
 
             numericUpDown1.MouseWheel += NumericUpDown1_MouseWheel;
+
+            //根据系统语言设置按钮文字
+            bool IsChineseSystem = CultureInfo.CurrentCulture.Name.StartsWith("zh");
+            if (IsChineseSystem)
+            {
+                label6.Text = "属性";
+                label4.Text = "配色";
+                toolStripDropDownButton1.Text = "操作";
+                toolStripLabel3.Text = "过滤";
+
+            }
+            else
+            {
+                label6.Text = "Prop";
+                label4.Text = "CMap";
+                toolStripDropDownButton1.Text = "Action";
+                toolStripLabel3.Text = "Filter";
+            }
         }
 
         private void NumericUpDown1_MouseWheel(object sender, MouseEventArgs e)

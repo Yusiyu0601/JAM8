@@ -66,7 +66,7 @@
             // 
             comboBox2.FormattingEnabled = true;
             comboBox2.Items.AddRange(new object[] { "XY", "YZ", "XZ" });
-            comboBox2.Location = new Point(276, 5);
+            comboBox2.Location = new Point(284, 5);
             comboBox2.Name = "comboBox2";
             comboBox2.Size = new Size(86, 32);
             comboBox2.TabIndex = 13;
@@ -74,7 +74,7 @@
             // 
             // trackBar1
             // 
-            trackBar1.Location = new Point(434, 5);
+            trackBar1.Location = new Point(442, 5);
             trackBar1.Name = "trackBar1";
             trackBar1.Size = new Size(106, 69);
             trackBar1.TabIndex = 12;
@@ -82,7 +82,7 @@
             // 
             // numericUpDown1
             // 
-            numericUpDown1.Location = new Point(366, 6);
+            numericUpDown1.Location = new Point(374, 6);
             numericUpDown1.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             numericUpDown1.Name = "numericUpDown1";
             numericUpDown1.Size = new Size(64, 30);
@@ -93,11 +93,11 @@
             // checkBox1
             // 
             checkBox1.AutoSize = true;
-            checkBox1.Location = new Point(153, 7);
+            checkBox1.Location = new Point(158, 7);
             checkBox1.Name = "checkBox1";
-            checkBox1.Size = new Size(126, 28);
+            checkBox1.Size = new Size(119, 28);
             checkBox1.TabIndex = 7;
-            checkBox1.Text = "纵横比相等";
+            checkBox1.Text = "AxisEqual";
             checkBox1.UseVisualStyleBackColor = true;
             checkBox1.CheckedChanged += checkBox1_CheckedChanged;
             // 

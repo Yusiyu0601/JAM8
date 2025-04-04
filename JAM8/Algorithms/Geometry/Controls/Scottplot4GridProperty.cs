@@ -1,4 +1,6 @@
-﻿using ScottPlot;
+﻿using System.Globalization;
+using System.Windows.Forms;
+using ScottPlot;
 using ScottPlot.Plottable;
 
 namespace JAM8.Algorithms.Geometry
@@ -33,6 +35,21 @@ namespace JAM8.Algorithms.Geometry
             trackBar1.Visible = false;
             trackBar1.TickFrequency = 1;
             numericUpDown1.MouseWheel += NumericUpDown1_MouseWheel;
+
+
+            //根据系统语言设置按钮文字
+            bool IsChineseSystem = CultureInfo.CurrentCulture.Name.StartsWith("zh");
+            if (IsChineseSystem)
+            {
+                label4.Text = "配色";
+                button1.Text = "统计";
+
+            }
+            else
+            {
+                label4.Text = "CMap";
+                button1.Text = "Stat";
+            }
         }
 
         private void NumericUpDown1_MouseWheel(object sender, MouseEventArgs e)

@@ -1,4 +1,6 @@
 ﻿using JAM8.Utilities;
+using Microsoft.VisualBasic;
+using System.Globalization;
 using System.Security.Cryptography;
 using System.Windows.Forms;
 
@@ -21,6 +23,34 @@ namespace JAM8.Algorithms.Geometry
                 Text = title;
             comboBox2.SelectedIndex = 0;
             groupBox1.Enabled = false;
+
+            bool IsChineseSystem = CultureInfo.CurrentCulture.Name.StartsWith("zh");
+            if (IsChineseSystem)
+            {
+                button3.Text = "打开文件";
+                label1.Text = "预览";
+                button4.Text = "示例数据";
+                button1.Text = "确定";
+                button2.Text = "取消";
+                label5.Text = "维度";
+                label2.Text = "X-表列序";
+                label3.Text = "Y-表列序";
+                label4.Text = "Z-表列序";
+                label6.Text = "注意:\r\n1.列序从0开始;\r\n2.每行分隔符只能是空格";
+            }
+            else
+            {
+                button3.Text = "Open the file";
+                label1.Text = "Preview";
+                button4.Text = "Example data";
+                button1.Text = "OK";
+                button2.Text = "Cancel";
+                label5.Text = "Dimension";
+                label2.Text = "X-Column";
+                label3.Text = "Y-Column";
+                label4.Text = "Z-Column";
+                label6.Text = "Note:\r\n1.Column starts from 0;\r\n2.Each line separator can only be a space";
+            }
         }
 
         //打开文件

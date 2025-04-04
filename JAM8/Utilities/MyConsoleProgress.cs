@@ -29,7 +29,7 @@
             {
                 if (progress == 100 && nextline_at_end)
                 {
-                    Console.WriteLine($"\r [{text}] 进度 = {progress_str} %");
+                    Console.WriteLine($"\r [{text}] progress = {progress_str} %");
                     return;
                 }
 
@@ -39,8 +39,8 @@
                 preview = progress_str;
 
                 string output = tag == null
-                    ? $"\r [{text}] 进度 = {progress_str} %   "
-                    : $"\r [{text}] 进度 = {progress_str} %  [{tag}]   ";
+                    ? $"\r [{text}] progress = {progress_str} %   "
+                    : $"\r [{text}] progress = {progress_str} %  [{tag}]   ";
                 Console.Write(output);
             }
         }
@@ -66,7 +66,7 @@
                 // 如果进度已达到最大值并且 nextline_at_end 为 true，换行
                 if (current == max && nextline_at_end)
                 {
-                    Console.WriteLine($"\r [{text}] 进度 = {progressStr} %");
+                    Console.WriteLine($"\r [{text}] progress = {progressStr} %");
                     return;
                 }
                 // 如果进度未变化，则不进行更新
@@ -77,8 +77,8 @@
 
                 // 根据是否有标签，格式化输出
                 string output = tag == null
-                    ? $"\r [{text}] 进度 = {progressStr} %   "
-                    : $"\r [{text}] 进度 = {progressStr} %  [{tag}]   ";
+                    ? $"\r [{text}] progress = {progressStr} %   "
+                    : $"\r [{text}] progress = {progressStr} %  [{tag}]   ";
                 Console.Write(output);
             }
         }

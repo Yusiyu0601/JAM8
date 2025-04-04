@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace JAM8.Algorithms.Geometry
 {
@@ -29,6 +30,23 @@ namespace JAM8.Algorithms.Geometry
                     comboBox2.SelectedIndex = 0;
                 else
                     comboBox2.SelectedIndex = 1;
+            }
+
+            //根据系统语言设置按钮文字
+            bool IsChineseSystem = CultureInfo.CurrentCulture.Name.StartsWith("zh");
+            if (IsChineseSystem)
+            {
+                this.Text = "GridStructure设置";
+                label10.Text = "维度";
+                button1.Text = "确定";
+                button2.Text = "取消";
+            }
+            else
+            {
+                this.Text = "GridStructure Setting";
+                label10.Text = "Dim";
+                button1.Text = "OK";
+                button2.Text = "Cancel";
             }
         }
 

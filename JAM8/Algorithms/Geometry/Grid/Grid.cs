@@ -310,7 +310,7 @@ namespace JAM8.Algorithms.Geometry
                     remainingBuffer = data[start..];
 
                     // 计算并输出进度
-                    MyConsoleProgress.Print(bytesRead, totalFileSize, "加载Grid（Gslib格式）");
+                    MyConsoleProgress.Print(bytesRead, totalFileSize, "Load Grid（Gslib format）");
                 }
             }
 

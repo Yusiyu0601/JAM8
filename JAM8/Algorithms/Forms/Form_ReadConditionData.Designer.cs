@@ -74,7 +74,7 @@
             // 
             button3.Location = new Point(12, 7);
             button3.Name = "button3";
-            button3.Size = new Size(59, 62);
+            button3.Size = new Size(124, 62);
             button3.TabIndex = 5;
             button3.Text = "打开文件";
             button3.UseVisualStyleBackColor = true;
@@ -92,14 +92,14 @@
             // textBox1
             // 
             textBox1.AllowDrop = true;
-            textBox1.Location = new Point(77, 7);
+            textBox1.Location = new Point(142, 7);
             textBox1.Multiline = true;
             textBox1.Name = "textBox1";
             textBox1.ReadOnly = true;
             textBox1.ScrollBars = ScrollBars.Vertical;
-            textBox1.Size = new Size(711, 62);
+            textBox1.Size = new Size(646, 62);
             textBox1.TabIndex = 8;
-            textBox1.Text = "拖动文件到...";
+            textBox1.Text = "file path";
             textBox1.DragEnter += textBox1_DragEnter;
             // 
             // t_NoDataValue
@@ -211,7 +211,7 @@
             // label5
             // 
             label5.AutoSize = true;
-            label5.Location = new Point(74, 29);
+            label5.Location = new Point(27, 29);
             label5.Name = "label5";
             label5.Size = new Size(46, 24);
             label5.TabIndex = 19;
@@ -230,9 +230,9 @@
             // button4
             // 
             button4.ForeColor = Color.Blue;
-            button4.Location = new Point(682, 73);
+            button4.Location = new Point(621, 73);
             button4.Name = "button4";
-            button4.Size = new Size(106, 33);
+            button4.Size = new Size(167, 33);
             button4.TabIndex = 21;
             button4.Text = "示例数据";
             button4.UseVisualStyleBackColor = true;

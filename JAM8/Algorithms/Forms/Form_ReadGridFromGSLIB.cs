@@ -1,4 +1,5 @@
-﻿using JAM8.Utilities;
+﻿using System.Globalization;
+using JAM8.Utilities;
 
 namespace JAM8.Algorithms.Geometry
 {
@@ -15,6 +16,23 @@ namespace JAM8.Algorithms.Geometry
             InitializeComponent();
             if (title != null)
                 this.Text = title;
+
+            //根据系统语言设置按钮文字
+            bool IsChineseSystem = CultureInfo.CurrentCulture.Name.StartsWith("zh");
+            if (IsChineseSystem)
+            {
+                btn_OK.Text = "确定";
+                btn_Cancel.Text = "取消";
+                btn_OpenFile.Text = "打开文件";
+                button2.Text = "示例数据";
+            }
+            else
+            {
+                btn_OK.Text = "OK";
+                btn_Cancel.Text = "Cancel";
+                btn_OpenFile.Text = "Open file";
+                button2.Text = "Example data";
+            }
         }
 
         private void btn_OpenFile_Click(object sender, EventArgs e)
@@ -28,7 +46,7 @@ namespace JAM8.Algorithms.Geometry
 
             txt_FileName.Text = ofd.FileName;
             txt_GridName.Text = FileHelper.GetFileName(ofd.FileName, false);
-            
+
             using var sr = new StreamReader(ofd.FileName);
             string s = "";
             int flag = -1;

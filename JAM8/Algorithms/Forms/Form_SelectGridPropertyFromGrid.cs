@@ -1,4 +1,5 @@
-﻿using JAM8.Algorithms.Geometry;
+﻿using System.Globalization;
+using JAM8.Algorithms.Geometry;
 
 namespace JAM8.Algorithms.Forms
 {
@@ -25,6 +26,21 @@ namespace JAM8.Algorithms.Forms
             listBox1.SelectedIndex = 0;
 
             #endregion
+
+            //根据系统语言设置按钮文字
+            bool IsChineseSystem = CultureInfo.CurrentCulture.Name.StartsWith("zh");
+            if (IsChineseSystem)
+            {
+                this.Text = "从Grid里选择GridProperty";
+                button1.Text = "选择GridProperty";
+                button3.Text = "取消";
+            }
+            else
+            {
+                this.Text = "Select GridProperty from Grid";
+                button1.Text = "Select GridProperty";
+                button3.Text = "Cancel";
+            }
         }
 
         private void button3_Click(object sender, EventArgs e)

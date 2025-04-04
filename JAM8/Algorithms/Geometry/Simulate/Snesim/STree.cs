@@ -2,10 +2,12 @@
 using System.Diagnostics;
 using System.Text;
 using JAM8.Utilities;
+using LiteDB;
 
 namespace JAM8.Algorithms.Geometry
 {
     /// <summary>
+    /// search tree
     /// 搜索树
     /// </summary>
     public class STree
@@ -13,26 +15,33 @@ namespace JAM8.Algorithms.Geometry
         private STree() { }
 
         /// <summary>
+        /// root of search tree
         /// 搜索树的根
         /// </summary>
         STreeNode root { get; set; }
 
         /// <summary>
+        /// template
         /// 模板
         /// </summary>
         Mould mould = null;
 
         /// <summary>
+        /// training images
         /// 训练图像
         /// </summary>
         GridProperty TI = null;
 
         /// <summary>
+        /// Values of discrete variables
         /// 离散变量的取值
         /// </summary>
         public List<float?> categories { get; internal set; }
 
         /// <summary>
+        /// Search for the number of layers of the tree. Since the depth of root is 1, 
+        /// the depth and number of layers of the search tree should be equal to the number 
+        /// of template neighbor nodes + 1.
         /// 搜索树的层数，因为root深度是1，因此搜索树深度层数应该等于模板邻居节点数+1
         /// </summary>
         public int tree_depth
@@ -44,17 +53,18 @@ namespace JAM8.Algorithms.Geometry
         }
 
         /// <summary>
+        /// Auxiliary “reverse” query structure 
         /// 辅助"逆向"查询结构
         /// </summary>
         public List<Dictionary<float?, STreeNode[]>> stree_nodes_with_levels = null;
 
-        public MyDataFrame df = null;//统计访问节点数量和计算时间
+        public MyDataFrame df = null;//Statistics on the number of access nodes and calculation time 统计访问节点数量和计算时间
 
         /// <summary>
-        /// 创建搜索树
+        /// Create a search tree 创建搜索树
         /// </summary>
         /// <param name="mould"></param>
-        /// <param name="TI">训练图像变量值要求离散变量类型</param>
+        /// <param name="TI">Training image variable values require discrete variable types. 训练图像变量值要求离散变量类型</param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
         public static STree create(Mould mould, GridProperty TI)
@@ -75,8 +85,8 @@ namespace JAM8.Algorithms.Geometry
                 categories = distinct.Select(a => a).ToList(),
             };
             tree.init_tree();
-            tree.建立分层节点集合();
-            MyConsoleHelper.write_string_to_console("搜索树节点总数", tree.get_nodes_count().ToString());
+            tree.init_reverse_query_structure();
+            MyConsoleHelper.write_string_to_console("Total number of search tree nodes", tree.get_nodes_count().ToString());
 
             tree.df = MyDataFrame.create(["访问节点总数", "计算时间(毫秒)"]);
 
@@ -84,7 +94,7 @@ namespace JAM8.Algorithms.Geometry
         }
 
         /// <summary>
-        /// 搜索树初始化
+        /// Search tree initialization 搜索树初始化
         /// </summary>
         void init_tree()
         {
@@ -166,7 +176,7 @@ namespace JAM8.Algorithms.Geometry
             #endregion
         }
 
-        void 建立分层节点集合()
+        void init_reverse_query_structure()
         {
             stree_nodes_with_levels = [];
 
@@ -174,20 +184,20 @@ namespace JAM8.Algorithms.Geometry
             {
                 { -1, new STreeNode[] { root } }
             };
-            stree_nodes_with_levels.Add(level_root);//添加第1层(即root)
+            stree_nodes_with_levels.Add(level_root);//Add the first level (i.e., root). 添加第1层(即root)
 
-            List<STreeNode> temp_nodes = [root];//临时节点，初始化为root
-            for (int level = 1; level < tree_depth; level++)//添加第i层
+            List<STreeNode> temp_nodes = [root];//Temporary node, initialized as root. 临时节点，初始化为root
+            for (int level = 1; level < tree_depth; level++)//Add level i. 添加第i层
             {
-                MyConsoleProgress.Print(level, tree_depth, "构建逆向查询结构");
+                MyConsoleProgress.Print(level, tree_depth, "Construct a reverse query structure");
 
                 List<STreeNode> nodes_level = [];
-                foreach (var node in temp_nodes)//查询第i层所有nodes
+                foreach (var node in temp_nodes)//Query all nodes on the ith layer. 查询第i层所有nodes
                     nodes_level.AddRange(node.children.Values);
-                temp_nodes = nodes_level;//更新temp_nodes
+                temp_nodes = nodes_level;//Update temp_nodes. 更新temp_nodes
 
                 Dictionary<float?, STreeNode[]> nodes_level_category = [];
-                //对该层中不同category的node进行分类
+                //Classify nodes of different categories in this layer. 对该层中不同category的node进行分类
                 foreach (var category in categories)
                     nodes_level_category.Add(category, [.. nodes_level.FindAll(a => a.value == category)]);
 
@@ -196,13 +206,13 @@ namespace JAM8.Algorithms.Geometry
         }
 
         /// <summary>
-        /// 统计搜索树节点总数
+        /// Count the total number of nodes in the search tree. 统计搜索树节点总数
         /// </summary>
         /// <returns></returns>
         int get_nodes_count()
         {
             int nodes_count = 1;//初始化为1
-            List<STreeNode> nodes_temp = [root];//临时节点集合
+            List<STreeNode> nodes_temp = [root];//Temporary node collection 临时节点集合
             for (int level = 0; level <= tree_depth; level++)//添加第i层
             {
                 List<STreeNode> nodes_level = [];
@@ -264,18 +274,22 @@ namespace JAM8.Algorithms.Geometry
                     }
                     node_max++;
 
-                    // 初始化 core_values 字典，键为分类变量（categories），
-                    // 值为搜索树该层所有节点中对应分类变量的重复数之和
+                    // Initialize the core_values dictionary with keys as categorical variables (categories) and
+                    // values as the sum of the repetitions of the corresponding categorical variable in all nodes
+                    // at this layer of the search tree.
+                    // 初始化 core_values 字典，键为分类变量（categories），值为搜索树该层所有节点中对应分类变量的重复数之和
                     var core_values = categories.ToDictionary(
                         category => category,
+                        // Sum the current categorical variable values in core_values_repl for each node. If it
+                        // does not exist, it is defaulted to 0.
                         // 对每个节点的 core_values_repl 中当前分类变量值求和，不存在则默认为 0
                         category => nodes_temp.Sum(node => node.core_values_repl.GetValueOrDefault(category, 0))
                     );
 
-                    core_values_all_levels.Add(core_values);//记录该层的重复数
+                    core_values_all_levels.Add(core_values);//Record the repetition number of this layer.记录该层的重复数
                 }
 
-                temp_level_nodes = nodes_temp;//更新
+                temp_level_nodes = nodes_temp;//update 更新
 
                 Sum += nodes_temp.Count;
                 Level = nodes_temp.Count;
@@ -289,8 +303,8 @@ namespace JAM8.Algorithms.Geometry
             // 输出结果
             return core_values_all_levels
                 .AsEnumerable()
-                .Reverse()// 反转集合的顺序
-                .FirstOrDefault(core_values 
+                .Reverse()// Reverse the order of the set. 反转集合的顺序
+                .FirstOrDefault(core_values
                 => core_values.Sum(a => a.Value) > cd_min);// Find the first element that meets the condition,
                                                            // which is that the sum of all 'Value' in 'core_values' is greater
                                                            // than 'cd_min'. If there is no element that meets the condition,
@@ -308,9 +322,8 @@ namespace JAM8.Algorithms.Geometry
         /// <returns></returns>
         public Dictionary<float?, int> retrieve_inverse(MouldInstance data_event, int cd_min)
         {
-            //这里也需要改
             var sb = new StringBuilder();
-            //将core值加进来
+            //Add the core value in. 将core值加进来
             sb.Append(data_event.core_value == null ? "n" : data_event.core_value.ToString());
             for (int i = 0; i < data_event.mould.neighbors_number; i++)
             {
@@ -319,21 +332,24 @@ namespace JAM8.Algorithms.Geometry
             var Guid = sb.ToString();
 
             List<int> cd_indexes = [.. data_event.neighbor_not_nulls_ids];//深度复制
-            cd_indexes.Reverse();//反转，由大到小
+            cd_indexes.Reverse();//Reverse, from large to small. 反转，由大到小
 
-            //最终统计得到的重复数结果
+            //The duplicate number result obtained by final statistics 最终统计得到的重复数结果
             Dictionary<float?, int> result = null;
 
             int flag = 0;
-            //由远到近的逐层查询
+            //Query layer by layer from far to near. 由远到近的逐层查询
             foreach (var cd_level in cd_indexes)
             {
                 var cd_value = data_event[cd_level];
-                //计算实际层次
+                //Calculate the actual level 计算实际层次
                 var cd_level_real = cd_level + 1;
                 STreeNode[] nodes_matched = this.stree_nodes_with_levels[cd_level_real][cd_value];
 
-                if (cd_indexes.Count > 1)//检查忠于当前level的cd的nodes，其前几个(如果存在)cd是否也匹配
+                //Check whether the nodes of the cd that are loyal to the current level also match the previous
+                //few cds (if any).
+                //检查忠于当前level的cd的nodes，其前几个(如果存在)cd是否也匹配
+                if (cd_indexes.Count > 1)
                 {
                     ConcurrentBag<STreeNode> temp_nodes = [];
                     flag++;
@@ -342,22 +358,28 @@ namespace JAM8.Algorithms.Geometry
                     #region 并行计算
 
                     int NumberOfThreads = -1;
-                    if (NumberOfThreads == -1) //如果线程数等于默认的-1,则表示使用所有线程数
+
+                    //If the number of threads is equal to the default -1, it means using all threads. 
+                    ///如果线程数等于默认的-1,则表示使用所有线程数
+                    if (NumberOfThreads == -1)
                         NumberOfThreads = Environment.ProcessorCount;
                     Parallel.ForEach(nodes_matched,
                         new ParallelOptions() { MaxDegreeOfParallelism = NumberOfThreads },
                         node =>
                         {
                             bool matched = true;
+                            //Check whether all nodes at levels 1 to level - 1 are all matched.
                             //检查1 ~ level-1层的节点是否全部matched
                             foreach (var idx in levels_above)
                             {
                                 //计算实际索引
                                 int idx_real = idx + 1;
-                                if (node.guid[idx_real] != Guid[idx_real])//只要有一个不同，就不行
+                                //As long as there is one difference, it won't work.
+                                //只要有一个不同，就不符合条件
+                                if (node.guid[idx_real] != Guid[idx_real])
                                 {
                                     matched = false;
-                                    break;//有一个不行，就放弃吧
+                                    break;//If one doesn't work, just give up. 有一个不行，就放弃吧
                                 }
                             }
                             if (matched)
@@ -394,8 +416,9 @@ namespace JAM8.Algorithms.Geometry
                 if (nodes_matched.Length > 0)
                 {
                     var coreValues_matched = categories.ToDictionary(category => category, _ => 0);
-
-                    foreach (var node in nodes_matched)//累积所有匹配cd的nodes的coreValue
+                    //Accumulate the coreValue of all nodes that match 'cd'.
+                    //累积所有匹配cd的nodes的coreValue
+                    foreach (var node in nodes_matched)
                     {
                         foreach (var KeyValuePair in node.core_values_repl)
                         {
@@ -403,6 +426,7 @@ namespace JAM8.Algorithms.Geometry
                         }
                     }
 
+                    //The coreValues of the current level meet CMin and jump out.
                     //当前level的coreValues满足CMin，跳出
                     if (coreValues_matched.Sum(a => a.Value) > cd_min)
                     {

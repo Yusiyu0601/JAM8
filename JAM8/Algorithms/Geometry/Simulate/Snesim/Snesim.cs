@@ -160,7 +160,7 @@ namespace JAM8.Algorithms.Geometry
                     df_time.add_record([path.progress, elapsedMicroseconds, totalElapsedTime]);
                     sw.Restart();
                 }
-                MyConsoleProgress.Print(path.progress, "snesim");
+                MyConsoleProgress.Print(path.progress, $"snesim multigrid_level{multigrid_level}");
                 var si = path.visit_next();
                 var value_si = result["re"].get_value(si);
                 if (value_si == null)

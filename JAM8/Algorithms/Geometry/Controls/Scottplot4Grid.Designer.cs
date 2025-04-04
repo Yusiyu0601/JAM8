@@ -80,13 +80,13 @@
             panel1.Dock = DockStyle.Top;
             panel1.Location = new Point(0, 0);
             panel1.Name = "panel1";
-            panel1.Size = new Size(842, 39);
+            panel1.Size = new Size(994, 39);
             panel1.TabIndex = 5;
             // 
             // label6
             // 
             label6.AutoSize = true;
-            label6.Location = new Point(4, 7);
+            label6.Location = new Point(7, 7);
             label6.Name = "label6";
             label6.Size = new Size(46, 24);
             label6.TabIndex = 15;
@@ -96,7 +96,7 @@
             // 
             cb_gridProperty.DrawMode = DrawMode.OwnerDrawFixed;
             cb_gridProperty.FormattingEnabled = true;
-            cb_gridProperty.Location = new Point(50, 5);
+            cb_gridProperty.Location = new Point(65, 5);
             cb_gridProperty.Name = "cb_gridProperty";
             cb_gridProperty.Size = new Size(107, 31);
             cb_gridProperty.TabIndex = 0;
@@ -107,15 +107,15 @@
             // cb_xy_yz_zx
             // 
             cb_xy_yz_zx.FormattingEnabled = true;
-            cb_xy_yz_zx.Location = new Point(447, 5);
+            cb_xy_yz_zx.Location = new Point(530, 5);
             cb_xy_yz_zx.Name = "cb_xy_yz_zx";
-            cb_xy_yz_zx.Size = new Size(65, 32);
+            cb_xy_yz_zx.Size = new Size(92, 32);
             cb_xy_yz_zx.TabIndex = 2;
             cb_xy_yz_zx.SelectedIndexChanged += cb_xy_yz_zx_SelectedIndexChanged;
             // 
             // trackBar1
             // 
-            trackBar1.Location = new Point(586, 5);
+            trackBar1.Location = new Point(709, 5);
             trackBar1.Name = "trackBar1";
             trackBar1.Size = new Size(106, 69);
             trackBar1.TabIndex = 4;
@@ -123,7 +123,7 @@
             // 
             // numericUpDown1
             // 
-            numericUpDown1.Location = new Point(517, 6);
+            numericUpDown1.Location = new Point(640, 6);
             numericUpDown1.Name = "numericUpDown1";
             numericUpDown1.Size = new Size(64, 30);
             numericUpDown1.TabIndex = 3;
@@ -134,7 +134,7 @@
             checkBox1.AutoSize = true;
             checkBox1.Checked = true;
             checkBox1.CheckState = CheckState.Checked;
-            checkBox1.Location = new Point(324, 7);
+            checkBox1.Location = new Point(407, 7);
             checkBox1.Name = "checkBox1";
             checkBox1.Size = new Size(119, 28);
             checkBox1.TabIndex = 7;
@@ -146,7 +146,7 @@
             // 
             cb_colorMap.DrawMode = DrawMode.OwnerDrawFixed;
             cb_colorMap.FormattingEnabled = true;
-            cb_colorMap.Location = new Point(211, 5);
+            cb_colorMap.Location = new Point(273, 5);
             cb_colorMap.Name = "cb_colorMap";
             cb_colorMap.Size = new Size(107, 31);
             cb_colorMap.TabIndex = 1;
@@ -157,7 +157,7 @@
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new Point(162, 9);
+            label4.Location = new Point(205, 9);
             label4.Name = "label4";
             label4.Size = new Size(46, 24);
             label4.TabIndex = 3;
@@ -169,7 +169,7 @@
             panel2.Dock = DockStyle.Bottom;
             panel2.Location = new Point(0, 381);
             panel2.Name = "panel2";
-            panel2.Size = new Size(842, 39);
+            panel2.Size = new Size(994, 39);
             panel2.TabIndex = 6;
             // 
             // toolStrip1
@@ -178,7 +178,7 @@
             toolStrip1.Items.AddRange(new ToolStripItem[] { toolStripDropDownButton1, toolStripSeparator2, toolStripLabel3, toolStripTextBox1, toolStripSeparator1, toolStripLabel1, toolStripSeparator3, toolStripLabel2 });
             toolStrip1.Location = new Point(0, 0);
             toolStrip1.Name = "toolStrip1";
-            toolStrip1.Size = new Size(842, 33);
+            toolStrip1.Size = new Size(994, 33);
             toolStrip1.TabIndex = 0;
             toolStrip1.Text = "toolStrip1";
             // 
@@ -307,7 +307,7 @@
             formsPlot1.Location = new Point(0, 39);
             formsPlot1.Margin = new Padding(6, 5, 6, 5);
             formsPlot1.Name = "formsPlot1";
-            formsPlot1.Size = new Size(842, 342);
+            formsPlot1.Size = new Size(994, 342);
             formsPlot1.TabIndex = 8;
             formsPlot1.MouseDown += formsPlot1_MouseDown;
             formsPlot1.MouseMove += formsPlot1_MouseMove;
@@ -320,7 +320,7 @@
             Controls.Add(panel1);
             Controls.Add(panel2);
             Name = "Scottplot4Grid";
-            Size = new Size(842, 420);
+            Size = new Size(994, 420);
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)trackBar1).EndInit();
