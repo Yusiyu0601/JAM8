@@ -47,20 +47,16 @@ namespace JAM8.Algorithms.Geometry
         /// <returns></returns>
         public float? this[int neighbor_idx]
         {
-            get
-            {
-                return neighbor_values[neighbor_idx];
-            }
-            set
-            {
-                neighbor_values[neighbor_idx] = value;
-            }
+            get { return neighbor_values[neighbor_idx]; }
+            set { neighbor_values[neighbor_idx] = value; }
         }
 
         /// <summary>
         /// 私有构造函数
         /// </summary>
-        private MouldInstance() { }
+        private MouldInstance()
+        {
+        }
 
         /// <summary>
         /// 打印
@@ -77,8 +73,11 @@ namespace JAM8.Algorithms.Geometry
                 str_builder.Append(neighbor_values[i] == null ? "N" : neighbor_values[i]);
                 str_builder.Append('_'); // 添加分隔符
             }
+
             // 处理最后一项，不添加分隔符
-            str_builder.Append(neighbor_values[mould.neighbors_number - 1] == null ? "N" : neighbor_values[mould.neighbors_number - 1]);
+            str_builder.Append(neighbor_values[mould.neighbors_number - 1] == null
+                ? "N"
+                : neighbor_values[mould.neighbors_number - 1]);
 
             return str_builder.ToString();
         }
@@ -96,9 +95,9 @@ namespace JAM8.Algorithms.Geometry
         /// <param name="gp_source"></param>
         public void update_from_gridProperty(SpatialIndex core, GridProperty gp_source)
         {
-            neighbor_values.Clear();//清空数据，保留容量
-            neighbor_nulls_ids.Clear();//清空数据
-            neighbor_not_nulls_ids.Clear();//清空数据
+            neighbor_values.Clear(); //清空数据，保留容量
+            neighbor_nulls_ids.Clear(); //清空数据
+            neighbor_not_nulls_ids.Clear(); //清空数据
 
             //记录中心点的arrayindex
             core_arrayIndex = gp_source.gridStructure.get_arrayIndex(core);
@@ -109,9 +108,9 @@ namespace JAM8.Algorithms.Geometry
             {
                 // 获取邻居索引
                 SpatialIndex neighbor = core.offset(mould.neighbor_spiral_mapper[n].spatial_index);
-                var value = gp_source.get_value(neighbor);// 获取对应的值
+                var value = gp_source.get_value(neighbor); // 获取对应的值
                 neighbor_values.Add(value);
-                if (value == null)//判断该节点的数据是否为null
+                if (value == null) //判断该节点的数据是否为null
                     neighbor_nulls_ids.Add(n);
                 else
                     neighbor_not_nulls_ids.Add(n);
@@ -121,17 +120,18 @@ namespace JAM8.Algorithms.Geometry
         /// <summary>
         /// 更新模板实例的数据，具体操作是通过传递新数据覆盖原始数据，超过模板范围的数组元素被丢弃
         /// </summary>
-        /// <param name="mould"></param>
-        /// <param name="buffer"></param>
+        /// <param name="core_value"></param>
+        /// <param name="core_arrayIndex"></param>
+        /// <param name="neighbor_values"></param>
         /// <returns></returns>
         public void update(float? core_value, int core_arrayIndex, float?[] neighbor_values)
         {
-            this.neighbor_values.Clear();//清空数据，保留容量
-            this.neighbor_nulls_ids.Clear();//清空数据
-            this.neighbor_not_nulls_ids.Clear();//清空数据
+            this.neighbor_values.Clear(); //清空数据，保留容量
+            this.neighbor_nulls_ids.Clear(); //清空数据
+            this.neighbor_not_nulls_ids.Clear(); //清空数据
 
-            this.core_arrayIndex = core_arrayIndex;//更新core_arrayIndex
-            this.core_value = core_value;//更新core_value
+            this.core_arrayIndex = core_arrayIndex; //更新core_arrayIndex
+            this.core_value = core_value; //更新core_value
 
             for (int n = 0; n < mould.neighbors_number; n++)
             {
@@ -168,13 +168,13 @@ namespace JAM8.Algorithms.Geometry
         /// 提取GridProperty里所有loc位置的MouldInstance
         /// </summary>
         /// <param name="mould"></param>
-        /// <param name="locs"></param>
+        /// <param name="loc"></param>
         /// <param name="gp_source"></param>
         /// <returns></returns>
         public static MouldInstance create_from_gridProperty(Mould mould, SpatialIndex loc, GridProperty gp_source)
         {
-            var mould_instance = create(mould);  // 创建新的MouldInstance
-            mould_instance.update_from_gridProperty(loc, gp_source);  // 更新MouldInstance
+            var mould_instance = create(mould); // 创建新的MouldInstance
+            mould_instance.update_from_gridProperty(loc, gp_source); // 更新MouldInstance
 
             return mould_instance;
         }
@@ -186,7 +186,8 @@ namespace JAM8.Algorithms.Geometry
         /// <param name="locs"></param>
         /// <param name="gp_source"></param>
         /// <returns></returns>
-        public static List<MouldInstance> create_from_gridProperty(Mould mould, List<SpatialIndex> locs, GridProperty gp_source)
+        public static List<MouldInstance> create_from_gridProperty(Mould mould, List<SpatialIndex> locs,
+            GridProperty gp_source)
         {
             // 预分配实例列表的容量，避免多次扩容
             List<MouldInstance> instances = new(locs.Count);
@@ -194,9 +195,9 @@ namespace JAM8.Algorithms.Geometry
             // 遍历locs列表并创建对应的MouldInstance
             foreach (var loc in locs)
             {
-                var mould_instance = create(mould);  // 创建新的MouldInstance
-                mould_instance.update_from_gridProperty(loc, gp_source);  // 更新MouldInstance
-                instances.Add(mould_instance);  // 将创建的实例添加到结果列表
+                var mould_instance = create(mould); // 创建新的MouldInstance
+                mould_instance.update_from_gridProperty(loc, gp_source); // 更新MouldInstance
+                instances.Add(mould_instance); // 将创建的实例添加到结果列表
             }
 
             return instances;
@@ -217,10 +218,11 @@ namespace JAM8.Algorithms.Geometry
             {
                 MyConsoleProgress.Print(n, gp_source.gridStructure.N, "提取模式");
                 var loc = gp_source.gridStructure.get_spatialIndex(n);
-                var mould_instance = create(mould);  // 创建新的MouldInstance
-                mould_instance.update_from_gridProperty(loc, gp_source);  // 更新MouldInstance
-                instances.Add(mould_instance);  // 将创建的实例添加到结果列表
+                var mould_instance = create(mould); // 创建新的MouldInstance
+                mould_instance.update_from_gridProperty(loc, gp_source); // 更新MouldInstance
+                instances.Add(mould_instance); // 将创建的实例添加到结果列表
             }
+
             return instances;
         }
 
@@ -231,7 +233,8 @@ namespace JAM8.Algorithms.Geometry
         /// <param name="Grid"></param>
         /// <param name="instance"></param>
         /// <returns></returns>
-        public List<SpatialIndex> paste_to_gridProperty(Mould mould, SpatialIndex core_in_gp_target, GridProperty gp_target)
+        public List<SpatialIndex> paste_to_gridProperty(Mould mould, SpatialIndex core_in_gp_target,
+            GridProperty gp_target)
         {
             //此处注意：gp_target的起始点x和y都是1
             List<SpatialIndex> spatialIndexes = [];
@@ -241,6 +244,7 @@ namespace JAM8.Algorithms.Geometry
                 gp_target.set_value(neighbor, neighbor_values[n]);
                 spatialIndexes.Add(neighbor);
             }
+
             return spatialIndexes;
         }
 
@@ -252,7 +256,7 @@ namespace JAM8.Algorithms.Geometry
         /// <returns></returns>
         public MouldInstance trim(CompareType compare_type, float? compare_value)
         {
-            Dictionary<string, float?> neighbors_values_dict = [];//<spatialIndex_str,value>，辅助找到对应的neighbor_value
+            Dictionary<string, float?> neighbors_values_dict = []; //<spatialIndex_str,value>，辅助找到对应的neighbor_value
             SpatialIndex core = mould.dim == Dimension.D2 ? SpatialIndex.create(0, 0) : SpatialIndex.create(0, 0, 0);
             List<SpatialIndex> neighbors = [];
 
@@ -281,6 +285,7 @@ namespace JAM8.Algorithms.Geometry
                     neighbors.Add(mould.neighbor_spiral_mapper[i].spatial_index);
                 }
             }
+
             //生成修剪后的模板
             Mould trim_mould = Mould.create_by_location(core, neighbors);
 
@@ -303,6 +308,30 @@ namespace JAM8.Algorithms.Geometry
             }
 
             return trim_mouldInstance;
+        }
+
+        /// <summary>
+        /// 计算Modified Hausdorff Distance（MHD）距离
+        /// 对每个 pat ∈ A，找 B 中最近的，然后取平均；再对 B 中每个 pat 找 A 中最近的，也取平均；最后两个平均值再平均。
+        /// </summary>
+        /// <param name="A"></param>
+        /// <param name="B"></param>
+        /// <returns></returns>
+        public static float calc_modified_hausdorff(List<MouldInstance> A, List<MouldInstance> B)
+        {
+            float A_to_B = A.Where(a => a != null).Select(a =>
+                B.Where(b => b != null)
+                    .Select(b => MyDistance.calc_hsim(a.neighbor_values, b.neighbor_values))
+                    .Max()
+            ).Average();
+
+            float B_to_A = B.Where(b => b != null).Select(b =>
+                A.Where(a => a != null)
+                    .Select(a => MyDistance.calc_hsim(b.neighbor_values, a.neighbor_values))
+                    .Max()
+            ).Average();
+
+            return (A_to_B + B_to_A) / 2f;
         }
     }
 }

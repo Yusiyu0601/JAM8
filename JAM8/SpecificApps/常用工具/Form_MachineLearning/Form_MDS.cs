@@ -16,8 +16,8 @@ namespace JAM8.SpecificApps.常用工具
 {
     public partial class Form_MDS : Form
     {
-        MyDataFrame df_距离矩阵 = null;
-        MyDataFrame df_记录表 = null;
+        private MyDataFrame df_距离矩阵 = null;
+        private MyDataFrame df_记录表 = null;
 
         public Form_MDS()
         {

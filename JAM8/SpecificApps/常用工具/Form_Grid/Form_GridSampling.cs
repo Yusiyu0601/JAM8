@@ -5,9 +5,9 @@ namespace JAM8.SpecificApps.常用工具
 {
     public partial class Form_GridSampling : Form
     {
-        Grid g;
-        Grid g_sampling;
-        GridProperty gp_sampling;
+        private Grid g;
+        private Grid g_sampling;
+        private GridProperty gp_sampling;
 
         public Form_GridSampling()
         {

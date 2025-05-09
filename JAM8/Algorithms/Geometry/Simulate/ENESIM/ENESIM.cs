@@ -7,8 +7,8 @@ namespace JAM8.Algorithms.Geometry
     public class ENESIM
     {
         private ENESIM() { }
-        Grid model { get; set; }
-        GridProperty ti { get; set; }
+        private Grid model { get; set; }
+        private GridProperty ti { get; set; }
         public static ENESIM create(Grid sim_grid, GridProperty ti)
         {
             ENESIM ds = new();
@@ -113,7 +113,7 @@ namespace JAM8.Algorithms.Geometry
         /// <param name="ti">训练图像</param>
         /// <param name="categories"></param>
         /// <returns></returns>
-        Dictionary<float?, float> get_cpdf(MouldInstance scan_re_mi, GridProperty ti, List<float?> categories)
+        private Dictionary<float?, float> get_cpdf(MouldInstance scan_re_mi, GridProperty ti, List<float?> categories)
         {
             //中心点的索引，默认（0，0）或者（0，0，0）
             SpatialIndex core_ti = ti.gridStructure.dim == Dimension.D2 ? SpatialIndex.create(0, 0) : SpatialIndex.create(0, 0, 0);

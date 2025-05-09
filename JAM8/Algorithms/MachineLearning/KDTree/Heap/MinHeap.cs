@@ -64,8 +64,7 @@ namespace DataStructures.ViliWonka.Heap {
 
     // generic version
     public class MinHeap<T> : MinHeap {
-
-        T[] objs; // objects
+        private T[] objs; // objects
 
         public MinHeap(int maxNodes = 2048) : base(maxNodes) {
             objs = new T[maxNodes + 1];
@@ -73,7 +72,7 @@ namespace DataStructures.ViliWonka.Heap {
 
         public T     HeadHeapObject { get { return objs[1]; } }
 
-        T tempObjs;
+        private T tempObjs;
         protected override void Swap(int A, int B) {
 
             tempHeap = heap[A];

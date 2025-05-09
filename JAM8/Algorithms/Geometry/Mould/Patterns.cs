@@ -14,7 +14,7 @@ namespace JAM8.Algorithms.Geometry
     {
         private Patterns() { }
 
-        List<int> arrayIndexes = null;//样式在训练图像中的arrayIndex
+        private List<int> arrayIndexes = null;//样式在训练图像中的arrayIndex
 
         /// <summary>
         /// 通过样式在样式库中的索引（非gridstruture的arrayIndex）获取样式，

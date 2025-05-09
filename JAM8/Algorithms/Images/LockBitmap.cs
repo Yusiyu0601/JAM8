@@ -8,9 +8,9 @@ namespace JAM8.Algorithms.Images
     /// </summary>
     public class LockBitmap
     {
-        Bitmap source = null;
-        IntPtr Iptr = IntPtr.Zero;
-        BitmapData bitmapData = null;
+        private Bitmap source = null;
+        private IntPtr Iptr = IntPtr.Zero;
+        private BitmapData bitmapData = null;
 
         public byte[] Pixels { get; set; }
         public int Depth { get; private set; }

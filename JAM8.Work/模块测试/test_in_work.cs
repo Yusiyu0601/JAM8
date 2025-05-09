@@ -32,7 +32,7 @@ namespace JAM8.Work.模块测试
         {
             for (int i = 0; i < 10000; i++)
             {
-                Console.WriteLine($"{i}");
+                Console.WriteLine($@"{i}");
             }
         }
 
@@ -92,10 +92,10 @@ namespace JAM8.Work.模块测试
             }
 
             // 输出直方图
-            Console.WriteLine("Histogram of 10000 Gaussian random numbers:");
+            Console.WriteLine(@"Histogram of 10000 Gaussian random numbers:");
             for (int i = 0; i < binCount; ++i)
             {
-                Console.WriteLine($"Bin {i - binCount / 2,2}: {histogram[i]}");
+                Console.WriteLine($@"Bin {i - binCount / 2,2}: {histogram[i]}");
             }
 
             Console.WriteLine();
@@ -110,7 +110,7 @@ namespace JAM8.Work.模块测试
             // 使用梅森旋转乱序
             Randomize(data, mt);
 
-            Console.WriteLine("Shuffled data:");
+            Console.WriteLine(@"Shuffled data:");
             foreach (var item in data)
             {
                 Console.Write(item + " ");
@@ -190,7 +190,7 @@ namespace JAM8.Work.模块测试
             }
 
             stopwatch.Stop();
-            Console.WriteLine($"Frequent Object Creation Time: {stopwatch.ElapsedMilliseconds} ms");
+            Console.WriteLine($@"Frequent Object Creation Time: {stopwatch.ElapsedMilliseconds} ms");
         }
 
         static void ObjectUpdate()
@@ -205,7 +205,7 @@ namespace JAM8.Work.模块测试
             }
 
             stopwatch.Stop();
-            Console.WriteLine($"Object Update Time: {stopwatch.ElapsedMilliseconds} ms");
+            Console.WriteLine($@"Object Update Time: {stopwatch.ElapsedMilliseconds} ms");
         }
         static void ObjectPoolUsage()
         {
@@ -221,7 +221,7 @@ namespace JAM8.Work.模块测试
             }
 
             stopwatch.Stop();
-            Console.WriteLine($"Object Pool Usage Time: {stopwatch.ElapsedMilliseconds} ms");
+            Console.WriteLine($@"Object Pool Usage Time: {stopwatch.ElapsedMilliseconds} ms");
         }
         private static void 频繁创建对象效率测试()
         {
@@ -312,7 +312,7 @@ namespace JAM8.Work.模块测试
             stopwatch.Stop();
 
             // 打印部分结果
-            Console.WriteLine("Convolved Image (Partial):");
+            Console.WriteLine(@"Convolved Image (Partial):");
             for (int i = 0; i < 10; ++i) // 仅打印前10行
             {
                 for (int j = 0; j < 10; ++j) // 仅打印前10列
@@ -323,7 +323,7 @@ namespace JAM8.Work.模块测试
             }
 
             // 输出卷积所需时间
-            Console.WriteLine($"Time taken for convolution: {stopwatch.ElapsedMilliseconds} milliseconds.");
+            Console.WriteLine($@"Time taken for convolution: {stopwatch.ElapsedMilliseconds} milliseconds.");
 
 
         }
@@ -412,7 +412,7 @@ namespace JAM8.Work.模块测试
             stopwatch.Stop();
 
             // 打印部分结果
-            Console.WriteLine("Convolved Image (Partial):");
+            Console.WriteLine(@"Convolved Image (Partial):");
             for (int i = 0; i < 10; ++i) // 仅打印前10行
             {
                 for (int j = 0; j < 10; ++j) // 仅打印前10列
@@ -423,7 +423,7 @@ namespace JAM8.Work.模块测试
             }
 
             // 输出卷积所需时间
-            Console.WriteLine($"Time taken for convolution: {stopwatch.ElapsedMilliseconds} milliseconds.");
+            Console.WriteLine($@"Time taken for convolution: {stopwatch.ElapsedMilliseconds} milliseconds.");
         }
 
 

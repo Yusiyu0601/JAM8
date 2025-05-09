@@ -9,7 +9,7 @@ namespace JAM8.Algorithms.Forms
 {
     public partial class Form_GridCatalog : Form
     {
-        GridCatalog grid_catalog = null;
+        private GridCatalog grid_catalog = null;
         public Grid[] selected_grids { get; internal set; }
         public GridProperty selected_gridProperty { get; internal set; }
 

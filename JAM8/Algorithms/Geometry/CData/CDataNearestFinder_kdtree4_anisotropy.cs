@@ -11,13 +11,13 @@ namespace JAM8.Algorithms.Geometry
         public CData cd { get; internal set; }
         public GridStructure gs { get; internal set; }
 
-        KDTree<string> tree;
+        private KDTree<string> tree;
 
-        DataMapper dm_x;
-        DataMapper dm_y;
-        DataMapper dm_z;
+        private DataMapper dm_x;
+        private DataMapper dm_y;
+        private DataMapper dm_z;
 
-        Dictionary<int, SpatialIndex> locs = null;
+        private Dictionary<int, SpatialIndex> locs = null;
 
         private CDataNearestFinder_kdtree4_anisotropy() { }
 

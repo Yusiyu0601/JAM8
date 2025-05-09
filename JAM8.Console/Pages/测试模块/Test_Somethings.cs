@@ -14,7 +14,7 @@ namespace JAM8.Console.Pages
 
             Perform();
 
-            System.Console.WriteLine("按任意键返回");
+            System.Console.WriteLine(@"按任意键返回");
             System.Console.ReadKey();
 
             Program.NavigateBack();
@@ -96,9 +96,9 @@ namespace JAM8.Console.Pages
             double[,] highStabilityGrid = GenerateUniformGrid(100, 100);
 
             // 计算熵值
-            System.Console.WriteLine($"低平稳性网格的熵值: {CalculateEntropy(lowStabilityGrid):F4}");
-            System.Console.WriteLine($"中平稳性网格的熵值: {CalculateEntropy(mediumStabilityGrid):F4}");
-            System.Console.WriteLine($"高平稳性网格的熵值: {CalculateEntropy(highStabilityGrid):F4}");
+            System.Console.WriteLine($@"低平稳性网格的熵值: {CalculateEntropy(lowStabilityGrid):F4}");
+            System.Console.WriteLine($@"中平稳性网格的熵值: {CalculateEntropy(mediumStabilityGrid):F4}");
+            System.Console.WriteLine($@"高平稳性网格的熵值: {CalculateEntropy(highStabilityGrid):F4}");
         }
 
         class FractalDimensionCalculator
@@ -229,8 +229,8 @@ namespace JAM8.Console.Pages
             double fractalDimension1 = FractalDimensionCalculator.CalculateFractalDimension(data1, 3);
             double fractalDimension2 = FractalDimensionCalculator.CalculateFractalDimension(data2, 3);
 
-            System.Console.WriteLine($"数据1的分形维数：{Math.Abs(fractalDimension1)}");
-            System.Console.WriteLine($"数据2的分形维数：{Math.Abs(fractalDimension2)}");
+            System.Console.WriteLine($@"数据1的分形维数：{Math.Abs(fractalDimension1)}");
+            System.Console.WriteLine($@"数据2的分形维数：{Math.Abs(fractalDimension2)}");
         }
 
         public class Moran
@@ -364,7 +364,7 @@ namespace JAM8.Console.Pages
             }
 
             // Print the generated array
-            System.Console.WriteLine("Generated Array:");
+            System.Console.WriteLine(@"Generated Array:");
             for (int i = 0; i < numRows; i++)
             {
                 for (int j = 0; j < numCols; j++)
@@ -376,7 +376,7 @@ namespace JAM8.Console.Pages
 
             Moran moran = new(testArray, numRows, numCols, -9999);
             double moransI = moran.CalculateMoransI();
-            System.Console.WriteLine($"Moran's I: {moransI}");
+            System.Console.WriteLine($@"Moran's I: {moransI}");
         }
 
         private void 高斯函数衰减权重计算()
@@ -407,10 +407,10 @@ namespace JAM8.Console.Pages
             // 打印前10个权重
             static void PrintTopWeights(double[] weights, int topN)
             {
-                System.Console.WriteLine($"前{topN}个点的权重：");
+                System.Console.WriteLine($@"前{topN}个点的权重：");
                 for (int i = 0; i < topN && i < weights.Length; i++)
                 {
-                    System.Console.WriteLine($"点{i + 1}: {weights[i]:F4}");
+                    System.Console.WriteLine($@"点{i + 1}: {weights[i]:F4}");
                 }
             }
 
@@ -421,7 +421,7 @@ namespace JAM8.Console.Pages
             double[] gaussianWeights = CalculateGaussianWeights(N, sigma);
 
             // 打印前10个高斯衰减权重
-            System.Console.WriteLine("高斯衰减权重：");
+            System.Console.WriteLine(@"高斯衰减权重：");
             PrintTopWeights(gaussianWeights, 1000);
         }
 
@@ -451,10 +451,10 @@ namespace JAM8.Console.Pages
             // 打印前10个权重
             static void PrintTopWeights(double[] weights, int topN)
             {
-                System.Console.WriteLine($"前{topN}个点的权重：");
+                System.Console.WriteLine($@"前{topN}个点的权重：");
                 for (int i = 0; i < topN && i < weights.Length; i++)
                 {
-                    System.Console.WriteLine($"点{i + 1}: {weights[i]:F4}");
+                    System.Console.WriteLine($@"点{i + 1}: {weights[i]:F4}");
                 }
             }
 
@@ -464,7 +464,8 @@ namespace JAM8.Console.Pages
             double[] logWeights = CalculateLogWeights(N);
 
             // 打印前10个对数衰减权重
-            System.Console.WriteLine("\n对数衰减权重：");
+            System.Console.WriteLine(@"
+对数衰减权重：");
             PrintTopWeights(logWeights, 10);
         }
 
@@ -494,10 +495,10 @@ namespace JAM8.Console.Pages
             // 打印前10个权重
             static void PrintTopWeights(double[] weights, int topN)
             {
-                System.Console.WriteLine($"前{topN}个点的权重：");
+                System.Console.WriteLine($@"前{topN}个点的权重：");
                 for (int i = 0; i < topN && i < weights.Length; i++)
                 {
-                    System.Console.WriteLine($"点{i + 1}: {weights[i]:F4}");
+                    System.Console.WriteLine($@"点{i + 1}: {weights[i]:F4}");
                 }
             }
             int N = 1000; // 这里可以改成100或10000，表示点的数量
@@ -506,7 +507,7 @@ namespace JAM8.Console.Pages
             double[] linearWeights = CalculateLinearWeights(N);
 
             // 打印前10个线性衰减权重
-            System.Console.WriteLine("线性衰减权重：");
+            System.Console.WriteLine(@"线性衰减权重：");
             PrintTopWeights(linearWeights, 100);
         }
 
@@ -537,10 +538,10 @@ namespace JAM8.Console.Pages
             // 打印前10个权重
             static void PrintTopWeights(double[] weights, int topN)
             {
-                System.Console.WriteLine($"前{topN}个点的权重：");
+                System.Console.WriteLine($@"前{topN}个点的权重：");
                 for (int i = 0; i < topN && i < weights.Length; i++)
                 {
-                    System.Console.WriteLine($"点{i + 1}: {weights[i]:F4}");
+                    System.Console.WriteLine($@"点{i + 1}: {weights[i]:F4}");
                 }
             }
 

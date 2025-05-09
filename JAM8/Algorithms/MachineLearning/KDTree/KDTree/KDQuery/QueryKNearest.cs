@@ -31,8 +31,7 @@ namespace DataStructures.ViliWonka.KDTree {
     using Heap;
 
     public partial class KDQuery {
-
-        SortedList<int, KSmallestHeap<int>> _heaps = new SortedList<int, KSmallestHeap<int>>();
+        private SortedList<int, KSmallestHeap<int>> _heaps = new SortedList<int, KSmallestHeap<int>>();
         /// <summary>
         /// Returns indices to k closest points, and optionaly can return distances
         /// </summary>

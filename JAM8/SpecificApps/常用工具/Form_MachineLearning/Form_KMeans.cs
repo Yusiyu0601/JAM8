@@ -14,7 +14,7 @@ namespace JAM8.SpecificApps.常用工具
 {
     public partial class Form_KMeans : Form
     {
-        MyDataFrame df = null;
+        private MyDataFrame df = null;
 
         public Form_KMeans()
         {

@@ -403,7 +403,7 @@ namespace SVM
         }
 
         // return 1 if already optimal, return 0 otherwise
-        int select_working_set(int[] working_set)
+        private int select_working_set(int[] working_set)
         {
             // return i,j such that
             // i: Maximizes -y_i * grad(f)_i, i in I_up(\alpha)
@@ -522,7 +522,7 @@ namespace SVM
                 return (false);
         }
 
-        void do_shrinking()
+        private void do_shrinking()
         {
             int i;
             double GMax1 = -INF;		// Max { -y_i * grad(f)_i | i in I_up(\alpha) }
@@ -582,7 +582,7 @@ namespace SVM
                 }
         }
 
-        double calculate_rho()
+        private double calculate_rho()
         {
             double r;
             int nr_free = 0;
@@ -627,7 +627,7 @@ namespace SVM
     //
     // additional constraint: e^T \alpha = constant
     //
-    class Solver_NU : Solver
+    internal class Solver_NU : Solver
     {
         private SolutionInfo si;
 
@@ -878,7 +878,7 @@ namespace SVM
     //
     // Q matrices for various formulations
     //
-    class SVC_Q : Kernel
+    internal class SVC_Q : Kernel
     {
         private sbyte[] y;
         private Cache cache;
@@ -919,7 +919,7 @@ namespace SVM
         }
     }
 
-    class ONE_CLASS_Q : Kernel
+    internal class ONE_CLASS_Q : Kernel
     {
         private Cache cache;
         private float[] QD;
@@ -957,7 +957,7 @@ namespace SVM
         }
     }
 
-    class SVR_Q : Kernel
+    internal class SVR_Q : Kernel
     {
         private int l;
         private Cache cache;
@@ -1229,7 +1229,7 @@ namespace SVM
             public double rho;
         };
 
-        static decision_function svm_train_one(Problem prob, Parameter param, double Cp, double Cn)
+        private static decision_function svm_train_one(Problem prob, Parameter param, double Cp, double Cn)
         {
             double[] alpha = new double[prob.Count];
             Solver.SolutionInfo si = new Solver.SolutionInfo();

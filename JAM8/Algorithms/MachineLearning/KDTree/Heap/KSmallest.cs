@@ -120,8 +120,7 @@ namespace DataStructures.ViliWonka.Heap {
     // array start at index 1
     // generic version
     public class KSmallestHeap<T> : KSmallestHeap {
-
-        T[] objs; //objects
+        private T[] objs; //objects
 
         public KSmallestHeap(int maxEntries) : base(maxEntries) {
             objs = new T[maxEntries + 1];
@@ -129,7 +128,7 @@ namespace DataStructures.ViliWonka.Heap {
 
         public T HeadHeapObject { get { return objs[1]; } }
 
-        T tempObjs;
+        private T tempObjs;
         protected override void Swap(int A, int B) {
 
             tempHeap = heap[A];

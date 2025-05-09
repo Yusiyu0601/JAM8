@@ -177,7 +177,7 @@ namespace JAM8.Algorithms.Geometry
             return (result, totalElapsedTime);
         }
 
-        Dictionary<float?, float> get_cpdf(MouldInstance dataEvent, STree tree, double progress,
+        private Dictionary<float?, float> get_cpdf(MouldInstance dataEvent, STree tree, double progress,
             int progress_for_retrieve_inverse = 0)
         {
             var cpdf = new Dictionary<float?, float>();

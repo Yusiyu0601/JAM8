@@ -9,15 +9,15 @@ namespace JAM8.Algorithms.Forms
 {
     public partial class Form_VariogramFit4Grid : Form
     {
-        Grid g = null;
+        private Grid g = null;
 
-        double[] h;
-        double[] gamma;
-        int[] N_pair;
+        private double[] h;
+        private double[] gamma;
+        private int[] N_pair;
 
-        Variogram variogram_fit = null;
-        Variogram variogram_manual = null;
-        VariogramType vt = VariogramType.Spherical;
+        private Variogram variogram_fit = null;
+        private Variogram variogram_manual = null;
+        private VariogramType vt = VariogramType.Spherical;
 
         public Form_VariogramFit4Grid()
         {
@@ -316,7 +316,7 @@ namespace JAM8.Algorithms.Forms
         /// </summary>
         /// <param name="h"></param>
         /// <param name="gamma"></param>
-        void init_controls(double[] h, double[] gamma, int[] N_pair)
+        private void init_controls(double[] h, double[] gamma, int[] N_pair)
         {
             if (comboBox1.Text == "球状模型")
                 vt = VariogramType.Spherical;
@@ -363,7 +363,7 @@ namespace JAM8.Algorithms.Forms
         }
 
         //重新绘制所有曲线，包括实验变程函数、拟合、手动调整
-        void draw()
+        private void draw()
         {
             formsPlot1.Plot.Clear();
             formsPlot1.Plot.XAxis.Label("滞后距", Color.Black, size: 22, fontName: "宋体");

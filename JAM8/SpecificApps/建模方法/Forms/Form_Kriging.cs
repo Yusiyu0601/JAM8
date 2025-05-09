@@ -6,9 +6,9 @@ namespace JAM8.SpecificApps.建模方法
 {
     public partial class Form_Kriging : Form
     {
-        Grid g_re;//
-        CData cd;
-        string file_name_cd;
+        private Grid g_re;//
+        private CData cd;
+        private string file_name_cd;
 
         public Form_Kriging()
         {

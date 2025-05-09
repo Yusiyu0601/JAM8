@@ -141,10 +141,10 @@ namespace JAM8.Tests
             //计算互换两个点的各向异性距离
             SpatialIndex si1 = SpatialIndex.create(10, 10);
             SpatialIndex si2 = SpatialIndex.create(12, 30);
-            Console.WriteLine($"{si1}与{si2}的各向同性距离为{SpatialIndex.calc_dist(si1, si2)}");
-            Console.WriteLine($"{si2}与{si1}的各向同性距离为{SpatialIndex.calc_dist(si2, si2)}");
-            Console.WriteLine($"{si1}与{si2}的各向异性距离为{AnisotropicDistance.calc_anis_distance_power2(rm, si1, si2)}");
-            Console.WriteLine($"{si2}与{si1}的各向异性距离为{AnisotropicDistance.calc_anis_distance_power2(rm, si2, si1)}");
+            Console.WriteLine($@"{si1}与{si2}的各向同性距离为{SpatialIndex.calc_dist(si1, si2)}");
+            Console.WriteLine($@"{si2}与{si1}的各向同性距离为{SpatialIndex.calc_dist(si2, si2)}");
+            Console.WriteLine($@"{si1}与{si2}的各向异性距离为{AnisotropicDistance.calc_anis_distance_power2(rm, si1, si2)}");
+            Console.WriteLine($@"{si2}与{si1}的各向异性距离为{AnisotropicDistance.calc_anis_distance_power2(rm, si2, si1)}");
 
             Coord c = Coord.create(1, 1);
             c.view_text();
@@ -224,15 +224,15 @@ namespace JAM8.Tests
 
             Stopwatch sw = new();
             sw.Start();
-            Console.WriteLine("start");
+            Console.WriteLine(@"start");
             //CDataNearestFinder_kdtree4 tree = CDataNearestFinder_kdtree4.create(gs, cd);
-            Console.WriteLine("end");
+            Console.WriteLine(@"end");
             sw.Stop();
             Console.WriteLine(sw.ElapsedMilliseconds);
 
 
             sw.Restart();
-            Console.WriteLine("start");
+            Console.WriteLine(@"start");
             Random rnd = new();
             for (int i = 0; i < 10000000; i++)
             {
@@ -240,7 +240,7 @@ namespace JAM8.Tests
                 //tree.find(si, 50);
                 MyConsoleProgress.Print(i, 10000000, "");
             }
-            Console.WriteLine("end");
+            Console.WriteLine(@"end");
             sw.Stop();
             Console.WriteLine(sw.ElapsedMilliseconds);
         }
@@ -300,19 +300,19 @@ namespace JAM8.Tests
         {
             GridStructure gs_left = GridStructure.create_simple(100, 100, 1);
             GridStructure gs_right = GridStructure.create_simple(100, 100, 1);
-            Console.WriteLine($"{gs_left.view_text()}  {gs_right.view_text()}");
+            Console.WriteLine($@"{gs_left.view_text()}  {gs_right.view_text()}");
             Console.WriteLine(gs_left == gs_right);
 
 
             gs_left = GridStructure.create_simple(100, 200, 1);
             gs_right = GridStructure.create_simple(100, 100, 1);
-            Console.WriteLine($"{gs_left.view_text()}  {gs_right.view_text()}");
+            Console.WriteLine($@"{gs_left.view_text()}  {gs_right.view_text()}");
             Console.WriteLine(gs_left == gs_right);
 
 
             gs_left = GridStructure.create_simple(100, 200, 1);
             gs_right = gs_left;
-            Console.WriteLine($"{gs_left.view_text()}  {gs_right.view_text()}");
+            Console.WriteLine($@"{gs_left.view_text()}  {gs_right.view_text()}");
             Console.WriteLine(gs_left == gs_right);
         }
 

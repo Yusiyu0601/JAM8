@@ -7,11 +7,11 @@ namespace JAM8.SpecificApps.常用工具
 {
     public partial class Form_Pic2GSLIB : Form
     {
-        Bitmap m_image = null;
-        string m_GridName = string.Empty;
+        private Bitmap m_image = null;
+        private string m_GridName = string.Empty;
 
 
-        Grid g = null;
+        private Grid g = null;
 
 
         public Form_Pic2GSLIB()
@@ -41,21 +41,22 @@ namespace JAM8.SpecificApps.常用工具
         //连续型图像
         private void button3_Click(object sender, EventArgs e)
         {
-            Console.WriteLine("打开彩色图像");
+            Console.WriteLine(@"打开彩色图像");
             //首先把图像转换为灰度图像
             var grayImage = ImageProcess.color_to_gray(m_image);
-            Console.WriteLine("原图  => 灰度图像(关闭图像进入下一步操作)");
+            Console.WriteLine(@"原图  => 灰度图像(关闭图像进入下一步操作)");
             ImageProcess.Show(grayImage);
             //上下翻转
             grayImage = ImageProcess.RevPicUD(grayImage, grayImage.Width, grayImage.Height);
-            Console.WriteLine("原图  => 上下翻转图像");
+            Console.WriteLine(@"原图  => 上下翻转图像");
             ImageProcess.Show(grayImage);
             Console.Write("是否进行反色计算:\n\t[ 是 => 1 ; 否 => 0 ]: ");
             int b = int.Parse(Console.ReadLine());
             if (b == 1)//采用反色计算
                 grayImage = ImageProcess.RePic(grayImage, grayImage.Width, grayImage.Height);
             var grayHist = ImageProcess.get_gray_histogram(grayImage);
-            Console.WriteLine($"灰度图像的取值区间为:\n\t[{grayHist.Item1[0]},{grayHist.Item1[grayHist.Item1.Length - 1]}]");
+            Console.WriteLine($@"灰度图像的取值区间为:
+	[{grayHist.Item1[0]},{grayHist.Item1[grayHist.Item1.Length - 1]}]");
             Console.Write("是否修改数值的区间:\n\t[ 是 => 1 ; 否 => 0 ]: ");
             double min = 0;
             double max = 0;
@@ -116,10 +117,10 @@ namespace JAM8.SpecificApps.常用工具
 
         private void button4_Click(object sender, EventArgs e)
         {
-            Console.WriteLine("打开彩色图像");
+            Console.WriteLine(@"打开彩色图像");
             //上下翻转
             var image = ImageProcess.RevPicUD(m_image, m_image.Width, m_image.Height);
-            Console.WriteLine("原图  => 上下翻转图像");
+            Console.WriteLine(@"原图  => 上下翻转图像");
             ImageProcess.Show(image);
             GridStructure gs = GridStructure.create_simple(m_image.Width, m_image.Height, 1);
             Grid rgbGrid = Grid.create(gs);

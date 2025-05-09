@@ -16,7 +16,7 @@ namespace JAM8.Console.Pages
 
             Perform();
 
-            System.Console.WriteLine("按任意键返回");
+            System.Console.WriteLine(@"按任意键返回");
             System.Console.ReadKey();
 
             Program.NavigateBack();

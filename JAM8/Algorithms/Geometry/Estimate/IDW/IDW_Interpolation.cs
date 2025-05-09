@@ -80,7 +80,7 @@
                         //if (si.iy == 28)//观察权重
                         //    Console.WriteLine($"{cd_founds[i].si} {weights[i]} {cd_founds[i].distance}");
                         if (si.ix == 40 && si.iy == 40)//观察权重
-                            Console.WriteLine($"{cd_founds[i].si} {weights[i]} {cd_founds[i].distance}");
+                            Console.WriteLine($@"{cd_founds[i].si} {weights[i]} {cd_founds[i].distance}");
                     }
                     //if (k > 0 && si.iy == 28)
                     if (si.ix == 40 && si.iy == 40)

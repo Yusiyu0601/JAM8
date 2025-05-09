@@ -158,7 +158,7 @@ namespace SVM
                         C = parameters.C;
                         Gamma = parameters.Gamma;
                         crossValidation = test;
-                        Console.WriteLine(" New Maximum!");
+                        Console.WriteLine(@" New Maximum!");
                     }
                     else Console.WriteLine();
                 }
@@ -228,7 +228,7 @@ namespace SVM
                         C = parameters.C;
                         Gamma = parameters.Gamma;
                         maxScore = test;
-                        Console.WriteLine(" New Maximum!");
+                        Console.WriteLine(@" New Maximum!");
                     }
                     else Console.WriteLine();
                 }

@@ -2,16 +2,16 @@
 
 namespace JAM8.Work.研究方法
 {
-    class Research_NonStationary
+    internal class ResearchNonStationary
     {
-        public static void Run()
+        public static void run()
         {
             var menu = new EasyConsole.Menu()
 
                 .Add("退出", CommonFunctions.Cancel)
-                .Add("NonStationary_Quantitative", Quantitative_NonStationary.step1_实验变差函数2d)
-                .Add("直接计算方法2d", Quantitative_NonStationary.直接计算方法2d)
-                .Add("TI_PatternSize", TI_PatternSize.FindPatternSize_Entropy);
+                .Add("NonStationary_Quantitative", QuantitativeNonStationary.step1_实验变差函数2d)
+                .Add("直接计算方法2d", QuantitativeNonStationary.直接计算方法2d)
+                .Add("TI_PatternSize", TrainImage_PatternSize.FindPatternSize_Entropy);
             ;
 
             menu.Display();

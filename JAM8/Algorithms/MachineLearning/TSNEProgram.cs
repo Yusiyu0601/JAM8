@@ -9,11 +9,13 @@ namespace TSNE
 {
   internal class TSNEProgram
   {
-    static void Main(string[] args)
+      private static void Main(string[] args)
     {
-      Console.WriteLine("\nBegin t-SNE with C# demo ");
+      Console.WriteLine(@"
+Begin t-SNE with C# demo ");
 
-      Console.WriteLine("\nLoading source data ");
+      Console.WriteLine(@"
+Loading source data ");
       // hard-coded demo data
       //double[][] X = new double[12][];  // penguin data
       //X[0] = new double[] { 39.5, 17.4, 186, 3800 };  // class 0
@@ -39,24 +41,29 @@ namespace TSNE
       double[][] X = TSNE.MatLoad(ifn,
         new int[] { 1, 2, 3, 4 }, ',', "#"); // not col [0]
 
-      Console.WriteLine("\nSource data: ");
+      Console.WriteLine(@"
+Source data: ");
       TSNE.MatShow(X, 1, 10, true);
 
-      Console.WriteLine("\nApplying t-SNE reduction ");
+      Console.WriteLine(@"
+Applying t-SNE reduction ");
       int maxIter = 500;
       int perplexity = 3;
       Console.WriteLine("Setting maxIter = " + maxIter);
       Console.WriteLine("Setting perplaxity = " + perplexity);
       double[][] reduced = TSNE.Reduce(X, maxIter, perplexity);
 
-      Console.WriteLine("\nReduced data: ");
+      Console.WriteLine(@"
+Reduced data: ");
       TSNE.MatShow(reduced, 2, 10, true);
 
-      Console.WriteLine("\nSaving reduced data for a graph ");
+      Console.WriteLine(@"
+Saving reduced data for a graph ");
       string ofn = @"C:\VSM\TSNE\Data\penguin_reduced.txt";
       TSNE.MatSave(reduced, ofn, ',', 2);
 
-      Console.WriteLine("\nEnd t-SNE demo ");
+      Console.WriteLine(@"
+End t-SNE demo ");
       Console.ReadLine();
     }
   } // Program
@@ -490,7 +497,7 @@ namespace TSNE
           Console.Write(v.ToString("F" + dec).
             PadLeft(wid));
         }
-        Console.WriteLine("");
+        Console.WriteLine(@"");
       }
     }
 
@@ -515,7 +522,7 @@ namespace TSNE
           Console.Write(v.ToString("F" + dec).
             PadLeft(wid));
         }
-        Console.WriteLine(" . . . ");
+        Console.WriteLine(@" . . . ");
       }
     }
 
@@ -534,10 +541,10 @@ namespace TSNE
           Console.Write(v.ToString("F" + dec).
             PadLeft(wid));
         }
-        Console.WriteLine("");
+        Console.WriteLine(@"");
       }
       if (nRows < M.Length)
-        Console.WriteLine(". . . ");
+        Console.WriteLine(@". . . ");
     }
 
     // ------------------------------------------------------
@@ -547,7 +554,7 @@ namespace TSNE
       int n = vec.Length;
       for (int i = 0; i < n; ++i)
         Console.Write(vec[i].ToString().PadLeft(wid));
-      Console.WriteLine("");
+      Console.WriteLine(@"");
     }
 
     // ------------------------------------------------------
@@ -559,7 +566,7 @@ namespace TSNE
       for (int i = 0; i < n; ++i)
         Console.Write(vec[i].ToString("F" + decimals).
           PadLeft(wid));
-      Console.WriteLine("");
+      Console.WriteLine(@"");
     }
 
     // ------------------------------------------------------
@@ -829,7 +836,7 @@ namespace TSNE
 
     // ------------------------------------------------------
 
-    static double MatSum(double[][] M)
+    private static double MatSum(double[][] M)
     {
       int nr = M.Length; int nc = M[0].Length;
       double result = 0.0;
@@ -841,7 +848,7 @@ namespace TSNE
 
     // ------------------------------------------------------
 
-    static void MatZeroOutDiag(double[][] M)
+    private static void MatZeroOutDiag(double[][] M)
     {
       int nr = M.Length; //int nc = M[0].Length;
       double result = 0.0;
@@ -853,7 +860,7 @@ namespace TSNE
     // ------------------------------------------------------
 
     // nested Gaussian to init TSNE.Reduce() result
-    class Gaussian
+    private class Gaussian
     {
       private Random rnd;
       private double mean;

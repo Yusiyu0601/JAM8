@@ -29,7 +29,7 @@
             {
                 if (progress == 100 && nextline_at_end)
                 {
-                    Console.WriteLine($"\r [{text}] progress = {progress_str} %");
+                    Console.WriteLine($@" [{text}] progress = {progress_str} %");
                     return;
                 }
 
@@ -66,7 +66,7 @@
                 // 如果进度已达到最大值并且 nextline_at_end 为 true，换行
                 if (current == max && nextline_at_end)
                 {
-                    Console.WriteLine($"\r [{text}] progress = {progressStr} %");
+                    Console.WriteLine($@" [{text}] progress = {progressStr} %");
                     return;
                 }
                 // 如果进度未变化，则不进行更新
@@ -87,11 +87,11 @@
 
         #region 实例方法，可打印剩余时间
 
-        DateTime time_start = DateTime.Now;//起始时间
-        DateTime time_last = DateTime.Now;//上一次调用print的时间
-        DateTime time_last_100;//前N次调用print的时间
-        TimeSpan time_span_100;//N次时间间隔
-        int flag = 0;
+        private DateTime time_start = DateTime.Now;//起始时间
+        private DateTime time_last = DateTime.Now;//上一次调用print的时间
+        private DateTime time_last_100;//前N次调用print的时间
+        private TimeSpan time_span_100;//N次时间间隔
+        private int flag = 0;
         public MyConsoleProgress()
         {
             time_last = DateTime.Now;

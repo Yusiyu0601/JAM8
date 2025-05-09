@@ -11,7 +11,7 @@ namespace JAM8.Algorithms.Numerics
         /// </summary>
         /// <param name="samples"></param>
         /// <returns></returns>
-        static Complex[] fft(Complex[] samples)
+        private static Complex[] fft(Complex[] samples)
         {
             Complex[] clone = new Complex[samples.Length];
             for (int i = 0; i < samples.Length; i++)
@@ -26,7 +26,7 @@ namespace JAM8.Algorithms.Numerics
         /// </summary>
         /// <param name="spectrum"></param>
         /// <returns></returns>
-        static Complex[] ifft(Complex[] spectrum)
+        private static Complex[] ifft(Complex[] spectrum)
         {
             Complex[] clone = new Complex[spectrum.Length];
             for (int i = 0; i < spectrum.Length; i++)
@@ -41,7 +41,7 @@ namespace JAM8.Algorithms.Numerics
         /// </summary>
         /// <param name="values"></param>
         /// <returns></returns>
-        static double[] fftshift(double[] values)
+        private static double[] fftshift(double[] values)
         {
             int shiftBy = (values.Length + 1) / 2;
 
@@ -56,7 +56,7 @@ namespace JAM8.Algorithms.Numerics
         /// </summary>
         /// <param name="values"></param>
         /// <returns></returns>
-        static Complex[] fftshift(Complex[] values)
+        private static Complex[] fftshift(Complex[] values)
         {
             int shiftBy = (values.Length + 1) / 2;
 
@@ -72,7 +72,7 @@ namespace JAM8.Algorithms.Numerics
         /// </summary>
         /// <param name="values"></param>
         /// <returns></returns>
-        static double[] ifftshift(double[] values)
+        private static double[] ifftshift(double[] values)
         {
             double[] result = new double[values.Length];
             int shiftBy = values.Length / 2;
@@ -88,7 +88,7 @@ namespace JAM8.Algorithms.Numerics
         /// </summary>
         /// <param name="values"></param>
         /// <returns></returns>
-        static Complex[] ifftshift(Complex[] values)
+        private static Complex[] ifftshift(Complex[] values)
         {
             Complex[] result = new Complex[values.Length];
             int shiftBy = values.Length / 2;
@@ -104,7 +104,7 @@ namespace JAM8.Algorithms.Numerics
         /// </summary>
         /// <param name="samples"></param>
         /// <returns></returns>
-        static Complex[,] fft2(Complex[,] samples)
+        private static Complex[,] fft2(Complex[,] samples)
         {
             int n_dim0 = samples.GetLength(0);
             int n_dim1 = samples.GetLength(1);
@@ -144,7 +144,7 @@ namespace JAM8.Algorithms.Numerics
         /// </summary>
         /// <param name="spectrum"></param>
         /// <returns></returns>
-        static Complex[,] ifft2(Complex[,] spectrum)
+        private static Complex[,] ifft2(Complex[,] spectrum)
         {
             int n_dim0 = spectrum.GetLength(0);
             int n_dim1 = spectrum.GetLength(1);
@@ -185,7 +185,7 @@ namespace JAM8.Algorithms.Numerics
         /// </summary>
         /// <param name="values"></param>
         /// <returns></returns>
-        static Complex[,] fftshift2(Complex[,] values)
+        private static Complex[,] fftshift2(Complex[,] values)
         {
             int n_dim0 = values.GetLength(0);
             int n_dim1 = values.GetLength(1);
@@ -226,7 +226,7 @@ namespace JAM8.Algorithms.Numerics
         /// </summary>
         /// <param name="values"></param>
         /// <returns></returns>
-        static double[,] fftshift2(double[,] values)
+        private static double[,] fftshift2(double[,] values)
         {
             int n_dim0 = values.GetLength(0);
             int n_dim1 = values.GetLength(1);
@@ -267,7 +267,7 @@ namespace JAM8.Algorithms.Numerics
         /// </summary>
         /// <param name="values"></param>
         /// <returns></returns>
-        static Complex[,] ifftshift2(Complex[,] values)
+        private static Complex[,] ifftshift2(Complex[,] values)
         {
             int n_dim0 = values.GetLength(0);
             int n_dim1 = values.GetLength(1);
@@ -308,7 +308,7 @@ namespace JAM8.Algorithms.Numerics
         /// </summary>
         /// <param name="values"></param>
         /// <returns></returns>
-        static double[,] ifftshift2(double[,] values)
+        private static double[,] ifftshift2(double[,] values)
         {
             int n_dim0 = values.GetLength(0);
             int n_dim1 = values.GetLength(1);
@@ -349,7 +349,7 @@ namespace JAM8.Algorithms.Numerics
         /// </summary>
         /// <param name="values"></param>
         /// <returns></returns>
-        static double[,] abs(Complex[,] spectrum)
+        private static double[,] abs(Complex[,] spectrum)
         {
             int n_dim0 = spectrum.GetLength(0);
             int n_dim1 = spectrum.GetLength(1);
@@ -369,7 +369,7 @@ namespace JAM8.Algorithms.Numerics
         /// </summary>
         /// <param name="samples"></param>
         /// <returns></returns>
-        static Complex[,,] fft3(Complex[,,] samples)
+        private static Complex[,,] fft3(Complex[,,] samples)
         {
             int n_dim0 = samples.GetLength(0);
             int n_dim1 = samples.GetLength(1);
@@ -433,7 +433,7 @@ namespace JAM8.Algorithms.Numerics
         /// </summary>
         /// <param name="spectrum"></param>
         /// <returns></returns>
-        static Complex[,,] ifft3(Complex[,,] spectrum)
+        private static Complex[,,] ifft3(Complex[,,] spectrum)
         {
             int n_dim0 = spectrum.GetLength(0);
             int n_dim1 = spectrum.GetLength(1);
@@ -497,7 +497,7 @@ namespace JAM8.Algorithms.Numerics
         /// </summary>
         /// <param name="values"></param>
         /// <returns></returns>
-        static Complex[,,] fftshift3(Complex[,,] values)
+        private static Complex[,,] fftshift3(Complex[,,] values)
         {
             int n_dim0 = values.GetLength(0);
             int n_dim1 = values.GetLength(1);
@@ -557,7 +557,7 @@ namespace JAM8.Algorithms.Numerics
             return result;
         }
 
-        static void show_win(Complex[,] values)
+        private static void show_win(Complex[,] values)
         {
             var gp = GridProperty.create(GridStructure.create_simple(values.GetLength(0), values.GetLength(1), 1));
             for (int idx_dim1 = 0; idx_dim1 < values.GetLength(0); idx_dim1++)
@@ -1127,7 +1127,7 @@ namespace JAM8.Algorithms.Numerics
             return result;
         }
 
-        static void show_win(Complex[,] values)
+        private static void show_win(Complex[,] values)
         {
             var gp = GridProperty.create(GridStructure.create_simple(values.GetLength(0), values.GetLength(1), 1));
             for (int idx_dim1 = 0; idx_dim1 < values.GetLength(0); idx_dim1++)

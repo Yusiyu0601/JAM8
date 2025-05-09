@@ -194,7 +194,7 @@ namespace JAM8.Algorithms.Geometry
         }
 
         /// <summary>
-        /// 根据距离
+        /// 根据距离排序
         /// </summary>
         /// <param name="coord"></param>
         /// <param name="distance"></param>

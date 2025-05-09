@@ -34,7 +34,7 @@ namespace JAM8.Tests
             lsh.MapVectorToHashTable(my_vectors);
             Stopwatch sw = new();
             sw.Start();
-            Console.WriteLine("start");
+            Console.WriteLine(@"start");
             Random rnd = new();
             for (int i = 0; i < 10000000; i++)
             {
@@ -42,7 +42,7 @@ namespace JAM8.Tests
                 var (a, b) = lsh.Search(MyVector.create(new float[] { si.ix, si.iy, si.iz }));
                 MyConsoleProgress.Print(i, 10000000, a.Count.ToString());
             }
-            Console.WriteLine("end");
+            Console.WriteLine(@"end");
             sw.Stop();
             Console.WriteLine(sw.ElapsedMilliseconds);
         }

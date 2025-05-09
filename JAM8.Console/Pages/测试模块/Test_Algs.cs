@@ -8,7 +8,9 @@ namespace JAM8.Console.Pages
 {
     internal class Test_Algs : Page
     {
-        public Test_Algs(EasyConsole.Program program) : base("Test_Algs", program) { }
+        public Test_Algs(EasyConsole.Program program) : base("Test_Algs", program)
+        {
+        }
 
         public override void Display()
         {
@@ -18,7 +20,7 @@ namespace JAM8.Console.Pages
 
             Perform();
 
-            System.Console.WriteLine("按任意键返回");
+            System.Console.WriteLine(@"按任意键返回");
             System.Console.ReadKey();
 
             Program.NavigateBack();
@@ -27,25 +29,43 @@ namespace JAM8.Console.Pages
         private void Perform()
         {
             var menu = new EasyConsole.Menu()
-
-           .Add("退出", CommonFunctions.Cancel)
-           .Add("Snesim_Test1", Snesim_Test1)
-           .Add("Snesim_Test2", Snesim_Test2)
-           .Add("统计", 统计)
-           .Add("从很大数组里等间距取值（例如等份100份）", 从很大数组里等间距取值)
-           .Add("GridProperty_replace_with_threshold", GridProperty_replace_with_threshold)
-           .Add("ENESIM测试", ENESIM测试)
-           .Add("CData2测试", CData2测试)
-           ;
+                    .Add("退出", CommonFunctions.Cancel)
+                    .Add("Snesim_Test1", Snesim_Test1)
+                    .Add("Snesim_Test2", Snesim_Test2)
+                    .Add("统计", 统计)
+                    .Add("从很大数组里等间距取值（例如等份100份）", 从很大数组里等间距取值)
+                    .Add("GridProperty_replace_with_threshold", GridProperty_replace_with_threshold)
+                    .Add("ENESIM测试", ENESIM测试)
+                    .Add("CData2测试", CData2测试)
+                    .Add("Patterns测试", Patterns测试)
+                    .Add("TEST_DistanceTransform", TEST_DistanceTransform)
+                ;
 
             menu.Display();
         }
 
+        private void TEST_DistanceTransform()
+        {
+            GridProperty gp = Grid.create_from_gslibwin().grid.select_gridProperty_win("选择GridProperty").grid_property;
+            gp.set_values_by_condition(2, 0, CompareType.Equals);
+            gp.show_win("原始");
+
+            var dist_grid = DistanceTransform.EuclideanDistanceTransform(gp, 1);
+            dist_grid.show_win("距离变换");
+        }
+
+        private void Patterns测试()
+        {
+            var ti = Grid.create_from_gslibwin().grid.select_gridProperty_win().grid_property;
+            var mould = Mould.create_by_ellipse(8, 8, 1);
+            var patterns = Patterns.create(mould, ti, false);
+            System.Console.WriteLine(patterns.Count);
+        }
 
         private void CData2测试()
         {
             CData2 cd2 = CData2.read_from_gslib_win().cdata;
-            var (coarsend, g) = cd2.coarsened(GridStructure.create_simple(100, 100, 1));
+            var (coarsend, g) = cd2.coarsened(GridStructure.create_simple(30, 30, 1));
             g.showGrid_win();
 
             var value = cd2[10, 1];
@@ -72,26 +92,27 @@ namespace JAM8.Console.Pages
                 return;
 
             GridStructure re_gs = ti.gridStructure;
-            Grid sim_grid = Grid.create(re_gs);//包含概率体数据、硬数据（赋值在模拟网格中）
+            Grid sim_grid = Grid.create(re_gs); //包含概率体数据、硬数据（赋值在模拟网格中）
 
             Output.WriteLine(ConsoleColor.Yellow, "打开cd");
             CData cd = CData.read_from_gslibwin("打开cd").cdata;
             if (cd != null)
             {
                 var gp_cd = cd.assign_to_grid(re_gs).grid_assigned.select_gridProperty_win().grid_property;
-                sim_grid.add_gridProperty("re", gp_cd);//将cd赋值给grid
+                sim_grid.add_gridProperty("re", gp_cd); //将cd赋值给grid
             }
             else
             {
-                sim_grid.add_gridProperty("re");//将cd赋值给grid
+                sim_grid.add_gridProperty("re"); //将cd赋值给grid
             }
 
             Output.WriteLine(ConsoleColor.Yellow, "加载软数据（概率体模型）");
             var soft_cd = Grid.create_from_gslibwin().grid.select_gridProperty_win("选择软条件数据").grid_property;
-            sim_grid.add_gridProperty("soft_cd", soft_cd);//将cd赋值给grid
+            sim_grid.add_gridProperty("soft_cd", soft_cd); //将cd赋值给grid
 
-            Mould mould = ti.gridStructure.dim == Dimension.D2 ? Mould.create_by_ellipse(10, 10, 1) :
-                Mould.create_by_ellipse(7, 7, 3, 1);
+            Mould mould = ti.gridStructure.dim == Dimension.D2
+                ? Mould.create_by_ellipse(10, 10, 1)
+                : Mould.create_by_ellipse(7, 7, 3, 1);
             mould = Mould.create_by_mould(mould, 4);
 
 
@@ -113,7 +134,7 @@ namespace JAM8.Console.Pages
             var g1 = GridProperty.create(g,
                 (g.Min, 0.2f, null),
                 (0.5f, g.Max, null)
-                );
+            );
             g1.show_win("测试1");
 
             var (a, b) = g.get_values_by_condition(0.2f, CompareType.GreaterThan);
@@ -123,8 +144,6 @@ namespace JAM8.Console.Pages
             //g.set_values_by_condition((float?)0.5, null, CompareType.GreaterThan);
             //g.set_values_by_condition((float?)0.2, null, CompareType.LessThan);
             //g.show_win("测试4");
-
-
         }
 
         private void 从很大数组里等间距取值()
@@ -141,6 +160,7 @@ namespace JAM8.Console.Pages
             {
                 record[series_name] = 0;
             }
+
             df_sample.add_record(record);
 
             for (int i = 1; i < sample_indexes.Length; i++)
@@ -170,8 +190,8 @@ namespace JAM8.Console.Pages
 
                 var list2 = series_buffer
                     .Select((value, index) => new { value, index }) // 把值和索引配对
-                    .GroupBy(x => x.index / partitionSize)         // 按索引分组
-                    .Select(group => group.Average(x => x.value))  // 计算每组的均值
+                    .GroupBy(x => x.index / partitionSize) // 按索引分组
+                    .Select(group => group.Average(x => x.value)) // 计算每组的均值
                     .ToArray();
 
                 temp.Add(df.series_names[i], list2);
@@ -209,8 +229,9 @@ namespace JAM8.Console.Pages
                 return;
 
             var ti = g.first_gridProperty();
-            Mould mould = ti.gridStructure.dim == Dimension.D2 ? Mould.create_by_ellipse(10, 10, 1) :
-                Mould.create_by_ellipse(7, 7, 3, 1);
+            Mould mould = ti.gridStructure.dim == Dimension.D2
+                ? Mould.create_by_ellipse(10, 10, 1)
+                : Mould.create_by_ellipse(7, 7, 3, 1);
             mould = Mould.create_by_mould(mould, 40);
 
             //手动测试
@@ -270,11 +291,11 @@ namespace JAM8.Console.Pages
                 Output.WriteLine(ConsoleColor.Red, $"时间:{time}");
                 result.showGrid_win();
             }
+
             //加速比
             double 加速比 = first / (sum_35percent / 10.0);
             Output.WriteLine(ConsoleColor.Red, $"使用时间:{(sum_35percent / 10.0)}");
             Output.WriteLine(ConsoleColor.Red, $"加速比:{加速比}");
-
         }
 
 
@@ -296,9 +317,9 @@ namespace JAM8.Console.Pages
                 return;
 
             var ti = g.first_gridProperty();
-            Mould mould = ti.gridStructure.dim == Dimension.D2 ?
-                Mould.create_by_ellipse(10, 10, 1) :
-                Mould.create_by_ellipse(7, 7, 3, 1);
+            Mould mould = ti.gridStructure.dim == Dimension.D2
+                ? Mould.create_by_ellipse(10, 10, 1)
+                : Mould.create_by_ellipse(7, 7, 3, 1);
 
             mould = Mould.create_by_mould(mould, 40);
 
@@ -317,7 +338,7 @@ namespace JAM8.Console.Pages
 
             re.showGrid_win();
 
-            var (not_match_number, not_match_array_index) = 
+            var (not_match_number, not_match_array_index) =
                 corsened_cd.check_match(re.first_gridProperty(), corsened_cd.property_names[0]);
 
             //re?.showGrid_win();

@@ -120,7 +120,7 @@ namespace JAM8.Console.Pages
             random_field = MyFFT.ifft2(random_field);
             Form_QuickChart.ArrayPlot2(random_field, 0);
 
-            System.Console.WriteLine("模拟完成,按任意键返回");
+            System.Console.WriteLine(@"模拟完成,按任意键返回");
             System.Console.ReadKey();
 
         }
@@ -146,7 +146,7 @@ namespace JAM8.Console.Pages
             GridStructure gs = GridStructure.create_simple(nx, ny, nz);
             GridProperty gp = GridProperty.create(gs);
             sw.Stop();
-            System.Console.WriteLine($"阶段1,time={sw.ElapsedMilliseconds}");
+            System.Console.WriteLine($@"阶段1,time={sw.ElapsedMilliseconds}");
             sw.Reset();
             sw.Restart();
             for (int n = 0; n < gs.N; n++)
@@ -158,7 +158,7 @@ namespace JAM8.Console.Pages
                 gp.set_value(n, (float?)semiv);
             }
             sw.Stop();
-            System.Console.WriteLine($"阶段2,time={sw.ElapsedMilliseconds}");
+            System.Console.WriteLine($@"阶段2,time={sw.ElapsedMilliseconds}");
             sw.Reset();
             sw.Restart();
             //gp.show_win();
@@ -175,19 +175,19 @@ namespace JAM8.Console.Pages
                 }
             }
             sw.Stop();
-            System.Console.WriteLine($"阶段3,time={sw.ElapsedMilliseconds}");
+            System.Console.WriteLine($@"阶段3,time={sw.ElapsedMilliseconds}");
             sw.Reset();
             sw.Restart();
             //Form_QuickChart.ArrayPlot2(cov, 0);
             var cov_shift = MyFFT.fftshift3(cov);
             sw.Stop();
-            System.Console.WriteLine($"阶段4,time={sw.ElapsedMilliseconds}");
+            System.Console.WriteLine($@"阶段4,time={sw.ElapsedMilliseconds}");
             sw.Reset();
             sw.Restart();
             //Form_QuickChart.ArrayPlot2(cov_shift, 0);
             var fftC = MyFFT.fft3(cov_shift);
             sw.Stop();
-            System.Console.WriteLine($"阶段5,time={sw.ElapsedMilliseconds}");
+            System.Console.WriteLine($@"阶段5,time={sw.ElapsedMilliseconds}");
             sw.Reset();
             sw.Restart();
             //Form_QuickChart.ArrayPlot2(fftC, 2);
@@ -206,13 +206,13 @@ namespace JAM8.Console.Pages
                 }
             }
             sw.Stop();
-            System.Console.WriteLine($"阶段6,time={sw.ElapsedMilliseconds}");
+            System.Console.WriteLine($@"阶段6,time={sw.ElapsedMilliseconds}");
             sw.Reset();
             sw.Restart();
             //Form_QuickChart.ArrayPlot2(z_rand, 0);
             z_rand = MyFFT.fft3(z_rand);
             sw.Stop();
-            System.Console.WriteLine($"阶段7,time={sw.ElapsedMilliseconds}");
+            System.Console.WriteLine($@"阶段7,time={sw.ElapsedMilliseconds}");
             sw.Reset();
             sw.Restart();
             //Form_QuickChart.ArrayPlot2(z_rand, 0);
@@ -229,10 +229,10 @@ namespace JAM8.Console.Pages
             }
             random_field = MyFFT.ifft3(random_field);
             sw.Stop();
-            System.Console.WriteLine($"模拟完成,time={sw.ElapsedMilliseconds}");
+            System.Console.WriteLine($@"模拟完成,time={sw.ElapsedMilliseconds}");
             Form_QuickChart.ArrayPlot2(random_field, 0);
 
-            System.Console.WriteLine("模拟完成,按任意键返回");
+            System.Console.WriteLine(@"模拟完成,按任意键返回");
             System.Console.ReadKey();
 
         }
@@ -247,7 +247,7 @@ namespace JAM8.Console.Pages
             var rot_mat = new double[] { 0, 0, 0, 20, 20, 2 };
             var (result, time) = grfs.run(30, rot_mat, 20, rnd.Next());
             result.showGrid_win();
-            System.Console.WriteLine($"计算时间:{time}秒");
+            System.Console.WriteLine($@"计算时间:{time}秒");
         }
 
         private void Modeling_GRFS_withCData_Method2()
@@ -260,7 +260,7 @@ namespace JAM8.Console.Pages
             var rot_mat = new double[] { 0, 0, 0, 20, 20, 2 };
             var (result, time) = grfs.run2(30, rot_mat, 20, rnd.Next());
             result.showGrid_win();
-            System.Console.WriteLine($"计算时间:{time}秒");
+            System.Console.WriteLine($@"计算时间:{time}秒");
         }
 
         private void MPS模拟()

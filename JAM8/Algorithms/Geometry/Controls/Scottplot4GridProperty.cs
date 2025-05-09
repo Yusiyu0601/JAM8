@@ -8,8 +8,8 @@ namespace JAM8.Algorithms.Geometry
     public partial class Scottplot4GridProperty : UserControl
     {
         public GridProperty _gp { get; internal set; }//输入GridProperty，2D或者3D
-        GridProperty _viewGrid;//显示GridProperty，只能是2D(2D模型本身、或者3D模型切片)
-        ScottPlot.Drawing.Colormap[] _colormaps = ScottPlot.Drawing.Colormap.GetColormaps();
+        private GridProperty _viewGrid;//显示GridProperty，只能是2D(2D模型本身、或者3D模型切片)
+        private ScottPlot.Drawing.Colormap[] _colormaps = ScottPlot.Drawing.Colormap.GetColormaps();
 
 
 
@@ -176,7 +176,7 @@ namespace JAM8.Algorithms.Geometry
             MouseDownEvent?.Invoke(ix, iy);
         }
 
-        static double?[,] Grid2Intensities(GridProperty gp)
+        private static double?[,] Grid2Intensities(GridProperty gp)
         {
             //grid网格顺时针旋转90度
             double?[,] intensities = new double?[gp.gridStructure.ny, gp.gridStructure.nx];
@@ -192,10 +192,11 @@ namespace JAM8.Algorithms.Geometry
             return intensities;
         }
 
-        Heatmap hm = null;
-        Colorbar cb = null;
+        private Heatmap hm = null;
+
+        private Colorbar cb = null;
         //重新绘制可显示的图像
-        void re_draw_viewGrid()
+        private void re_draw_viewGrid()
         {
             if (_gp == null) return;
             ScottPlot.Drawing.Colormap cmap;
@@ -218,7 +219,7 @@ namespace JAM8.Algorithms.Geometry
         }
 
         //根据实际情况，获取实际显示的模型
-        void get_viewGrid()
+        private void get_viewGrid()
         {
             if (_gp.gridStructure.dim == Dimension.D2)
             {

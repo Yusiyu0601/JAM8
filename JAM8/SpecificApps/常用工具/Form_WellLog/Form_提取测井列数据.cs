@@ -4,9 +4,9 @@ namespace JAM8.SpecificApps.常用工具
 {
     public partial class Form_提取测井列数据 : Form
     {
-        Dictionary<string, string> fileNames_dic = null;
+        private Dictionary<string, string> fileNames_dic = null;
 
-        MyDataFrame df_current = null;//当前显示的表
+        private MyDataFrame df_current = null;//当前显示的表
 
         public Form_提取测井列数据()
         {
@@ -111,7 +111,7 @@ namespace JAM8.SpecificApps.常用工具
                     return;
                 var df = df_current.get_series_subset(curve_names);
                 MyDataFrame.write_to_excel(df, sfd.FileName);
-                Console.WriteLine($"保存完成({listBox1.SelectedItem})");
+                Console.WriteLine($@"保存完成({listBox1.SelectedItem})");
             }
             else
             {
@@ -137,11 +137,11 @@ namespace JAM8.SpecificApps.常用工具
                         {
                             tip += not_found[i] + " ";
                         }
-                        Console.WriteLine($"{fileName_justName}缺少列:{tip}");
+                        Console.WriteLine($@"{fileName_justName}缺少列:{tip}");
                         continue;
                     }
                     MyDataFrame.write_to_excel(df, save_path);
-                    Console.WriteLine($"保存完成({fileName_justName})");
+                    Console.WriteLine($@"保存完成({fileName_justName})");
                 }
             }
         }

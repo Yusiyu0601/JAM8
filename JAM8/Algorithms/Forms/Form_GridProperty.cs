@@ -2,7 +2,7 @@
 {
     public partial class Form_GridProperty : Form
     {
-        GridProperty _gp = null;
+        private GridProperty _gp = null;
 
         public Form_GridProperty(GridProperty gp)
         {

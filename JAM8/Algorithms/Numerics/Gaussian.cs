@@ -16,7 +16,7 @@
         /// </summary>
         public double STD { get; internal set; }
 
-        Random rnd = null;
+        private Random rnd = null;
 
         //构造函数
         public Gaussian()
@@ -177,7 +177,8 @@
         }
 
         #region 私有方法
-        static double RationalApproximation(double t)
+
+        private static double RationalApproximation(double t)
         {
             // Abramowitz and Stegun formula 26.2.23.
             // The absolute value of the error should be less than 4.5 e-4.
@@ -196,7 +197,7 @@
         ///         <item>returns -1 if <c>x == Double.NegativeInfinity</c>.</item>
         ///     </list>
         /// </remarks>
-        static double Erf(double x)
+        private static double Erf(double x)
         {
             if (x == 0)
             {
@@ -226,7 +227,7 @@
         /// <param name="poly">The coefficients of the polynomial.</param>
         /// <param name="z">The location where to evaluate the polynomial at.</param>
         /// <returns>the evaluation of the polynomial.</returns>
-        static double EvaluatePolynomial(double[] poly, double z)
+        private static double EvaluatePolynomial(double[] poly, double z)
         {
             int count = poly.Length;
             double sum = poly[count - 1];
@@ -244,7 +245,7 @@
         /// <param name="z">Where to evaluate the error function.</param>
         /// <param name="invert">Whether to compute 1 - the error function.</param>
         /// <returns>the error function.</returns>
-        static double ErfImp(double z, bool invert)
+        private static double ErfImp(double z, bool invert)
         {
             if (z < 0)
             {
@@ -429,7 +430,7 @@
         /// <summary>calculates the complementary inverse error function evaluated at z.</summary>
         /// <param name="z">value to evaluate.</param>
         /// <returns>the complementary inverse error function evaluated at Z.</returns>
-        static double ErfcInv(double z)
+        private static double ErfcInv(double z)
         {
             if (z <= 0.0)
             {
@@ -464,7 +465,7 @@
         /// <param name="q">Second intermediate parameter.</param>
         /// <param name="s">Third intermediate parameter.</param>
         /// <returns>the inverse error function.</returns>
-        static double ErfInvImpl(double p, double q, double s)
+        private static double ErfInvImpl(double p, double q, double s)
         {
             double result;
 

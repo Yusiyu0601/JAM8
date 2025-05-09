@@ -6,10 +6,10 @@ namespace JAM8.SpecificApps.常用工具
 {
     public partial class Form_SVM : Form
     {
-        MyDataFrame df = null;
-        SVMModel svm_model = null;
+        private MyDataFrame df = null;
+        private SVMModel svm_model = null;
 
-        MyDataFrame df_predict = null;
+        private MyDataFrame df_predict = null;
 
         public Form_SVM()
         {

@@ -46,7 +46,7 @@ namespace JAM8.SpecificApps.常用工具
             int iDepth_bottom = int.Parse(Console.ReadLine()) - 1;
 
             Console.WriteLine();
-            Console.WriteLine("提示:输入xlsx测井曲线文件B，<首行标题> [1-深度] [2-测井属性1] [3-测井属性2] ...，要求目录下所有文件标题相同、顺序相同");
+            Console.WriteLine(@"提示:输入xlsx测井曲线文件B，<首行标题> [1-深度] [2-测井属性1] [3-测井属性2] ...，要求目录下所有文件标题相同、顺序相同");
             Dictionary<string, MyDataFrame> dfs_测井曲线 = new();
             var fileNames = DirHelper.GetFileNames();
             List<string> curve_names = null;//曲线名称

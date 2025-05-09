@@ -6,8 +6,8 @@ namespace JAM8.SpecificApps.建模方法
 {
     public partial class Form_GRFS : Form
     {
-        CData cd;
-        string file_name_cd;
+        private CData cd;
+        private string file_name_cd;
 
         public Form_GRFS()
         {

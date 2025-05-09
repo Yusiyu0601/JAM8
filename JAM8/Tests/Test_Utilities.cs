@@ -70,7 +70,7 @@ namespace JAM8.Tests
             var idx = MyGenerator.linespace(1, 100, 100);
         }
 
-        class ABC
+        private class ABC
         {
             public string a { get; set; }
             public string b { get; set; }
@@ -87,7 +87,7 @@ namespace JAM8.Tests
             Console.WriteLine(abc.Count);
             foreach (var item in abc)
             {
-                Console.WriteLine($"{item.a}, {item.b}, {item.c}");
+                Console.WriteLine($@"{item.a}, {item.b}, {item.c}");
             }
         }
 

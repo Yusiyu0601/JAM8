@@ -62,7 +62,7 @@ namespace JAM8.Console.Pages
             g.Add("estimate_idw", estimate_idw);
             g.showGrid_win("反距离加权插值模型");
             sw.Stop();
-            System.Console.WriteLine($"Time:{sw.ElapsedMilliseconds}");
+            System.Console.WriteLine($@"Time:{sw.ElapsedMilliseconds}");
 
         }
 

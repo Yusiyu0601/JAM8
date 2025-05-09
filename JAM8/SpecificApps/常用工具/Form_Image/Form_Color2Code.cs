@@ -6,7 +6,7 @@
         public event delegate_OK event_OK;
 
         public Dictionary<string, double> Color2Code = null;
-        Bitmap m_image = null;
+        private Bitmap m_image = null;
 
         public Form_Color2Code(string GridName, Bitmap image)
         {
@@ -19,7 +19,7 @@
             txt_GridName.Text = GridName;
         }
 
-        void SetColor2CodeDic()
+        private void SetColor2CodeDic()
         {
             Color2Code = new Dictionary<string, double>();
             //统计图像的像素颜色值数量

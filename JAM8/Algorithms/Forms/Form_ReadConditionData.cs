@@ -8,11 +8,11 @@ namespace JAM8.Algorithms.Geometry
 {
     public partial class Form_ReadConditionData : Form
     {
-        string fileName = "";
-        string Dim = Dimension.D2.ToString();
-        int ColX, ColY, ColZ;
-        double? nullValue;
-        bool enable_nullValue;
+        private string fileName = "";
+        private string Dim = Dimension.D2.ToString();
+        private int ColX, ColY, ColZ;
+        private double? nullValue;
+        private bool enable_nullValue;
 
         public List<string> paras { get; internal set; }
 
@@ -78,7 +78,7 @@ namespace JAM8.Algorithms.Geometry
         }
 
         //前30行数据预览
-        void 预览()
+        private void 预览()
         {
             groupBox1.Enabled = true;
             textBox1.Text = fileName;

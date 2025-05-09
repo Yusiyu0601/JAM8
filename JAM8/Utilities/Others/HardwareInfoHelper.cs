@@ -385,10 +385,10 @@ namespace JAM8.Utilities
         #region API
 
         [DllImport("kernel32.dll", SetLastError = true)]
-        static extern int CloseHandle(IntPtr hObject);
+        private static extern int CloseHandle(IntPtr hObject);
 
         [DllImport("kernel32.dll", SetLastError = true)]
-        static extern IntPtr CreateFile(
+        private static extern IntPtr CreateFile(
          string lpFileName,
          uint dwDesiredAccess,
          uint dwShareMode,
@@ -398,7 +398,7 @@ namespace JAM8.Utilities
          IntPtr hTemplateFile);
 
         [DllImport("kernel32.dll")]
-        static extern int DeviceIoControl(
+        private static extern int DeviceIoControl(
          IntPtr hDevice,
          uint dwIoControlCode,
          IntPtr lpInBuffer,
@@ -409,7 +409,7 @@ namespace JAM8.Utilities
          [Out] IntPtr lpOverlapped);
 
         [DllImport("kernel32.dll")]
-        static extern int DeviceIoControl(
+        private static extern int DeviceIoControl(
          IntPtr hDevice,
          uint dwIoControlCode,
          ref SendCmdInParams lpInBuffer,
@@ -420,17 +420,17 @@ namespace JAM8.Utilities
          [Out] IntPtr lpOverlapped);
 
 
-        const uint DFP_GET_VERSION = 0x00074080;
-        const uint DFP_SEND_DRIVE_COMMAND = 0x0007c084;
-        const uint DFP_RECEIVE_DRIVE_DATA = 0x0007c088;
+        private const uint DFP_GET_VERSION = 0x00074080;
+        private const uint DFP_SEND_DRIVE_COMMAND = 0x0007c084;
+        private const uint DFP_RECEIVE_DRIVE_DATA = 0x0007c088;
 
 
-        const uint GENERIC_READ = 0x80000000;
-        const uint GENERIC_WRITE = 0x40000000;
-        const uint FILE_SHARE_READ = 0x00000001;
-        const uint FILE_SHARE_WRITE = 0x00000002;
-        const uint CREATE_NEW = 1;
-        const uint OPEN_EXISTING = 3;
+        private const uint GENERIC_READ = 0x80000000;
+        private const uint GENERIC_WRITE = 0x40000000;
+        private const uint FILE_SHARE_READ = 0x00000001;
+        private const uint FILE_SHARE_WRITE = 0x00000002;
+        private const uint CREATE_NEW = 1;
+        private const uint OPEN_EXISTING = 3;
 
 
         #endregion

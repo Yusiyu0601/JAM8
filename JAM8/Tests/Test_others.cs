@@ -69,7 +69,8 @@ namespace JAM8.Tests
             Console.Write("组合结果为:\n");
             combrecur(n, r, arr, 0);
         }
-        static void combrecur(int n, int r, int[] arr, int index)
+
+        private static void combrecur(int n, int r, int[] arr, int index)
         {
             if (r == 0)
             {
@@ -91,7 +92,7 @@ namespace JAM8.Tests
             combrecur(n - 1, r, arr, index);
         }
 
-        static int[] a = new int[100];
+        private static int[] a = new int[100];
         public static void 自然数的组合计算()
         {
             int m = 6, k = 3;
@@ -100,7 +101,8 @@ namespace JAM8.Tests
                 function(i, k);
             }
         }
-        static void function(int m, int k)
+
+        private static void function(int m, int k)
         {
             if (k == 1)
             {
@@ -191,17 +193,17 @@ namespace JAM8.Tests
             Console.WriteLine("### Overall End Time: " + end.ToLongTimeString());
             Console.WriteLine("### Overall Run Time: " + (end - start));
             Console.WriteLine();
-            Console.WriteLine("Hit Enter to Exit");
+            Console.WriteLine(@"Hit Enter to Exit");
             Console.ReadLine();
         }
         //####################################################
         //Does a comparison of reading all the lines in from a file. Which way is fastest?
-        static void TestReadingLinesFromFile(int numberOfLines, int numTimesGuidRepeated)
+        private static void TestReadingLinesFromFile(int numberOfLines, int numTimesGuidRepeated)
         {
             Console.WriteLine("######## " + System.Reflection.MethodBase.GetCurrentMethod().Name);
             Console.WriteLine("######## Number of lines in file: " + numberOfLines);
             Console.WriteLine("######## Number of times Guid repeated on each line: " + numTimesGuidRepeated);
-            Console.WriteLine("###########################################################");
+            Console.WriteLine(@"###########################################################");
             Console.WriteLine();
             string g = String.Join("", Enumerable.Repeat(new Guid().ToString(), numTimesGuidRepeated));
             string[] AllLines = null;
@@ -229,7 +231,7 @@ namespace JAM8.Tests
             GC.Collect();
             Thread.Sleep(1000);     //give disk hardware time to recover
             //Just read everything into one string
-            Console.WriteLine("Reading file reading to end into string: ");
+            Console.WriteLine(@"Reading file reading to end into string: ");
             start = DateTime.Now;
             try
             {
@@ -246,7 +248,7 @@ namespace JAM8.Tests
             catch (OutOfMemoryException)
             {
                 end = DateTime.Now;
-                Console.WriteLine("Not enough memory. Couldn't perform this test.");
+                Console.WriteLine(@"Not enough memory. Couldn't perform this test.");
                 Console.WriteLine("Finished at: " + end.ToLongTimeString());
                 Console.WriteLine("Time: " + (end - start));
                 Console.WriteLine();
@@ -254,7 +256,7 @@ namespace JAM8.Tests
             catch (Exception)
             {
                 end = DateTime.Now;
-                Console.WriteLine("EXCEPTION. Couldn't perform this test.");
+                Console.WriteLine(@"EXCEPTION. Couldn't perform this test.");
                 Console.WriteLine("Finished at: " + end.ToLongTimeString());
                 Console.WriteLine("Time: " + (end - start));
                 Console.WriteLine();
@@ -266,7 +268,7 @@ namespace JAM8.Tests
             GC.Collect();
             Thread.Sleep(1000);     //give disk hardware time to recover
             //Read the entire contents into a StringBuilder object
-            Console.WriteLine("Reading file reading to end into stringbuilder: ");
+            Console.WriteLine(@"Reading file reading to end into stringbuilder: ");
             start = DateTime.Now;
             try
             {
@@ -284,7 +286,7 @@ namespace JAM8.Tests
             catch (OutOfMemoryException)
             {
                 end = DateTime.Now;
-                Console.WriteLine("Not enough memory. Couldn't perform this test.");
+                Console.WriteLine(@"Not enough memory. Couldn't perform this test.");
                 Console.WriteLine("Finished at: " + end.ToLongTimeString());
                 Console.WriteLine("Time: " + (end - start));
                 Console.WriteLine();
@@ -292,7 +294,7 @@ namespace JAM8.Tests
             catch (Exception)
             {
                 end = DateTime.Now;
-                Console.WriteLine("EXCEPTION. Couldn't perform this test.");
+                Console.WriteLine(@"EXCEPTION. Couldn't perform this test.");
                 Console.WriteLine("Finished at: " + end.ToLongTimeString());
                 Console.WriteLine("Time: " + (end - start));
                 Console.WriteLine();
@@ -304,7 +306,7 @@ namespace JAM8.Tests
             GC.Collect();
             Thread.Sleep(1000);     //give disk hardware time to recover
             //Standard and probably most common way of reading a file. 
-            Console.WriteLine("Reading file assigning each line to string: ");
+            Console.WriteLine(@"Reading file assigning each line to string: ");
             start = DateTime.Now;
             using (StreamReader sr = File.OpenText(fileName))
             {
@@ -325,7 +327,7 @@ namespace JAM8.Tests
             GC.Collect();
             Thread.Sleep(1000);     //give disk hardware time to recover
             //Doing it the most common way, but using a Buffered Reader now.
-            Console.WriteLine("Buffered reading file assigning each line to string: ");
+            Console.WriteLine(@"Buffered reading file assigning each line to string: ");
             start = DateTime.Now;
             using (FileStream fs = File.Open(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             using (BufferedStream bs = new BufferedStream(fs))
@@ -347,7 +349,7 @@ namespace JAM8.Tests
             GC.Collect();
             Thread.Sleep(1000);     //give disk hardware time to recover
             //Reading each line using a buffered reader again, but setting the buffer size since we know what it will be.
-            Console.WriteLine("Buffered reading with preset buffer size assigning each line to string: ");
+            Console.WriteLine(@"Buffered reading with preset buffer size assigning each line to string: ");
             start = DateTime.Now;
             using (FileStream fs = File.Open(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             using (BufferedStream bs = new BufferedStream(fs, System.Text.ASCIIEncoding.Unicode.GetByteCount(g)))
@@ -369,7 +371,7 @@ namespace JAM8.Tests
             GC.Collect();
             Thread.Sleep(1000);     //give disk hardware time to recover
             //Read every line of the file reusing a StringBuilder object to save on string memory allocation times
-            Console.WriteLine("Reading file assigning each line to StringBuilder: ");
+            Console.WriteLine(@"Reading file assigning each line to StringBuilder: ");
             start = DateTime.Now;
             using (StreamReader sr = File.OpenText(fileName))
             {
@@ -392,7 +394,7 @@ namespace JAM8.Tests
             Thread.Sleep(1000);     //give disk hardware time to recover
             //Reading each line into a StringBuilder, but setting the StringBuilder object to an initial
             //size since we know how long the longest line in the file is.
-            Console.WriteLine("Reading file assigning each line to preset size StringBuilder: ");
+            Console.WriteLine(@"Reading file assigning each line to preset size StringBuilder: ");
             start = DateTime.Now;
             using (StreamReader sr = File.OpenText(fileName))
             {
@@ -414,7 +416,7 @@ namespace JAM8.Tests
             GC.Collect();
             Thread.Sleep(1000);     //give disk hardware time to recover
             //Read each line into an array index. 
-            Console.WriteLine("Reading each line into string array: ");
+            Console.WriteLine(@"Reading each line into string array: ");
             start = DateTime.Now;
             try
             {
@@ -437,7 +439,7 @@ namespace JAM8.Tests
             catch (OutOfMemoryException)
             {
                 end = DateTime.Now;
-                Console.WriteLine("Not enough memory. Couldn't perform this test.");
+                Console.WriteLine(@"Not enough memory. Couldn't perform this test.");
                 Console.WriteLine("Finished at: " + end.ToLongTimeString());
                 Console.WriteLine("Time: " + (end - start));
                 Console.WriteLine();
@@ -445,7 +447,7 @@ namespace JAM8.Tests
             catch (Exception)
             {
                 end = DateTime.Now;
-                Console.WriteLine("EXCEPTION. Couldn't perform this test.");
+                Console.WriteLine(@"EXCEPTION. Couldn't perform this test.");
                 Console.WriteLine("Finished at: " + end.ToLongTimeString());
                 Console.WriteLine("Time: " + (end - start));
                 Console.WriteLine();
@@ -465,7 +467,7 @@ namespace JAM8.Tests
             GC.Collect();
             Thread.Sleep(1000);
             //Read the entire file using File.ReadAllLines. 
-            Console.WriteLine("Performing File ReadAllLines into array: ");
+            Console.WriteLine(@"Performing File ReadAllLines into array: ");
             start = DateTime.Now;
             try
             {
@@ -479,7 +481,7 @@ namespace JAM8.Tests
             catch (OutOfMemoryException)
             {
                 end = DateTime.Now;
-                Console.WriteLine("Not enough memory. Couldn't perform this test.");
+                Console.WriteLine(@"Not enough memory. Couldn't perform this test.");
                 Console.WriteLine("Finished at: " + end.ToLongTimeString());
                 Console.WriteLine("Time: " + (end - start));
                 Console.WriteLine();
@@ -487,7 +489,7 @@ namespace JAM8.Tests
             catch (Exception)
             {
                 end = DateTime.Now;
-                Console.WriteLine("EXCEPTION. Couldn't perform this test.");
+                Console.WriteLine(@"EXCEPTION. Couldn't perform this test.");
                 Console.WriteLine("Finished at: " + end.ToLongTimeString());
                 Console.WriteLine("Time: " + (end - start));
                 Console.WriteLine();
@@ -529,10 +531,10 @@ namespace JAM8.Tests
 
 
 
-            Console.WriteLine($"{sw.ElapsedMilliseconds}");
+            Console.WriteLine($@"{sw.ElapsedMilliseconds}");
         }
 
-        static (int x, int y, int z) sorted(int x, int y, int z)
+        private static (int x, int y, int z) sorted(int x, int y, int z)
         {
             int t;
             if (x > y)

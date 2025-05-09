@@ -19,7 +19,7 @@ namespace JAM8.Algorithms.MachineLearning
         /// <param name="rawData"></param>
         /// <param name="numClusters"></param>
         /// <returns></returns>
-        static int[] Cluster(double[][] rawData, int numClusters)
+        private static int[] Cluster(double[][] rawData, int numClusters)
         {
             // k-means clustering
             // index of return is tuple ID, cell is cluster ID
@@ -93,7 +93,7 @@ namespace JAM8.Algorithms.MachineLearning
 
         #region 私有方法
 
-        static double[][] Normalized(double[][] rawData)
+        private static double[][] Normalized(double[][] rawData)
         {
             // normalize raw data by computing (x - mean) / stddev
             // primary alternative is min-max:
@@ -123,7 +123,7 @@ namespace JAM8.Algorithms.MachineLearning
             return result;
         }
 
-        static int[] InitClustering(int numTuples, int numClusters, int randomSeed)
+        private static int[] InitClustering(int numTuples, int numClusters, int randomSeed)
         {
             // init clustering semi-randomly (at least one tuple in each cluster)
             // consider alternatives, especially k-means++ initialization,
@@ -139,7 +139,7 @@ namespace JAM8.Algorithms.MachineLearning
             return clustering;
         }
 
-        static double[][] Allocate(int numClusters, int numColumns)
+        private static double[][] Allocate(int numClusters, int numColumns)
         {
             // convenience matrix allocator for Cluster()
             double[][] result = new double[numClusters][];
@@ -148,7 +148,7 @@ namespace JAM8.Algorithms.MachineLearning
             return result;
         }
 
-        static bool UpdateMeans(double[][] data, int[] clustering, double[][] means)
+        private static bool UpdateMeans(double[][] data, int[] clustering, double[][] means)
         {
             // returns false if there is a cluster that has no tuples assigned to it
             // parameter means[][] is really a ref parameter
@@ -186,7 +186,7 @@ namespace JAM8.Algorithms.MachineLearning
             return true;
         }
 
-        static bool UpdateClustering(double[][] data, int[] clustering, double[][] means)
+        private static bool UpdateClustering(double[][] data, int[] clustering, double[][] means)
         {
             // (re)assign each tuple to a cluster (closest mean)
             // returns false if no tuple assignments change OR
@@ -233,7 +233,7 @@ namespace JAM8.Algorithms.MachineLearning
             return true; // good clustering and at least one change
         }
 
-        static double Distance(double[] tuple, double[] mean)
+        private static double Distance(double[] tuple, double[] mean)
         {
             // Euclidean distance between two vectors for UpdateClustering()
             // consider alternatives such as Manhattan distance
@@ -243,7 +243,7 @@ namespace JAM8.Algorithms.MachineLearning
             return Math.Sqrt(sumSquaredDiffs);
         }
 
-        static int MinIndex(double[] distances)
+        private static int MinIndex(double[] distances)
         {
             // index of smallest value in array
             // helper for UpdateClustering()

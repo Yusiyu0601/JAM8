@@ -6,10 +6,10 @@ namespace JAM8.SpecificApps.常用工具
 {
     public partial class Form_RandomForest : Form
     {
-        MyDataFrame df_train = null;
-        MyDataFrame df_predict = null;
+        private MyDataFrame df_train = null;
+        private MyDataFrame df_predict = null;
 
-        MyRandomForest my_rf = null;
+        private MyRandomForest my_rf = null;
 
         public Form_RandomForest()
         {

@@ -8,16 +8,16 @@ namespace JAM8.Algorithms.Geometry
     {
         private Simpat() { }
 
-        int random_seed = 1;
-        int multi_grid = 1;
-        GridProperty train_image;
-        GridStructure gs_re;
-        CoarsenedCData ccd;
-        Mould mould;
-        (int rx, int ry, int rz) template_rx_ry_rz;
-        int N = 1;//建模个数
+        private int random_seed = 1;
+        private int multi_grid = 1;
+        private GridProperty train_image;
+        private GridStructure gs_re;
+        private CoarsenedCData ccd;
+        private Mould mould;
+        private (int rx, int ry, int rz) template_rx_ry_rz;
+        private int N = 1;//建模个数
 
-        Dimension dim
+        private Dimension dim
         {
             get
             {
@@ -32,7 +32,7 @@ namespace JAM8.Algorithms.Geometry
         /// <summary>
         /// 初始化，创建模式库
         /// </summary>
-        void init()
+        private void init()
         {
             pats_mg = [];
             for (int m = 1; m <= multi_grid; m++)//多重网格模拟
@@ -180,7 +180,7 @@ namespace JAM8.Algorithms.Geometry
                             }
                             if (temp.Count == 0)
                             {
-                                Console.WriteLine("有hd，但是没有一个pat匹配所有hd节点");
+                                Console.WriteLine(@"有hd，但是没有一个pat匹配所有hd节点");
                             }
                         }
                         var ordered = temp.OrderBy(a => a.distance).ToList();

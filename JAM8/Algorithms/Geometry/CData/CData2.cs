@@ -15,23 +15,23 @@ namespace JAM8.Algorithms.Geometry
 
         public string[] property_names { get; internal set; }//属性名称
 
-        MyDataFrame buffer;//Data buffer for conditional data 条件数据的数据缓存区
+        private MyDataFrame buffer;//Data buffer for conditional data 条件数据的数据缓存区
 
         //The number of the x coordinate in the data buffer, starting at 0
         //x坐标在数据缓存区里的序号，从0开始
-        int x_series_index { get; set; }
+        private int x_series_index { get; set; }
 
         //The number of the y coordinate in the data buffer, starting at 0
         //y坐标在数据缓存区里的序号，从0开始
-        int y_series_index { get; set; }
+        private int y_series_index { get; set; }
 
         //The number of the z coordinate in the data buffer, starting at 0
         //z坐标在数据缓存区里的序号，从0开始
-        int z_series_index { get; set; }
+        private int z_series_index { get; set; }
 
-        float null_value { get; set; }//null value
+        private float null_value { get; set; }//null value
 
-        bool null_value_enabled { get; set; }//Set whether to enable null values 设置是否启用null value
+        private bool null_value_enabled { get; set; }//Set whether to enable null values 设置是否启用null value
 
         //The target grid structure, if not empty, indicates that the conditional data
         //has been coarsened to the target grid structure

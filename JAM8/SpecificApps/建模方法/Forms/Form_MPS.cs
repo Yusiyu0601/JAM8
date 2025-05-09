@@ -6,14 +6,14 @@ namespace JAM8.SpecificApps.建模方法.Forms
 {
     public partial class Form_MPS : Form
     {
-        Grid g_ti;//训练图像
-        Grid g_re;//模拟网格
+        private Grid g_ti;//训练图像
+        private Grid g_re;//模拟网格
 
-        CData cd;//cdata
-        CData2 cd2;
+        private CData cd;//cdata
+        private CData2 cd2;
 
-        string file_name_ti;
-        string file_name_cd;
+        private string file_name_ti;
+        private string file_name_cd;
 
         public Form_MPS()
         {

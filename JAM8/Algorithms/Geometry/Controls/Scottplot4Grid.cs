@@ -11,10 +11,11 @@ namespace JAM8.Algorithms.Geometry
         //选中的GridProperty，2D或者3D
         public GridProperty _gp { get; internal set; }
         //实际显示GridProperty，只能是2D(2D模型的深度复制体、或者3D模型切片)
-        GridProperty _view_2d_gp;
+        private GridProperty _view_2d_gp;
         //过滤字符串
-        string _filter_string = null;
-        readonly ScottPlot.Drawing.Colormap[] _colormaps =
+        private string _filter_string = null;
+
+        private readonly ScottPlot.Drawing.Colormap[] _colormaps =
             ScottPlot.Drawing.Colormap.GetColormaps();
 
         public delegate void MouseMoveHandler(int view_ix, int view_iy);
@@ -117,7 +118,7 @@ namespace JAM8.Algorithms.Geometry
         }
 
         //选择GridProperty
-        void cb_gridProperty_SelectedIndexChanged(object sender, EventArgs e)
+        private void cb_gridProperty_SelectedIndexChanged(object sender, EventArgs e)
         {
             _gp = _g[cb_gridProperty.Text];
 
@@ -143,7 +144,7 @@ namespace JAM8.Algorithms.Geometry
             GridPropertySelectedEvent?.Invoke(cb_gridProperty.Text);
         }
 
-        void formsPlot1_MouseMove(object sender, MouseEventArgs e)
+        private void formsPlot1_MouseMove(object sender, MouseEventArgs e)
         {
             if (_gp == null)
                 return;
@@ -156,7 +157,7 @@ namespace JAM8.Algorithms.Geometry
             MouseMoveEvent?.Invoke(ix, iy);
         }
 
-        void formsPlot1_MouseDown(object sender, MouseEventArgs e)
+        private void formsPlot1_MouseDown(object sender, MouseEventArgs e)
         {
             if (_gp == null)
                 return;
@@ -169,7 +170,7 @@ namespace JAM8.Algorithms.Geometry
             MouseDownEvent?.Invoke(ix, iy);
         }
 
-        static double?[,] Grid2Intensities(GridProperty gp)
+        private static double?[,] Grid2Intensities(GridProperty gp)
         {
             //grid网格顺时针旋转90度
             double?[,] intensities = new double?[gp.gridStructure.ny, gp.gridStructure.nx];
@@ -186,13 +187,13 @@ namespace JAM8.Algorithms.Geometry
         }
 
         //更改颜色映射并重绘
-        void cb_ColorMap_SelectedIndexChanged(object sender, EventArgs e)
+        private void cb_ColorMap_SelectedIndexChanged(object sender, EventArgs e)
         {
             redraw_viewGrid();
         }
 
         //更改坐标轴比例并重绘
-        void checkBox1_CheckedChanged(object sender, EventArgs e)
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
             if (checkBox1.Checked == true)
             {
@@ -212,29 +213,30 @@ namespace JAM8.Algorithms.Geometry
         }
 
         //更新三维切片数据并重绘
-        void numericUpDown1_ValueChanged(object sender, EventArgs e)
+        private void numericUpDown1_ValueChanged(object sender, EventArgs e)
         {
             trackBar1.Value = (int)numericUpDown1.Value;
             redraw_viewGrid();
         }
         //更新三维切片数据并重绘
-        void trackBar1_Scroll(object sender, EventArgs e)
+        private void trackBar1_Scroll(object sender, EventArgs e)
         {
             numericUpDown1.Value = trackBar1.Value;
             redraw_viewGrid();
         }
         //更新三维切片数据并重绘
-        void cb_xy_yz_zx_SelectedIndexChanged(object sender, EventArgs e)
+        private void cb_xy_yz_zx_SelectedIndexChanged(object sender, EventArgs e)
         {
             redraw_viewGrid();
         }
 
         #region 重绘函数
 
-        Heatmap hm = null;
-        Colorbar cb = null;
+        private Heatmap hm = null;
+
+        private Colorbar cb = null;
         //重新绘制可显示的图像
-        void redraw_viewGrid()
+        private void redraw_viewGrid()
         {
             if (_gp == null)
                 return;

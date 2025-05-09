@@ -82,7 +82,7 @@ namespace JAM8.Utilities
         /// </summary>
         /// <param name="file_name"></param>
         /// <returns></returns>
-        static DataTable xls_to_dataTable(string file_name)
+        private static DataTable xls_to_dataTable(string file_name)
         {
             string ext = FileHelper.GetFileExtension(file_name);
             if (ext != ".xls")
@@ -101,7 +101,7 @@ namespace JAM8.Utilities
         /// </summary>
         /// <param name="stream"></param>
         /// <returns></returns>
-        static DataTable xls_to_dataTable(Stream stream)
+        private static DataTable xls_to_dataTable(Stream stream)
         {
             Workbook workbook = Workbook.Load(stream);
             foreach (Worksheet ws in workbook.Worksheets)
@@ -118,7 +118,7 @@ namespace JAM8.Utilities
         /// <param name="file_name"></param>
         /// <param name="sheet_name"></param>
         /// <returns></returns>
-        static DataTable xls_to_dataTable(string file_name, string sheet_name)
+        private static DataTable xls_to_dataTable(string file_name, string sheet_name)
         {
             Workbook workbook = Workbook.Load(file_name);
             foreach (Worksheet ws in workbook.Worksheets)
@@ -134,7 +134,7 @@ namespace JAM8.Utilities
         /// </summary>
         /// <param name="filePath"></param>
         /// <returns></returns>
-        static DataSet xls_to_dataSet(string file_name)
+        private static DataSet xls_to_dataSet(string file_name)
         {
             DataSet ds = new();
             Workbook workbook = Workbook.Load(file_name);
@@ -146,7 +146,7 @@ namespace JAM8.Utilities
             return ds;
         }
 
-        static DataTable PopulateDataTable(Worksheet ws)
+        private static DataTable PopulateDataTable(Worksheet ws)
         {
             CellCollection Cells = ws.Cells;
 
@@ -175,7 +175,7 @@ namespace JAM8.Utilities
         /// </summary>
         /// <param name="file_name"></param>
         /// <param name="dt"></param>
-        static void dataTable_to_xls(string file_name, DataTable dt)
+        private static void dataTable_to_xls(string file_name, DataTable dt)
         {
             Workbook workbook = new();
             Worksheet worksheet = new("Sheet1");
@@ -217,7 +217,7 @@ namespace JAM8.Utilities
         /// </summary>
         /// <param name="file_name"></param>
         /// <param name="ds"></param>
-        static void dataSet_to_xls(string file_name, DataSet ds)
+        private static void dataSet_to_xls(string file_name, DataSet ds)
         {
             if (ds.Tables.Count == 0)
                 throw new ArgumentException("DataSet needs to have at least one DataTable", "dataset");
@@ -246,7 +246,7 @@ namespace JAM8.Utilities
         /// <param name="stream"></param>
         /// <param name="ds"></param>
         /// <exception cref="ArgumentException"></exception>
-        static void dataSet_to_stream(Stream stream, DataSet ds)
+        private static void dataSet_to_stream(Stream stream, DataSet ds)
         {
             if (ds.Tables.Count == 0)
                 throw new ArgumentException("DataSet needs to have at least one DataTable", "dataset");
@@ -278,7 +278,7 @@ namespace JAM8.Utilities
         /// </summary>
         /// <param name="file_name"></param>
         /// <param name="useHeaderRow"></param>
-        static DataTable xlsx_to_dataTable(string file_name)
+        private static DataTable xlsx_to_dataTable(string file_name)
         {
             try
             {
@@ -298,7 +298,7 @@ namespace JAM8.Utilities
         /// </summary>
         /// <param name="stream"></param>
         /// <returns></returns>
-        static DataTable xlsx_to_dataTable(Stream stream)
+        private static DataTable xlsx_to_dataTable(Stream stream)
         {
             var dt = MiniExcel.QueryAsDataTable(stream, useHeaderRow: true);
             return dt;
@@ -309,7 +309,7 @@ namespace JAM8.Utilities
         /// </summary>
         /// <param name="file_name"></param>
         /// <param name="dt"></param>
-        static void dataTable_to_xlsx(string file_name, DataTable dt)
+        private static void dataTable_to_xlsx(string file_name, DataTable dt)
         {
             MiniExcel.SaveAs(file_name, dt, printHeader: true, overwriteFile: true);
         }

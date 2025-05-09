@@ -5,7 +5,7 @@ namespace JAM8.Algorithms.Geometry
 {
     public partial class Form_GridStructure : Form
     {
-        string _dim = "";
+        private string _dim = "";
         public List<string> paras { get; internal set; }
         public Form_GridStructure(GridStructure gs = null, string title = null)
         {

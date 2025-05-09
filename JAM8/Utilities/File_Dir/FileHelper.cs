@@ -145,13 +145,13 @@ namespace JAM8.Utilities
         #region CheckFileCanBeUse 检查文件能否被使用
 
         [DllImport("kernel32.dll")]
-        static extern IntPtr _lopen(string lpPathName, int iReadWrite);
+        private static extern IntPtr _lopen(string lpPathName, int iReadWrite);
         [DllImport("kernel32.dll")]
-        static extern bool CloseHandle(IntPtr hObject);
+        private static extern bool CloseHandle(IntPtr hObject);
 
-        const int OF_READWRITE = 2;
-        const int OF_SHARE_DENY_NONE = 0x40;
-        static readonly IntPtr HFILE_ERROR = new IntPtr(-1);
+        private const int OF_READWRITE = 2;
+        private const int OF_SHARE_DENY_NONE = 0x40;
+        private static readonly IntPtr HFILE_ERROR = new IntPtr(-1);
 
         /// <summary>
         /// 检查文件能否被使用

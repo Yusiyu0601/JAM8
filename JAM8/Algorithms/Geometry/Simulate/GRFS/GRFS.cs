@@ -111,7 +111,7 @@ namespace JAM8.Algorithms.Geometry
             sw.Stop();
 
             //检验
-            Console.WriteLine($"条件数据匹配错误的数量：{find_mistakes(g, "cd_assign_to_grid", "result")}");
+            Console.WriteLine($@"条件数据匹配错误的数量：{find_mistakes(g, "cd_assign_to_grid", "result")}");
 
             return (g, sw.ElapsedMilliseconds);
         }
@@ -187,12 +187,12 @@ namespace JAM8.Algorithms.Geometry
             sw.Stop();
 
             //检验
-            Console.WriteLine($"条件数据匹配错误的数量：{find_mistakes(g, "Z_0_a", "Z_CS")}");
+            Console.WriteLine($@"条件数据匹配错误的数量：{find_mistakes(g, "Z_0_a", "Z_CS")}");
 
             return (g, sw.ElapsedMilliseconds);
         }
 
-        int find_mistakes(Grid g, string property_name1, string property_name2)
+        private int find_mistakes(Grid g, string property_name1, string property_name2)
         {
             int count = 0;
             for (int n = 0; n < g.gridStructure.N; n++)

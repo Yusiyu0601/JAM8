@@ -184,14 +184,14 @@ namespace JAM8.Work
         {
             string time = DateTime.Now.ToLocalTime().ToString();
             Console.WriteLine();
-            Console.WriteLine($"*   *   *   *   *   执行 Task:{taskName}   {time}  *   *   *   *   *");
+            Console.WriteLine($@"*   *   *   *   *   执行 Task:{taskName}   {time}  *   *   *   *   *");
             Console.WriteLine();
 
             Run();
 
             time = DateTime.Now.ToLocalTime().ToString();
             Console.WriteLine();
-            Console.WriteLine($"*   *   *   *   *   Task 结束:{taskName}   {time}  *   *   *   *   * ");
+            Console.WriteLine($@"*   *   *   *   *   Task 结束:{taskName}   {time}  *   *   *   *   * ");
             Console.WriteLine();
         }
 
@@ -323,7 +323,7 @@ namespace JAM8.Work
                 #region Research
 
                 case "Research_NonStationary":
-                    Research_NonStationary.Run();
+                    ResearchNonStationary.run();
                     break;
                 case "Research_模型评价问题":
                     Research_模型评价问题.Run();

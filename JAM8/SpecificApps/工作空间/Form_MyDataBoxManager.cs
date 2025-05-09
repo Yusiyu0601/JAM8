@@ -18,8 +18,8 @@ namespace JAM8.SpecificApps.工作空间
 {
     public partial class Form_MyDataBoxManager : Form
     {
-        string operate_type = "";
-        MyDataBox my_dataBox = null;
+        private string operate_type = "";
+        private MyDataBox my_dataBox = null;
         public List<MyDataItem> selected_items = null;
 
         public Form_MyDataBoxManager()
@@ -59,7 +59,7 @@ namespace JAM8.SpecificApps.工作空间
             update_listview(lite);
         }
 
-        void update_listview(LiteDatabase lite)
+        private void update_listview(LiteDatabase lite)
         {
             ILiteCollection<MyDataItem> lite_collection = lite.GetCollection<MyDataItem>("TrainingImages");
             var items = lite_collection.FindAll().ToList();

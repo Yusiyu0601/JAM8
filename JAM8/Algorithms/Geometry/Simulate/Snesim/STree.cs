@@ -18,19 +18,19 @@ namespace JAM8.Algorithms.Geometry
         /// root of search tree
         /// 搜索树的根
         /// </summary>
-        STreeNode root { get; set; }
+        private STreeNode root { get; set; }
 
         /// <summary>
         /// template
         /// 模板
         /// </summary>
-        Mould mould = null;
+        private Mould mould = null;
 
         /// <summary>
         /// training images
         /// 训练图像
         /// </summary>
-        GridProperty TI = null;
+        private GridProperty TI = null;
 
         /// <summary>
         /// Values of discrete variables
@@ -96,7 +96,7 @@ namespace JAM8.Algorithms.Geometry
         /// <summary>
         /// Search tree initialization 搜索树初始化
         /// </summary>
-        void init_tree()
+        private void init_tree()
         {
             var patterns = Patterns.create(mould, TI);//提取TI所有pattern
             long id = 0;//节点id
@@ -176,7 +176,7 @@ namespace JAM8.Algorithms.Geometry
             #endregion
         }
 
-        void init_reverse_query_structure()
+        private void init_reverse_query_structure()
         {
             stree_nodes_with_levels = [];
 
@@ -209,7 +209,7 @@ namespace JAM8.Algorithms.Geometry
         /// Count the total number of nodes in the search tree. 统计搜索树节点总数
         /// </summary>
         /// <returns></returns>
-        int get_nodes_count()
+        private int get_nodes_count()
         {
             int nodes_count = 1;//初始化为1
             List<STreeNode> nodes_temp = [root];//Temporary node collection 临时节点集合

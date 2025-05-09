@@ -13,7 +13,7 @@ namespace JAM8.SpecificApps.常用工具
 {
     public partial class Form_Grid2CData : Form
     {
-        Grid g;
+        private Grid g;
 
         public Form_Grid2CData()
         {

@@ -10,37 +10,32 @@
         /// <returns>用户输入的有效整数。</returns>
         public static int read_int_from_console(string content, string prompt = null)
         {
-            // 输出空行以提高可读性
-            Console.WriteLine();
-
-            // 如果提供了提示信息，显示内容+提示；否则只显示内容
-            if (!string.IsNullOrEmpty(prompt))
+            while (true)
             {
-                Console.WriteLine($"{content} [{prompt}]");
-            }
-            else
-            {
-                Console.WriteLine(content);
-            }
+                // 输出空行以提高可读性
+                Console.WriteLine();
 
-            // 提示用户输入整数
-            Console.Write("请输入整数 => ");
+                // 如果提供了提示信息，显示内容+提示；否则只显示内容
+                Console.WriteLine(!string.IsNullOrEmpty(prompt) ? $@"{content} [{prompt}]" : content);
 
-            // 读取用户输入
-            string input = Console.ReadLine();
+                // 提示用户输入整数
+                Console.Write(@"请输入整数 => ");
 
-            // 校验输入是否为有效的整数
-            if (int.TryParse(input, out int result))
-            {
-                // 如果解析成功，返回结果
-                return result;
-            }
-            else
-            {
-                // 如果解析失败，提示用户重新输入
-                Console.WriteLine("输入无效，请输入一个有效的整数。");
-                // 递归调用该函数，直到输入有效值
-                return read_int_from_console(content, prompt);
+                // 读取用户输入
+                var input = Console.ReadLine();
+
+                // 校验输入是否为有效的整数
+                if (int.TryParse(input, out var result))
+                {
+                    // 如果解析成功，返回结果
+                    return result;
+                }
+                else
+                {
+                    // 如果解析失败，提示用户重新输入
+                    Console.WriteLine(@"输入无效，请输入一个有效的整数。");
+                    // 递归调用该函数，直到输入有效值
+                }
             }
         }
 
@@ -58,7 +53,7 @@
             // 如果提供了提示信息，显示内容+提示；否则只显示内容
             if (!string.IsNullOrEmpty(prompt))
             {
-                Console.WriteLine($"{content} [{prompt}]");
+                Console.WriteLine($@"{content} [{prompt}]");
             }
             else
             {
@@ -80,7 +75,7 @@
             else
             {
                 // 如果解析失败，提示用户重新输入
-                Console.WriteLine("输入无效，请输入一个有效的浮点数。");
+                Console.WriteLine(@"输入无效，请输入一个有效的浮点数。");
                 // 递归调用该函数，直到输入有效值
                 return read_float_from_console(content, prompt);
             }
@@ -100,7 +95,7 @@
             // 如果提供了提示信息，显示内容+提示；否则只显示内容
             if (!string.IsNullOrEmpty(prompt))
             {
-                Console.WriteLine($"{content} [{prompt}]");
+                Console.WriteLine($@"{content} [{prompt}]");
             }
             else
             {
@@ -122,7 +117,7 @@
             else
             {
                 // 如果解析失败，提示用户重新输入
-                Console.WriteLine("输入无效，请输入一个有效的双精度浮点数。");
+                Console.WriteLine(@"输入无效，请输入一个有效的双精度浮点数。");
                 // 递归调用该函数，直到输入有效值
                 return read_double_from_console(content, prompt);
             }
@@ -142,7 +137,7 @@
             // 如果提供了提示信息，显示内容+提示；否则只显示内容
             if (!string.IsNullOrEmpty(prompt))
             {
-                Console.WriteLine($"{content} [{prompt}]");
+                Console.WriteLine($@"{content} [{prompt}]");
             }
             else
             {
@@ -158,7 +153,7 @@
             // 输入校验：如果输入为空，则提示用户重新输入
             if (string.IsNullOrEmpty(input))
             {
-                Console.WriteLine("输入不能为空，请重新输入。");
+                Console.WriteLine(@"输入不能为空，请重新输入。");
                 // 递归调用该函数，直到输入有效值
                 return read_string_from_console(content, prompt);
             }
@@ -187,7 +182,7 @@
             // 如果提供了提示信息，显示内容+提示；否则只显示内容
             if (!string.IsNullOrEmpty(prompt))
             {
-                Console.WriteLine($"{content} [{prompt}]");
+                Console.WriteLine($@"{content} [{prompt}]");
             }
             else
             {

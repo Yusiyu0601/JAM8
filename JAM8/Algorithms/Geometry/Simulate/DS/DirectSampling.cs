@@ -13,9 +13,9 @@ namespace JAM8.Algorithms.Geometry
         private DirectSampling() { }
 
         //GridProperty model { get; set; }
-        Grid model { get; set; }
+        private Grid model { get; set; }
 
-        GridProperty ti { get; set; }
+        private GridProperty ti { get; set; }
 
         /// <summary>
         /// 条件数据的属性名称，例如"岩相类型"

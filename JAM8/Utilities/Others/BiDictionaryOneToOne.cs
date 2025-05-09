@@ -8,8 +8,8 @@
     /// <typeparam name="TSecond">The type of the "value"</typeparam>
     public class BiDictionaryOneToOne<TFirst, TSecond>
     {
-        IDictionary<TFirst, TSecond> firstToSecond = new Dictionary<TFirst, TSecond>();
-        IDictionary<TSecond, TFirst> secondToFirst = new Dictionary<TSecond, TFirst>();
+        private IDictionary<TFirst, TSecond> firstToSecond = new Dictionary<TFirst, TSecond>();
+        private IDictionary<TSecond, TFirst> secondToFirst = new Dictionary<TSecond, TFirst>();
 
         #region Exception throwing methods
 

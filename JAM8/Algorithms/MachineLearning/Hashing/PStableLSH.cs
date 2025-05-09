@@ -10,17 +10,17 @@ namespace JAM8.Algorithms.MachineLearning
     /// </summary>
     public class PStableLSH
     {
-        int seed;//随机种子
-        int HashTableCount = 3;//哈希表的数量
-        int Dimension = 2;//Vector的维度
-        float width;//LSH的w
-        float b;//LSH的随机数b
-        float[][] a = null;//p-Stable分布（L=2；高斯分布）的随机向量
+        private int seed;//随机种子
+        private int HashTableCount = 3;//哈希表的数量
+        private int Dimension = 2;//Vector的维度
+        private float width;//LSH的w
+        private float b;//LSH的随机数b
+        private float[][] a = null;//p-Stable分布（L=2；高斯分布）的随机向量
 
         /// <summary>
         /// 哈希表
         /// </summary>
-        List<HashTable> HashTables { get; set; }
+        private List<HashTable> HashTables { get; set; }
 
         /// <summary>
         /// 输入的Vectors
@@ -46,7 +46,7 @@ namespace JAM8.Algorithms.MachineLearning
         }
 
         //初始化LSH参数
-        void InitLSH(int seed)
+        private void InitLSH(int seed)
         {
             Random rnd = new(seed);
             //p-Stable分布（L=2；高斯分布）的随机向量
@@ -71,7 +71,7 @@ namespace JAM8.Algorithms.MachineLearning
         }
 
         //哈希函数，f为特征，a_temp为a向量，b_temp为b，w_temp为w
-        int Hashfamily(float[] f, float[] a_temp, float b_temp, float w_temp)
+        private int Hashfamily(float[] f, float[] a_temp, float b_temp, float w_temp)
         {
             int dim = f.Length;
             float result = b_temp;
@@ -155,7 +155,7 @@ namespace JAM8.Algorithms.MachineLearning
             data = new Dictionary<int, List<int>>();
         }
 
-        bool ContainsKey(int Key)
+        private bool ContainsKey(int Key)
         {
             return data.ContainsKey(Key);
         }

@@ -5,10 +5,10 @@ namespace JAM8.SpecificApps.常用工具
 {
     public partial class Form_层位测井均值 : Form
     {
-        Dictionary<string, string> log_fileName_dic = null;//测井数据文件集
-        List<string> log_names = null;//测井曲线属性名称集
+        private Dictionary<string, string> log_fileName_dic = null;//测井数据文件集
+        private List<string> log_names = null;//测井曲线属性名称集
 
-        MyDataFrame df_层位数据 = null;
+        private MyDataFrame df_层位数据 = null;
         public Form_层位测井均值()
         {
             InitializeComponent();
@@ -124,7 +124,7 @@ namespace JAM8.SpecificApps.常用工具
 
                 if (!log_fileName_dic.ContainsKey(well_name))
                 {
-                    Console.WriteLine($"{well_name}文件不存在");
+                    Console.WriteLine($@"{well_name}文件不存在");
                     df_result.add_record(record);
                     continue;
                 }

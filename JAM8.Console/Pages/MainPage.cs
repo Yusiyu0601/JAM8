@@ -6,12 +6,12 @@ namespace JAM8.Console.Pages
     {
         public MainPage(EasyConsole.Program program)
             : base("地质建模工具箱", program,
-                  new Option("常用工具", () => program.NavigateTo<ToolBox>()),
-                  new Option("建模方法", () => program.NavigateTo<Modeling>()),
-                  new Option("其他研究", () => program.NavigateTo<Research>()),
-                  new Option("测试模块", () => program.NavigateTo<Test>()),
-                  new Option("帮助", () => program.NavigateTo<Help>())
-                  )
+                new Option("工具(variogram、grid、excel)", () => program.NavigateTo<ToolBox>()),
+                new Option("建模(estimate、simulation)", () => program.NavigateTo<Modeling>()),
+                new Option("研究(non_stationary)", () => program.NavigateTo<Research>()),
+                new Option("测试(Algorithms、Utilities)", () => program.NavigateTo<Test>()),
+                new Option("帮助", () => program.NavigateTo<Help>())
+            )
         {
         }
     }

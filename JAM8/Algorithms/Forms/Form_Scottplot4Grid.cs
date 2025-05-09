@@ -2,7 +2,7 @@
 {
     public partial class Form_Scottplot4Grid : Form
     {
-        string title = null;
+        private string title = null;
         public Form_Scottplot4Grid(Grid g, string title = null)
         {
             InitializeComponent();

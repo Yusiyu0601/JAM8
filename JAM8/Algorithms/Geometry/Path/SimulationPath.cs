@@ -19,7 +19,7 @@ namespace JAM8.Algorithms.Geometry
         /// <summary>
         /// 访问节点，可冻结
         /// </summary>
-        class path_node
+        private class path_node
         {
             /// <summary>
             /// 冻结状态
@@ -39,11 +39,12 @@ namespace JAM8.Algorithms.Geometry
         /// 模拟路径包含的节点集
         /// </summary>
         public List<SpatialIndex> spatialIndexes { get; internal set; }
-        Random rnd;
-        int flag_forward = -1;//向前访问的位置
 
-        List<path_node> path_nodes;//
-        Dictionary<string, int> spatialIndex_MapTo_randomIndex;//
+        private Random rnd;
+        private int flag_forward = -1;//向前访问的位置
+
+        private List<path_node> path_nodes;//
+        private Dictionary<string, int> spatialIndex_MapTo_randomIndex;//
 
         private SimulationPath() { }
 
@@ -56,14 +57,14 @@ namespace JAM8.Algorithms.Geometry
             }
         }
         //累积冻结的数量
-        int N_freezed = 0;
+        private int N_freezed = 0;
         //进度
         public double progress
         {
             get { return Math.Round(100.0 * N_freezed / N, 2); }
         }
 
-        void init()
+        private void init()
         {
             path_nodes = new();
             spatialIndex_MapTo_randomIndex = new();

@@ -116,7 +116,7 @@ namespace DataStructures.ViliWonka.KDTree
             }
         }
 
-        void BuildTree() {
+        private void BuildTree() {
 
             ResetKDNodeStack();
 
@@ -128,7 +128,7 @@ namespace DataStructures.ViliWonka.KDTree
             SplitNode(RootNode);
         }
 
-        KDNode GetKDNode() {
+        private KDNode GetKDNode() {
 
             KDNode node = null;
 
@@ -154,7 +154,7 @@ namespace DataStructures.ViliWonka.KDTree
             return node;
         }
 
-        void ResetKDNodeStack() {
+        private void ResetKDNodeStack() {
             kdNodesCount = 0;
         }
 
@@ -162,7 +162,7 @@ namespace DataStructures.ViliWonka.KDTree
         /// For calculating root node bounds
         /// </summary>
         /// <returns>Boundary of all Vector3 points</returns>
-        KDBounds MakeBounds() {
+        private KDBounds MakeBounds() {
 
             Vector3 max = new Vector3(float.MinValue, float.MinValue, float.MinValue);
             Vector3 min = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
@@ -265,7 +265,7 @@ namespace DataStructures.ViliWonka.KDTree
         /// <param name="parent">This is where root node goes</param>
         /// <param name="depth"></param>
         ///
-        void SplitNode(KDNode parent) {
+        private void SplitNode(KDNode parent) {
 
             // center of bounding box
             KDBounds parentBounds = parent.bounds;
@@ -351,7 +351,7 @@ namespace DataStructures.ViliWonka.KDTree
         /// <param name="boundsEnd"></param>
         /// <param name="axis"></param>
         /// <returns></returns>
-        float CalculatePivot(int start, int end, float boundsStart, float boundsEnd, int axis) {
+        private float CalculatePivot(int start, int end, float boundsStart, float boundsEnd, int axis) {
 
             //! sliding midpoint rule
             float midPoint = (boundsStart + boundsEnd) / 2f;
@@ -407,7 +407,7 @@ namespace DataStructures.ViliWonka.KDTree
         /// left = [start, pivot),
         /// right = [pivot, end)
         /// </returns>
-        int Partition(int start, int end, float partitionPivot, int axis) {
+        private int Partition(int start, int end, float partitionPivot, int axis) {
 
             // note: increasing right pointer is actually decreasing!
             int LP = start - 1; // left pointer (negative side)
@@ -448,7 +448,7 @@ namespace DataStructures.ViliWonka.KDTree
         /// </summary>
         /// <param name="node"></param>
         /// <returns></returns>
-        bool ContinueSplit(KDNode node) {
+        private bool ContinueSplit(KDNode node) {
 
             return (node.Count > maxPointsPerLeafNode);
         }

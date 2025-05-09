@@ -22,7 +22,7 @@
         }
         //统计值及其数量，第1个参数是唯一值集合（升序排列），第2个参数是值的频数
         //( NOTE: 不保留Null )
-        static (int?[], int[]) distinct_without_keep_null(IList<int?> array)
+        private static (int?[], int[]) distinct_without_keep_null(IList<int?> array)
         {
             List<int> temp = new();
             for (int i = 0; i < array.Count; i++)
@@ -44,7 +44,7 @@
         }
         //统计值及其数量，第1个参数是唯一值集合（升序排列），第2个参数是值的频数
         //( NOTE: 保留Null )
-        static (int?[], int[]) distinct_keep_null(IList<int?> array)
+        private static (int?[], int[]) distinct_keep_null(IList<int?> array)
         {
             Dictionary<int?, int> dict = new();
             var keys = array.Distinct().ToList();
@@ -122,7 +122,7 @@
         }
         //统计值及其数量，第1个参数是唯一值集合（升序排列），第2个参数是值的频数
         //( NOTE: 不保留Null )
-        static (double?[], int[]) distinct_without_keep_null(IList<double?> array)
+        private static (double?[], int[]) distinct_without_keep_null(IList<double?> array)
         {
             List<double> temp = new();
             for (int i = 0; i < array.Count; i++)
@@ -144,7 +144,7 @@
         }
         //统计值及其数量，第1个参数是唯一值集合（升序排列），第2个参数是值的频数
         //( NOTE: 保留Null )
-        static (double?[], int[]) distinct_keep_null(IList<double?> array)
+        private static (double?[], int[]) distinct_keep_null(IList<double?> array)
         {
             Dictionary<double?, int> dict = new();
             var keys = array.Distinct().ToList();

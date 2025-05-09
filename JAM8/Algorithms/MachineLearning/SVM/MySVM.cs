@@ -76,7 +76,7 @@
             return predict;
         }
 
-        static Node[][] ConvertArrayToNodeList(double[][] doubleArray)
+        private static Node[][] ConvertArrayToNodeList(double[][] doubleArray)
         {
             int rowCount = doubleArray.Length;
             int colCount = doubleArray[0].Length;

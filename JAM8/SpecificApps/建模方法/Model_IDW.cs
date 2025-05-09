@@ -30,7 +30,7 @@ namespace JAM8.SpecificApps.建模方法
             g.Add("estimate_idw", estimate_idw);
             g.showGrid_win("反距离加权插值模型");
             sw.Stop();
-            Console.WriteLine($"Time:{sw.ElapsedMilliseconds}");
+            Console.WriteLine($@"Time:{sw.ElapsedMilliseconds}");
         }
     }
 }

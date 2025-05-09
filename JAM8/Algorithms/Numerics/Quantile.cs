@@ -22,8 +22,8 @@ namespace JAM8.Algorithms.Numerics
         /// </summary>
         public List<double> quantile_values { get; internal set; }
 
-        IInterpolation interpolation_X2Y = null;
-        IInterpolation interpolation_Y2X = null;
+        private IInterpolation interpolation_X2Y = null;
+        private IInterpolation interpolation_Y2X = null;
 
         public static Quantile create(List<double> data)
         {

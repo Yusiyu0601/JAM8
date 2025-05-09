@@ -197,7 +197,7 @@ namespace JAM8.Algorithms.Geometry
                 catch (Exception ex)
                 {
                     // 记录错误日志或执行其他错误处理
-                    Console.WriteLine($"Error processing row: {ex.Message}");
+                    Console.WriteLine($@"Error processing row: {ex.Message}");
                 }
             }
 

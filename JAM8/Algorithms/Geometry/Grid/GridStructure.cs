@@ -430,7 +430,7 @@ namespace JAM8.Algorithms.Geometry
         /// </summary>
         /// <param name="gs"></param>
         /// <returns></returns>
-        static List<SpatialIndex> get_index_mapper(GridStructure gs)
+        private static List<SpatialIndex> get_index_mapper(GridStructure gs)
         {
             List<SpatialIndex> indexMapper = new()
             {

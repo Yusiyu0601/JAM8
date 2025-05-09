@@ -14,7 +14,7 @@ namespace JAM8.SpecificApps.常用工具
 {
     public partial class Form_ScatterPlot : Form
     {
-        MyDataFrame df = null;
+        private MyDataFrame df = null;
 
         public Form_ScatterPlot()
         {

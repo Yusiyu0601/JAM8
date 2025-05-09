@@ -5,11 +5,11 @@ namespace JAM8.SpecificApps.建模方法
 {
     public partial class Form_DS : Form
     {
-        Grid g_ti;
-        CData cd;
-        Grid g_re;
-        string file_name_ti;
-        string file_name_cd;
+        private Grid g_ti;
+        private CData cd;
+        private Grid g_re;
+        private string file_name_ti;
+        private string file_name_cd;
 
         public Form_DS()
         {
@@ -141,9 +141,9 @@ namespace JAM8.SpecificApps.建模方法
         //批量模拟
         private void button4_Click(object sender, EventArgs e)
         {
-            Console.WriteLine("输入批量模拟的次数");
+            Console.WriteLine(@"输入批量模拟的次数");
             int N = int.Parse(Console.ReadLine());
-            Console.WriteLine("设置保存路径");
+            Console.WriteLine(@"设置保存路径");
             FolderBrowserDialog fbd = new();
             if (fbd.ShowDialog() != DialogResult.OK)
                 return;
@@ -165,13 +165,13 @@ namespace JAM8.SpecificApps.建模方法
         //隐藏功能:批量模拟2
         private void button6_Click(object sender, EventArgs e)
         {
-            Console.WriteLine("程序目标:实现批量导入不同cd，用相同ti进行建模，其中建模参数相同");
+            Console.WriteLine(@"程序目标:实现批量导入不同cd，用相同ti进行建模，其中建模参数相同");
             Grid g_ti = Grid.create_from_gslibwin("打开训练图像").grid;
             GridProperty gp_ti = g_ti.select_gridProperty_win("选择作为训练图像的gridProperty").grid_property;
             Grid g_cd = Grid.create_from_gslibwin("打开Grid形式的cdata").grid;
             g_cd.showGrid_win("Grid形式的cdata");
 
-            Console.WriteLine("设置保存路径");
+            Console.WriteLine(@"设置保存路径");
             FolderBrowserDialog fbd = new();
             if (fbd.ShowDialog() != DialogResult.OK)
                 return;

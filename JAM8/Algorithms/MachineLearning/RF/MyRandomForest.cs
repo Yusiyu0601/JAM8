@@ -5,9 +5,9 @@ namespace JAM8.Algorithms.MachineLearning
     public class MyRandomForest
     {
         //RandomForest rf_model = null;
-        MyDataFrame df_training = null;
-        Dictionary<string, int> category_map_to_code = null;
-        Dictionary<int, string> code_map_to_category = null;
+        private MyDataFrame df_training = null;
+        private Dictionary<string, int> category_map_to_code = null;
+        private Dictionary<int, string> code_map_to_category = null;
 
         private MyRandomForest()
         {

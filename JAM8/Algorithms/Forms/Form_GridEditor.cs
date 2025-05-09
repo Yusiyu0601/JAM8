@@ -5,7 +5,7 @@ namespace JAM8.Algorithms.Forms
 {
     public partial class Form_GridEditor : Form
     {
-        Grid g;
+        private Grid g;
 
 
         public Form_GridEditor()

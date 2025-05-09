@@ -795,7 +795,7 @@ namespace JAM8.Algorithms.Geometry
         /// <summary>
         /// 垂直于z方向的xy切片
         /// </summary>
-        GridProperty get_xy_slice(int iz_pos)
+        private GridProperty get_xy_slice(int iz_pos)
         {
             GridStructure gs = GridStructure.create(gridStructure.nx, gridStructure.ny, 1,
                 gridStructure.xsiz, gridStructure.ysiz, gridStructure.zsiz,
@@ -809,7 +809,7 @@ namespace JAM8.Algorithms.Geometry
         /// <summary>
         /// 垂直于y方向的xz切片
         /// </summary>
-        GridProperty get_xz_slice(int iy_pos)
+        private GridProperty get_xz_slice(int iy_pos)
         {
             GridStructure gs = GridStructure.create(gridStructure.nx, gridStructure.nz, 1,
                 gridStructure.xsiz, gridStructure.zsiz, gridStructure.ysiz,
@@ -823,7 +823,7 @@ namespace JAM8.Algorithms.Geometry
         /// <summary>
         /// 垂直于x方向的yz切片
         /// </summary>
-        GridProperty get_yz_slice(int ix_pos)
+        private GridProperty get_yz_slice(int ix_pos)
         {
             GridStructure gs = GridStructure.create(gridStructure.ny, gridStructure.nz, 1,
                  gridStructure.ysiz, gridStructure.zsiz, gridStructure.xsiz,
@@ -863,7 +863,7 @@ namespace JAM8.Algorithms.Geometry
         /// <summary>
         /// 垂直于z方向的xy切片
         /// </summary>
-        void set_xy_slice(int iz_pos, GridProperty xy_slice)
+        private void set_xy_slice(int iz_pos, GridProperty xy_slice)
         {
             for (int iy = 0; iy < gridStructure.ny; iy++)
                 for (int ix = 0; ix < gridStructure.nx; ix++)
@@ -872,7 +872,7 @@ namespace JAM8.Algorithms.Geometry
         /// <summary>
         /// 垂直于y方向的xz切片
         /// </summary>
-        void set_xz_slice(int iy_pos, GridProperty xz_slice)
+        private void set_xz_slice(int iy_pos, GridProperty xz_slice)
         {
             for (int iz = 0; iz < gridStructure.nz; iz++)
                 for (int ix = 0; ix < gridStructure.nx; ix++)
@@ -881,7 +881,7 @@ namespace JAM8.Algorithms.Geometry
         /// <summary>
         /// 垂直于x方向的yz切片
         /// </summary>
-        void set_yz_slice(int ix_pos, GridProperty yz_slice)
+        private void set_yz_slice(int ix_pos, GridProperty yz_slice)
         {
             for (int iz = 0; iz < gridStructure.nz; iz++)
                 for (int iy = 0; iy < gridStructure.ny; iy++)

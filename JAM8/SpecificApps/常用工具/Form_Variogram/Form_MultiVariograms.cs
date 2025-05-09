@@ -8,7 +8,7 @@ namespace JAM8.SpecificApps.常用工具
 {
     public partial class Form_MultiVariograms : Form
     {
-        DataTable dataTable = null;
+        private DataTable dataTable = null;
 
         public Form_MultiVariograms()
         {

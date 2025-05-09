@@ -14,8 +14,8 @@ namespace JAM8.SpecificApps.常用工具
 {
     public partial class Form_GridFilter : Form
     {
-        Grid g;
-        GridProperty gp_filtered;//过滤后的gp
+        private Grid g;
+        private GridProperty gp_filtered;//过滤后的gp
 
         public Form_GridFilter()
         {

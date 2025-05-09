@@ -5,7 +5,7 @@ namespace JAM8.Algorithms.Forms
 {
     public partial class Form_SelectPropertyFromCData : Form
     {
-        CData cd;
+        private CData cd;
 
         public string selected_property_name
         {

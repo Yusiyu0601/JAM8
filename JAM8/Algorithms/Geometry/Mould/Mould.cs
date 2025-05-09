@@ -294,7 +294,7 @@ namespace JAM8.Algorithms.Geometry
         /// 深度复制
         /// </summary>
         /// <returns></returns>
-        Mould clone()
+        private Mould clone()
         {
             Mould mould = new()
             {

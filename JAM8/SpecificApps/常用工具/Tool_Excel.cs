@@ -32,7 +32,7 @@ namespace JAM8.SpecificApps.常用工具
                 var series_names_distinct = series_names.Distinct().ToList();
                 bool is_same = true;
                 Console.WriteLine();
-                Console.WriteLine("各个excel表结构信息为:");
+                Console.WriteLine(@"各个excel表结构信息为:");
                 foreach (var (file_name, df) in dfs)
                 {
                     Console.Write($"{file_name}[{df.N_Series}列;{df.N_Record}行]\n\t");
@@ -53,11 +53,12 @@ namespace JAM8.SpecificApps.常用工具
                 Console.WriteLine();
                 if (is_same == false)
                 {
-                    Console.WriteLine("所有excel表的格式存在不一致");
+                    Console.WriteLine(@"所有excel表的格式存在不一致");
                     return;
                 }
                 else
-                    Console.WriteLine("\n所有excel表的格式一致，可以采用行形式合并");
+                    Console.WriteLine(@"
+所有excel表的格式一致，可以采用行形式合并");
 
                 MyDataFrame df_combine = MyDataFrame.create(series_names_distinct.ToArray());//创建新dataframe
 

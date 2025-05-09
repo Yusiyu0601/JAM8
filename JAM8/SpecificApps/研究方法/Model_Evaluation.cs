@@ -56,14 +56,14 @@ namespace JAM8.SpecificApps.研究方法
                 var record = df.new_record(new object[] { FileHelper.GetFileName(file_name, false), N_is_噪点 });
                 df.add_record(record);
                 Console.WriteLine();
-                Console.WriteLine($"cd节点总数=[{All}]     cd节点表现为噪点数=[{N_is_噪点}]");
+                Console.WriteLine($@"cd节点总数=[{All}]     cd节点表现为噪点数=[{N_is_噪点}]");
             }
             df.show_win();
         }
 
         public static void cd在随机实现中表现为噪点的比例()
         {
-            Console.WriteLine("输入[1]查看demo数据; 输入[2]打开文件");
+            Console.WriteLine(@"输入[1]查看demo数据; 输入[2]打开文件");
             string input = Console.ReadLine();
             if (input == "1")
             {
@@ -100,17 +100,17 @@ namespace JAM8.SpecificApps.研究方法
                     }
                 }
                 Console.WriteLine();
-                Console.WriteLine($"cd节点总数=[{All}]");
-                Console.WriteLine($"cd节点表现为噪点数=[{N_is_噪点}]");
+                Console.WriteLine($@"cd节点总数=[{All}]");
+                Console.WriteLine($@"cd节点表现为噪点数=[{N_is_噪点}]");
             }
             else
-                Console.WriteLine("输入错误");
+                Console.WriteLine(@"输入错误");
 
         }
 
         public static void 随机实现与cd匹配率()
         {
-            Console.WriteLine("输入[1]查看demo数据; 输入[2]打开文件");
+            Console.WriteLine(@"输入[1]查看demo数据; 输入[2]打开文件");
             string input = Console.ReadLine();
             if (input == "1")
             {
@@ -138,11 +138,11 @@ namespace JAM8.SpecificApps.研究方法
                     }
                 }
                 Console.WriteLine();
-                Console.WriteLine($"cd节点总数=[{All}]");
-                Console.WriteLine($"cd节点匹配数=[{matched}]");
+                Console.WriteLine($@"cd节点总数=[{All}]");
+                Console.WriteLine($@"cd节点匹配数=[{matched}]");
             }
             else
-                Console.WriteLine("输入错误");
+                Console.WriteLine(@"输入错误");
         }
 
         public static void 随机实现与TI的实验变差函数比较()
@@ -173,7 +173,7 @@ namespace JAM8.SpecificApps.研究方法
 
                 differences.Add(MyDistance.calc_hsim(lags_ti.ToArray(), lags_re.ToArray()));
             }
-            Console.WriteLine($"differences={differences.Average()}");
+            Console.WriteLine($@"differences={differences.Average()}");
 
 
 
@@ -254,7 +254,7 @@ namespace JAM8.SpecificApps.研究方法
 
                     differences.Add(MyDistance.calc_hsim(lags_ti.ToArray(), lags_re.ToArray()));
                 }
-                Console.WriteLine($"differences={differences.Average()}");
+                Console.WriteLine($@"differences={differences.Average()}");
 
                 var record = df.new_record();
                 record["realization_name"] = FileHelper.GetFileName(file_name, false);

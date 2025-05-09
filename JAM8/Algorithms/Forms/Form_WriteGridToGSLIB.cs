@@ -64,7 +64,7 @@ namespace JAM8.Algorithms.Geometry
             Close();
         }
 
-        string get_first_50_lines(Grid g)
+        private string get_first_50_lines(Grid g)
         {
             string text = "";
             string gridSize = g.gridStructure.view_text().Trim('\n').Trim('\t');

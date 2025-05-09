@@ -13,8 +13,8 @@ namespace JAM8.SpecificApps.常用工具
 {
     public partial class Form_Image2Binary : Form
     {
-        Bitmap b = null;
-        Bitmap b_binary = null;
+        private Bitmap b = null;
+        private Bitmap b_binary = null;
         public Form_Image2Binary()
         {
             InitializeComponent();

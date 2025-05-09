@@ -389,7 +389,7 @@ namespace JAM8.Tests
                 //Console.WriteLine(founds.Min(a => a.Distance));
             });
             sw.Stop();
-            Console.WriteLine($"{sw.ElapsedMilliseconds}ms");
+            Console.WriteLine($@"{sw.ElapsedMilliseconds}ms");
 
         }
         /// <summary>
@@ -399,7 +399,7 @@ namespace JAM8.Tests
         /// <param name="v"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
-        static float L2_distance(float[] u, float[] v)
+        private static float L2_distance(float[] u, float[] v)
         {
             if (u.Length != v.Length)
             {
@@ -528,7 +528,7 @@ namespace JAM8.Tests
             var rot_mat = new double[] { 0, 0, 0, 20, 20, 2 };
             ok.Run(30, rot_mat, 5).result[1].show_win();
             sw.Stop();
-            Console.WriteLine($"Time:{sw.ElapsedMilliseconds}");
+            Console.WriteLine($@"Time:{sw.ElapsedMilliseconds}");
         }
 
         public static void Coord_Test()
@@ -542,7 +542,7 @@ namespace JAM8.Tests
                 if (si != null)
                 {
                     Coord c2 = gs.spatialIndex_to_coord(si);
-                    Console.WriteLine($"{c.view_text()}  \t  {si.view_text()}   \t  {c2.view_text()}");
+                    Console.WriteLine($@"{c.view_text()}  	  {si.view_text()}   	  {c2.view_text()}");
                 }
             }
 

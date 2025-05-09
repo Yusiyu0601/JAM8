@@ -349,7 +349,7 @@ namespace JAM8.Utilities
         public static void Print<T>(IEnumerable<T> array, int Mode = 0, bool b_print_tips = true)
         {
             if (b_print_tips)
-                Console.WriteLine("--- 1D Array内容 ---");
+                Console.WriteLine(@"--- 1D Array内容 ---");
             if (Mode == 0)
             {
                 for (int n = 0; n < array.Count(); n++)
@@ -410,7 +410,7 @@ namespace JAM8.Utilities
         /// <param name="matrix"></param>
         public static void print<T>(T[,] array)
         {
-            Console.WriteLine("--- 2D Array内容 ---");
+            Console.WriteLine(@"--- 2D Array内容 ---");
             for (int i = 0; i < array.GetLength(0); i++)
             {
                 for (int j = 0; j < array.GetLength(1); j++)
@@ -418,7 +418,7 @@ namespace JAM8.Utilities
                     Console.Write("{0:F3}", array[i, j]);
                     Console.Write("\t");
                 }
-                Console.WriteLine("\t");
+                Console.WriteLine(@"	");
             }
         }
 
