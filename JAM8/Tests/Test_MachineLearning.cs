@@ -27,7 +27,7 @@ namespace JAM8.Tests
             List<MyVector> my_vectors = new();
             for (int n = 0; n < gs.N; n++)
             {
-                SpatialIndex si = gs.get_spatialIndex(n);
+                SpatialIndex si = gs.get_spatial_index(n);
                 my_vectors.Add(MyVector.create(new float[] { si.ix, si.iy, si.iz }));
             }
             PStableLSH lsh = new(3, 3, 0.1f, 0.05f, 1);

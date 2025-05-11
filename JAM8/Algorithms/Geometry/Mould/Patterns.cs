@@ -53,7 +53,7 @@ namespace JAM8.Algorithms.Geometry
         /// <returns>生成的 Patterns</returns>
         public static Patterns create(Mould mould, GridProperty gp_source, bool parallel = true, bool distinct = true)
         {
-            GridStructure gs = gp_source.gridStructure;
+            GridStructure gs = gp_source.grid_structure;
             ConcurrentBag<MouldInstance> patterns_list = [];
 
             if (parallel)
@@ -61,9 +61,9 @@ namespace JAM8.Algorithms.Geometry
                 // Use parallel extraction Patterns 使用并行提取 Patterns
                 ConcurrentBag<int> flag = [];//计数器
                 // Extract patterns using Parallel.For. 使用 Parallel.For 提取 patterns
-                Parallel.For(0, gp_source.gridStructure.N, n =>
+                Parallel.For(0, gp_source.grid_structure.N, n =>
                 {
-                    var pattern = MouldInstance.create_from_gridProperty(mould, gs.get_spatialIndex(n), gp_source);
+                    var pattern = MouldInstance.create_from_gridProperty(mould, gs.get_spatial_index(n), gp_source);
                     if (pattern.neighbor_not_nulls_ids.Count == pattern.mould.neighbors_number)
                         patterns_list.Add(pattern);
 
@@ -78,7 +78,7 @@ namespace JAM8.Algorithms.Geometry
                 for (int n = 0; n < gs.N; n++)
                 {
                     // Creation pattern 创建模式
-                    var pattern = MouldInstance.create_from_gridProperty(mould, gs.get_spatialIndex(n), gp_source);
+                    var pattern = MouldInstance.create_from_gridProperty(mould, gs.get_spatial_index(n), gp_source);
 
                     // Only record patterns where all neighbors are non-empty. 仅记录所有邻居非空的模式
                     if (pattern.neighbor_not_nulls_ids.Count == pattern.mould.neighbors_number)

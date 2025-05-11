@@ -21,7 +21,7 @@ namespace JAM8.Algorithms.Geometry
         {
             get
             {
-                return train_image.gridStructure.dim;
+                return train_image.grid_structure.dim;
             }
         }
 
@@ -114,7 +114,7 @@ namespace JAM8.Algorithms.Geometry
                     //逐个条件数据点赋值到第m重网格上，具体操作是将硬数据赋值到最近的多重网格节点上
                     foreach (var (array_index, ccdi) in ccd)
                     {
-                        var loc_cd = gs_re.get_spatialIndex(array_index);
+                        var loc_cd = gs_re.get_spatial_index(array_index);
                         SpatialIndex loc_nearest = null;
                         var min_dist = float.MaxValue;
                         foreach (var loc_m in locs_m)

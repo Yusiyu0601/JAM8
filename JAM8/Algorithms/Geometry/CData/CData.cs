@@ -166,7 +166,7 @@ namespace JAM8.Algorithms.Geometry
                 GridProperty gp = GridProperty.create(gs);
                 for (int i = 0; i < N; i++)//将条件数据赋值于网格
                 {
-                    SpatialIndex si = gs.coord_to_spatialIndex(this[i].coord);//坐标—>索引
+                    SpatialIndex si = gs.coord_to_spatial_index(this[i].coord);//坐标—>索引
                     if (si != null)
                         gp.set_value(si, this[i][propertyName]);
                 }
@@ -174,11 +174,11 @@ namespace JAM8.Algorithms.Geometry
             }
             foreach (var cdi in this)
             {
-                var si = gs.coord_to_spatialIndex(cdi.coord);
+                var si = gs.coord_to_spatial_index(cdi.coord);
                 if (si != null)//保留在grid范围内的cdi
                 {
                     var cdi_adjust = cdi.deep_clone();
-                    cdi_adjust.coord = gs.spatialIndex_to_coord(si);
+                    cdi_adjust.coord = gs.spatial_index_to_coord(si);
                     cd_assigned.Add(cdi_adjust);
                 }
             }
@@ -206,12 +206,12 @@ namespace JAM8.Algorithms.Geometry
             //遍历所有cdi,计算是否落在目标网格范围内
             foreach (var cdi in this)
             {
-                SpatialIndex si = target_gs.coord_to_spatialIndex(cdi.coord);
+                SpatialIndex si = target_gs.coord_to_spatial_index(cdi.coord);
                 if (si != null)//保留落在grid范围内的cdi
                 {
                     var cdi_adjust = cdi.deep_clone();
 
-                    cdi_adjust.coord = target_gs.spatialIndex_to_coord(si);
+                    cdi_adjust.coord = target_gs.spatial_index_to_coord(si);
 
                     cd_assigned.Add(cdi_adjust);
 
@@ -427,7 +427,7 @@ namespace JAM8.Algorithms.Geometry
             cd.propertyNames.Add(property_name);
             for (int n = 0; n < g.gridStructure.N; n++)
             {
-                Coord c = g.gridStructure.arrayIndex_to_coord(n);
+                Coord c = g.gridStructure.array_index_to_coord(n);
                 float? value1 = g[property_name].get_value(n);
                 if (equal_or_exclude)//为true，则保留等于value的节点
                 {
@@ -473,9 +473,9 @@ namespace JAM8.Algorithms.Geometry
                 propertyNames = []
             };
             cd.propertyNames.Add(property_name);
-            for (int n = 0; n < gp.gridStructure.N; n++)
+            for (int n = 0; n < gp.grid_structure.N; n++)
             {
-                Coord c = gp.gridStructure.arrayIndex_to_coord(n);
+                Coord c = gp.grid_structure.array_index_to_coord(n);
                 float? value1 = gp.get_value(n);
                 if (equal_or_exclude)//为true，则保留等于value的节点
                 {

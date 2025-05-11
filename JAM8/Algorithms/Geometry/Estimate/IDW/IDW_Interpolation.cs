@@ -60,7 +60,7 @@
             var cd_finder = CDataNearestFinder_kdtree4_anisotropy.create(gs, cd);
             for (int n = 0; n < gs.N; n++)//计算工区网格的所有节点
             {
-                SpatialIndex si = gs.get_spatialIndex(n);
+                SpatialIndex si = gs.get_spatial_index(n);
                 if (g["模型"].get_value(n) == null)//如果某个点没有数据，则需要插值
                 {
                     var cd_founds = cd_finder.find(si, k_cdi);

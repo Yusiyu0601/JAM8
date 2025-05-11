@@ -1,4 +1,5 @@
-﻿using JAM8.Algorithms.Images;
+﻿using CsvHelper;
+using JAM8.Algorithms.Images;
 using JAM8.Algorithms.Numerics;
 
 namespace JAM8.Algorithms.Geometry
@@ -8,7 +9,9 @@ namespace JAM8.Algorithms.Geometry
     /// </summary>
     public class GridProperty
     {
-        private GridProperty() { }
+        private GridProperty()
+        {
+        }
 
         #region 属性
 
@@ -16,37 +19,30 @@ namespace JAM8.Algorithms.Geometry
         /// 数据缓存
         /// </summary>
         public float?[] buffer { get; internal set; }
+
         /// <summary>
         /// 网格单元等于Null的数量
         /// </summary>
         public int N_Nulls { get; internal set; } = 0;
+
         /// <summary>
         /// 网格结构
         /// </summary>
-        public GridStructure gridStructure { get; internal set; }
+        public GridStructure grid_structure { get; internal set; }
 
         public float? Min
         {
-            get
-            {
-                return buffer.Min();
-            }
+            get { return buffer.Min(); }
         }
 
         public float? Max
         {
-            get
-            {
-                return buffer.Max();
-            }
+            get { return buffer.Max(); }
         }
 
         public float? Average
         {
-            get
-            {
-                return buffer.Average();
-            }
+            get { return buffer.Average(); }
         }
 
         /// <summary>
@@ -66,8 +62,8 @@ namespace JAM8.Algorithms.Geometry
                 // 初始化 positions 和 ratios
                 for (int i = 0; i <= ticks.TickCount; i++)
                 {
-                    positions.Add(ticks.Lower + ticks.Step * i);  // 填充 bin 位置
-                    ratios.Add(0);  // 初始化所有 bin 的频率为 0
+                    positions.Add(ticks.Lower + ticks.Step * i); // 填充 bin 位置
+                    ratios.Add(0); // 初始化所有 bin 的频率为 0
                 }
 
                 // 统计非 null 数据的数量
@@ -77,13 +73,13 @@ namespace JAM8.Algorithms.Geometry
                 foreach (var item in buffer.Where(b => b != null))
                 {
                     // 计算数据应该落入哪个 bin，并更新对应 bin 的频率
-                    int idx = (int)((item.Value - ticks.Lower) / ticks.Step + 0.5);  // 四舍五入到最近的整数
+                    int idx = (int)((item.Value - ticks.Lower) / ticks.Step + 0.5); // 四舍五入到最近的整数
                     ratios[idx]++;
                 }
 
                 // 计算每个 bin 的比例
                 var totalCount = (double)N;
-                var frequencyRatios = ratios.Select(r => r / totalCount).ToList();  // 计算频率比例
+                var frequencyRatios = ratios.Select(r => r / totalCount).ToList(); // 计算频率比例
 
                 return (frequencyRatios, positions);
             }
@@ -169,9 +165,9 @@ namespace JAM8.Algorithms.Geometry
         /// <returns></returns>
         public static GridProperty create(GridStructure gs)
         {
-            GridProperty gp = new()//开辟缓存空间
+            GridProperty gp = new() //开辟缓存空间
             {
-                gridStructure = gs,
+                grid_structure = gs,
                 buffer = new float?[gs.N],
                 N_Nulls = gs.N
             };
@@ -186,11 +182,12 @@ namespace JAM8.Algorithms.Geometry
         /// <param name="gp">原始 GridProperty 对象</param>
         /// <param name="conditions">条件列表，每个条件包含比较值、目标值和比较类型</param>
         /// <returns>修改后的新的 GridProperty 对象</returns>
-        public static GridProperty create(GridProperty gp, params (float? ComparedValue, float? NewValue, CompareType CompareType)[] conditions)
+        public static GridProperty create(GridProperty gp,
+            params (float? ComparedValue, float? NewValue, CompareType CompareType)[] conditions)
         {
             GridProperty clone = gp.deep_clone();
 
-            for (int n = 0; n < clone.gridStructure.N; n++)
+            for (int n = 0; n < clone.grid_structure.N; n++)
             {
                 float? currentValue = clone.get_value(n);
 
@@ -228,11 +225,12 @@ namespace JAM8.Algorithms.Geometry
         /// <param name="gp">原始 GridProperty 对象</param>
         /// <param name="conditions">区间条件列表，每个条件包含区间的起始值、结束值和目标值</param>
         /// <returns>修改后的新的 GridProperty 对象</returns>
-        public static GridProperty create(GridProperty gp, params (float? MinValue, float? MaxValue, float? NewValue)[] conditions)
+        public static GridProperty create(GridProperty gp,
+            params (float? MinValue, float? MaxValue, float? NewValue)[] conditions)
         {
             GridProperty clone = gp.deep_clone();
 
-            for (int n = 0; n < clone.gridStructure.N; n++)
+            for (int n = 0; n < clone.grid_structure.N; n++)
             {
                 float? currentValue = clone.get_value(n);
 
@@ -256,50 +254,57 @@ namespace JAM8.Algorithms.Geometry
 
         public static GridProperty operator +(GridProperty left, GridProperty right)
         {
-            if (!left.gridStructure.Equals(right.gridStructure))
+            if (!left.grid_structure.Equals(right.grid_structure))
                 throw new Exception("gridStructure不一致");
-            GridProperty result = create(left.gridStructure);
-            for (int n = 0; n < left.gridStructure.N; n++)
+            GridProperty result = create(left.grid_structure);
+            for (int n = 0; n < left.grid_structure.N; n++)
             {
                 float? value = left.get_value(n) + right.get_value(n);
                 result.set_value(n, value);
             }
+
             return result;
         }
+
         public static GridProperty operator -(GridProperty left, GridProperty right)
         {
-            if (!left.gridStructure.Equals(right.gridStructure))
+            if (!left.grid_structure.Equals(right.grid_structure))
                 throw new Exception("gridStructure不一致");
-            GridProperty result = create(left.gridStructure);
-            for (int n = 0; n < left.gridStructure.N; n++)
+            GridProperty result = create(left.grid_structure);
+            for (int n = 0; n < left.grid_structure.N; n++)
             {
                 float? value = left.get_value(n) - right.get_value(n);
                 result.set_value(n, value);
             }
+
             return result;
         }
+
         public static GridProperty operator *(GridProperty left, GridProperty right)
         {
-            if (!left.gridStructure.Equals(right.gridStructure))
+            if (!left.grid_structure.Equals(right.grid_structure))
                 throw new Exception("gridStructure不一致");
-            GridProperty result = create(left.gridStructure);
-            for (int n = 0; n < left.gridStructure.N; n++)
+            GridProperty result = create(left.grid_structure);
+            for (int n = 0; n < left.grid_structure.N; n++)
             {
                 float? value = left.get_value(n) * right.get_value(n);
                 result.set_value(n, value);
             }
+
             return result;
         }
+
         public static GridProperty operator /(GridProperty left, GridProperty right)
         {
-            if (!left.gridStructure.Equals(right.gridStructure))
+            if (!left.grid_structure.Equals(right.grid_structure))
                 throw new Exception("gridStructure不一致");
-            GridProperty result = create(left.gridStructure);
-            for (int n = 0; n < left.gridStructure.N; n++)
+            GridProperty result = create(left.grid_structure);
+            for (int n = 0; n < left.grid_structure.N; n++)
             {
                 float? value = left.get_value(n) / right.get_value(n);
                 result.set_value(n, value);
             }
+
             return result;
         }
 
@@ -317,7 +322,7 @@ namespace JAM8.Algorithms.Geometry
         public float? get_value(int arrayIndex)
         {
             // 检查 arrayIndex 是否在合法范围内
-            if (arrayIndex < 0 || arrayIndex >= gridStructure.N)
+            if (arrayIndex < 0 || arrayIndex >= grid_structure.N)
             {
                 return null; // 如果超出范围，直接返回 null
             }
@@ -333,7 +338,7 @@ namespace JAM8.Algorithms.Geometry
         /// <returns></returns>
         public float? get_value(SpatialIndex si)
         {
-            return get_value(gridStructure.get_arrayIndex(si));
+            return get_value(grid_structure.get_array_index(si));
         }
 
         /// <summary>
@@ -344,7 +349,7 @@ namespace JAM8.Algorithms.Geometry
         /// <returns></returns>
         public float? get_value(int ix, int iy)
         {
-            return get_value(gridStructure.get_arrayIndex(ix, iy, 0));
+            return get_value(grid_structure.get_array_index(ix, iy, 0));
         }
 
         /// <summary>
@@ -356,7 +361,7 @@ namespace JAM8.Algorithms.Geometry
         /// <returns></returns>
         public float? get_value(int ix, int iy, int iz)
         {
-            return get_value(gridStructure.get_arrayIndex(ix, iy, iz));
+            return get_value(grid_structure.get_array_index(ix, iy, iz));
         }
 
         /// <summary>
@@ -371,7 +376,7 @@ namespace JAM8.Algorithms.Geometry
             List<float?> values = [];
 
             // 遍历网格节点并进行条件判断
-            for (int n = 0; n < gridStructure.N; n++)
+            for (int n = 0; n < grid_structure.N; n++)
             {
                 float? currentValue = get_value(n);
 
@@ -411,7 +416,7 @@ namespace JAM8.Algorithms.Geometry
             List<float?> values = [];
 
             // 遍历网格节点并进行区间判断
-            for (int n = 0; n < gridStructure.N; n++)
+            for (int n = 0; n < grid_structure.N; n++)
             {
                 float? currentValue = get_value(n);
 
@@ -426,7 +431,6 @@ namespace JAM8.Algorithms.Geometry
             return (idx, values);
         }
 
-
         #endregion
 
         #region set_value
@@ -438,7 +442,7 @@ namespace JAM8.Algorithms.Geometry
         /// <param name="value"></param>
         public void set_value(int arrayIndex, float? value)
         {
-            if (arrayIndex >= 0 && arrayIndex < gridStructure.N)
+            if (arrayIndex >= 0 && arrayIndex < grid_structure.N)
             {
                 float? old = get_value(arrayIndex);
                 if (old == null && value != null)
@@ -456,7 +460,7 @@ namespace JAM8.Algorithms.Geometry
         /// <param name="value"></param>
         public void set_value(SpatialIndex si, float? value)
         {
-            set_value(gridStructure.get_arrayIndex(si), value);
+            set_value(grid_structure.get_array_index(si), value);
         }
 
         /// <summary>
@@ -467,7 +471,7 @@ namespace JAM8.Algorithms.Geometry
         /// <param name="value"></param>
         public void set_value(int ix, int iy, float? value)
         {
-            set_value(gridStructure.get_arrayIndex(ix, iy, 0), value);
+            set_value(grid_structure.get_array_index(ix, iy, 0), value);
         }
 
         /// <summary>
@@ -479,7 +483,7 @@ namespace JAM8.Algorithms.Geometry
         /// <param name="value"></param>
         public void set_value(int ix, int iy, int iz, float? value)
         {
-            set_value(gridStructure.get_arrayIndex(ix, iy, iz), value);
+            set_value(grid_structure.get_array_index(ix, iy, iz), value);
         }
 
         /// <summary>
@@ -488,7 +492,7 @@ namespace JAM8.Algorithms.Geometry
         /// <param name="value"></param>
         public void set_value(float? value)
         {
-            for (int n = 0; n < gridStructure.N; n++)
+            for (int n = 0; n < grid_structure.N; n++)
             {
                 set_value(n, value);
             }
@@ -504,13 +508,12 @@ namespace JAM8.Algorithms.Geometry
         {
             DataMapper mapper = new();
             mapper.Reset(0, 1, min, max);
-            for (int i = 0; i < gridStructure.N; i++)
+            for (int i = 0; i < grid_structure.N; i++)
             {
                 float value = (float)rnd.NextDouble();
                 value = (float)mapper.MapAToB(value);
                 set_value(i, value);
             }
-
         }
 
         /// <summary>
@@ -522,7 +525,7 @@ namespace JAM8.Algorithms.Geometry
         public void set_values_gaussian(double mean, double dev, Random rnd)
         {
             Gaussian norm = new(mean, dev);
-            for (int i = 0; i < gridStructure.N; i++)
+            for (int i = 0; i < grid_structure.N; i++)
             {
                 set_value(i, (float)norm.Sample(rnd));
             }
@@ -538,7 +541,7 @@ namespace JAM8.Algorithms.Geometry
         public List<int> set_values_by_condition(float? compared_value, float? new_value, CompareType compare_type)
         {
             List<int> idx = [];
-            for (int n = 0; n < gridStructure.N; n++)
+            for (int n = 0; n < grid_structure.N; n++)
             {
                 float? currentValue = get_value(n);
 
@@ -561,6 +564,7 @@ namespace JAM8.Algorithms.Geometry
                     set_value(n, new_value);
                 }
             }
+
             return idx;
         }
 
@@ -576,7 +580,7 @@ namespace JAM8.Algorithms.Geometry
             List<int> idx = [];
 
             // 遍历所有网格节点并判断是否在区间范围内
-            for (int n = 0; n < gridStructure.N; n++)
+            for (int n = 0; n < grid_structure.N; n++)
             {
                 float? currentValue = get_value(n);
 
@@ -605,19 +609,20 @@ namespace JAM8.Algorithms.Geometry
         /// <param name="iy_min">从1开始</param>
         /// <param name="iy_max">gs.ny结束</param>
         /// <returns></returns>
-        public (GridProperty region, bool index_out_of_bounds) get_region_by_range(int ix_min, int ix_max, int iy_min, int iy_max)
+        public (GridProperty region, bool index_out_of_bounds) get_region_by_range(int ix_min, int ix_max, int iy_min,
+            int iy_max)
         {
-            bool index_out_of_bounds = false;//是否越界，默认是假
-            if (Dimension.D3 == gridStructure.dim)
+            bool index_out_of_bounds = false; //是否越界，默认是假
+            if (Dimension.D3 == grid_structure.dim)
                 throw new Exception(MyExceptions.Geometry_DimensionException);
 
             int extent_x = ix_max - ix_min;
             int extent_y = iy_max - iy_min;
 
             ix_min = Math.Max(ix_min, 0);
-            ix_max = Math.Min(ix_max, gridStructure.nx - 1);
+            ix_max = Math.Min(ix_max, grid_structure.nx - 1);
             iy_min = Math.Max(iy_min, 0);
-            iy_max = Math.Min(iy_max, gridStructure.ny - 1);
+            iy_max = Math.Min(iy_max, grid_structure.ny - 1);
 
             if (extent_x != ix_max - ix_min || extent_y != iy_max - iy_min)
                 index_out_of_bounds = true;
@@ -627,8 +632,8 @@ namespace JAM8.Algorithms.Geometry
             var region = create(gs);
 
             for (int iy = iy_min; iy <= iy_max; iy++)
-                for (int ix = ix_min; ix <= ix_max; ix++)
-                    region.set_value(ix - ix_min, iy - iy_min, get_value(ix, iy));
+            for (int ix = ix_min; ix <= ix_max; ix++)
+                region.set_value(ix - ix_min, iy - iy_min, get_value(ix, iy));
 
             return (region, index_out_of_bounds);
         }
@@ -643,10 +648,11 @@ namespace JAM8.Algorithms.Geometry
         /// <param name="iz_min">从1开始</param>
         /// <param name="iz_max">gs.ny结束</param>
         /// <returns></returns>
-        public (GridProperty region, bool index_out_of_bounds) get_region_by_range(int ix_min, int ix_max, int iy_min, int iy_max, int iz_min, int iz_max)
+        public (GridProperty region, bool index_out_of_bounds) get_region_by_range(int ix_min, int ix_max, int iy_min,
+            int iy_max, int iz_min, int iz_max)
         {
-            bool index_out_of_bounds = false;//是否越界，默认是假
-            if (Dimension.D2 == gridStructure.dim)
+            bool index_out_of_bounds = false; //是否越界，默认是假
+            if (Dimension.D2 == grid_structure.dim)
                 throw new Exception(MyExceptions.Geometry_DimensionException);
 
             int extent_x = ix_max - ix_min;
@@ -654,11 +660,11 @@ namespace JAM8.Algorithms.Geometry
             int extent_z = iz_max - iz_min;
 
             ix_min = Math.Max(ix_min, 1);
-            ix_max = Math.Min(ix_max, gridStructure.nx);
+            ix_max = Math.Min(ix_max, grid_structure.nx);
             iy_min = Math.Max(iy_min, 1);
-            iy_max = Math.Min(iy_max, gridStructure.ny);
+            iy_max = Math.Min(iy_max, grid_structure.ny);
             iz_min = Math.Max(iz_min, 1);
-            iz_max = Math.Min(iz_max, gridStructure.nz);
+            iz_max = Math.Min(iz_max, grid_structure.nz);
 
             if (extent_x != ix_max - ix_min || extent_y != iy_max - iy_min || extent_z != iz_max - iz_min)
                 index_out_of_bounds = true;
@@ -669,9 +675,9 @@ namespace JAM8.Algorithms.Geometry
             var region = create(gs);
 
             for (int iz = iz_min; iz <= iz_max; iz++)
-                for (int iy = iy_min; iy <= iy_max; iy++)
-                    for (int ix = ix_min; ix <= ix_max; ix++)
-                        region.set_value(ix - ix_min + 1, iy - iy_min + 1, iz - iz_min + 1, get_value(ix, iy, iz));
+            for (int iy = iy_min; iy <= iy_max; iy++)
+            for (int ix = ix_min; ix <= ix_max; ix++)
+                region.set_value(ix - ix_min + 1, iy - iy_min + 1, iz - iz_min + 1, get_value(ix, iy, iz));
 
             return (region, index_out_of_bounds);
         }
@@ -684,9 +690,10 @@ namespace JAM8.Algorithms.Geometry
         /// <param name="radius_y"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public (GridProperty region, bool index_out_of_bounds) get_region_by_center(SpatialIndex center, int radius_x, int radius_y)
+        public (GridProperty region, bool index_out_of_bounds) get_region_by_center(SpatialIndex center, int radius_x,
+            int radius_y)
         {
-            if (Dimension.D3 == gridStructure.dim)
+            if (Dimension.D3 == grid_structure.dim)
                 throw new Exception(MyExceptions.Geometry_DimensionException);
 
             return get_region_by_range(
@@ -705,9 +712,10 @@ namespace JAM8.Algorithms.Geometry
         /// <param name="radius_z"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public (GridProperty region, bool index_out_of_bounds) get_region_by_center(SpatialIndex center, int radius_x, int radius_y, int radius_z)
+        public (GridProperty region, bool index_out_of_bounds) get_region_by_center(SpatialIndex center, int radius_x,
+            int radius_y, int radius_z)
         {
-            if (Dimension.D3 == gridStructure.dim)
+            if (Dimension.D3 == grid_structure.dim)
                 throw new Exception(MyExceptions.Geometry_DimensionException);
 
             return get_region_by_range(
@@ -738,43 +746,45 @@ namespace JAM8.Algorithms.Geometry
             /// 参考资料：http://blog.chinaunix.net/uid-7525568-id-3452691.html
             /// 将Grid从nx,ny缩小到nx1,ny1，本质是缩略图思想
             /// 
-            if (gridStructure.dim != resized_gs.dim)
+            if (grid_structure.dim != resized_gs.dim)
             {
                 Console.WriteLine(MyExceptions.Geometry_DimensionException);
                 return null;
             }
-            if (resized_gs == this.gridStructure)
+
+            if (resized_gs == this.grid_structure)
                 return this.deep_clone();
 
-            GridStructure old_gs = gridStructure;//原始GridStructure
-            GridProperty resized_gp = create(resized_gs);//创建缩放后的gp
+            GridStructure old_gs = grid_structure; //原始GridStructure
+            GridProperty resized_gp = create(resized_gs); //创建缩放后的gp
 
             DataMapper mapper_x = new();
-            mapper_x.Reset(0, gridStructure.nx - 1, 0, resized_gs.nx - 1);
+            mapper_x.Reset(0, grid_structure.nx - 1, 0, resized_gs.nx - 1);
             DataMapper mapper_y = new();
-            mapper_y.Reset(0, gridStructure.ny - 1, 0, resized_gs.ny - 1);
+            mapper_y.Reset(0, grid_structure.ny - 1, 0, resized_gs.ny - 1);
             DataMapper mapper_z = new();
-            mapper_z.Reset(0, gridStructure.nz - 1, 0, resized_gs.nz - 1);
+            mapper_z.Reset(0, grid_structure.nz - 1, 0, resized_gs.nz - 1);
 
             for (int n = 0; n < resized_gs.N; n++)
             {
-                SpatialIndex si_resized = resized_gs.get_spatialIndex(n);
+                SpatialIndex si_resized = resized_gs.get_spatial_index(n);
                 var ix = mapper_x.MapBToA(si_resized.ix);
                 var iy = mapper_y.MapBToA(si_resized.iy);
                 var iz = mapper_z.MapBToA(si_resized.iz);
 
-                SpatialIndex si = gridStructure.dim == Dimension.D2 ?
-                    SpatialIndex.create((int)ix, (int)iy)
+                SpatialIndex si = grid_structure.dim == Dimension.D2
+                    ? SpatialIndex.create((int)ix, (int)iy)
                     : SpatialIndex.create((int)ix, (int)iy, (int)iz);
 
-                resized_gp.set_value(si_resized, get_value(si));//取样赋值
+                resized_gp.set_value(si_resized, get_value(si)); //取样赋值
             }
+
             return resized_gp;
         }
 
         #endregion
 
-        #region 三维的切片操作
+        #region 三维属性的切片操作
 
         /// <summary>
         /// 从三维里获取切片
@@ -792,46 +802,49 @@ namespace JAM8.Algorithms.Geometry
                 _ => null,
             };
         }
+
         /// <summary>
         /// 垂直于z方向的xy切片
         /// </summary>
         private GridProperty get_xy_slice(int iz_pos)
         {
-            GridStructure gs = GridStructure.create(gridStructure.nx, gridStructure.ny, 1,
-                gridStructure.xsiz, gridStructure.ysiz, gridStructure.zsiz,
-                gridStructure.xmn, gridStructure.ymn, gridStructure.zmn);
+            GridStructure gs = GridStructure.create(grid_structure.nx, grid_structure.ny, 1,
+                grid_structure.xsiz, grid_structure.ysiz, grid_structure.zsiz,
+                grid_structure.xmn, grid_structure.ymn, grid_structure.zmn);
             GridProperty slice = create(gs);
-            for (int iy = 0; iy < gridStructure.ny; iy++)
-                for (int ix = 0; ix < gridStructure.nx; ix++)
-                    slice.set_value(ix, iy, get_value(ix, iy, iz_pos));
+            for (int iy = 0; iy < grid_structure.ny; iy++)
+            for (int ix = 0; ix < grid_structure.nx; ix++)
+                slice.set_value(ix, iy, get_value(ix, iy, iz_pos));
             return slice;
         }
+
         /// <summary>
         /// 垂直于y方向的xz切片
         /// </summary>
         private GridProperty get_xz_slice(int iy_pos)
         {
-            GridStructure gs = GridStructure.create(gridStructure.nx, gridStructure.nz, 1,
-                gridStructure.xsiz, gridStructure.zsiz, gridStructure.ysiz,
-                gridStructure.xmn, gridStructure.zmn, gridStructure.ymn);
+            GridStructure gs = GridStructure.create(grid_structure.nx, grid_structure.nz, 1,
+                grid_structure.xsiz, grid_structure.zsiz, grid_structure.ysiz,
+                grid_structure.xmn, grid_structure.zmn, grid_structure.ymn);
             GridProperty slice = create(gs);
-            for (int iz = 0; iz < gridStructure.nz; iz++)
-                for (int ix = 0; ix < gridStructure.nx; ix++)
-                    slice.set_value(ix, iz, get_value(ix, iy_pos, iz));
+            for (int iz = 0; iz < grid_structure.nz; iz++)
+            for (int ix = 0; ix < grid_structure.nx; ix++)
+                slice.set_value(ix, iz, get_value(ix, iy_pos, iz));
             return slice;
         }
+
         /// <summary>
         /// 垂直于x方向的yz切片
         /// </summary>
         private GridProperty get_yz_slice(int ix_pos)
         {
-            GridStructure gs = GridStructure.create(gridStructure.ny, gridStructure.nz, 1,
-                 gridStructure.ysiz, gridStructure.zsiz, gridStructure.xsiz,
-                 gridStructure.ymn, gridStructure.zmn, gridStructure.xmn);
+            GridStructure gs = GridStructure.create(grid_structure.ny, grid_structure.nz, 1,
+                grid_structure.ysiz, grid_structure.zsiz, grid_structure.xsiz,
+                grid_structure.ymn, grid_structure.zmn, grid_structure.xmn);
             GridProperty slice = create(gs);
-            for (int iz = 0; iz < gridStructure.nz; iz++)
-                for (int iy = 0; iy < gridStructure.ny; iy++)
-                    slice.set_value(iy, iz, get_value(ix_pos, iy, iz));
+            for (int iz = 0; iz < grid_structure.nz; iz++)
+            for (int iy = 0; iy < grid_structure.ny; iy++)
+                slice.set_value(iy, iz, get_value(ix_pos, iy, iz));
             return slice;
         }
 
@@ -860,32 +873,35 @@ namespace JAM8.Algorithms.Geometry
                     break;
             }
         }
+
         /// <summary>
         /// 垂直于z方向的xy切片
         /// </summary>
         private void set_xy_slice(int iz_pos, GridProperty xy_slice)
         {
-            for (int iy = 0; iy < gridStructure.ny; iy++)
-                for (int ix = 0; ix < gridStructure.nx; ix++)
-                    set_value(ix, iy, iz_pos, xy_slice.get_value(ix, iy));
+            for (int iy = 0; iy < grid_structure.ny; iy++)
+            for (int ix = 0; ix < grid_structure.nx; ix++)
+                set_value(ix, iy, iz_pos, xy_slice.get_value(ix, iy));
         }
+
         /// <summary>
         /// 垂直于y方向的xz切片
         /// </summary>
         private void set_xz_slice(int iy_pos, GridProperty xz_slice)
         {
-            for (int iz = 0; iz < gridStructure.nz; iz++)
-                for (int ix = 0; ix < gridStructure.nx; ix++)
-                    set_value(ix, iy_pos, iz, xz_slice.get_value(ix, iz));
+            for (int iz = 0; iz < grid_structure.nz; iz++)
+            for (int ix = 0; ix < grid_structure.nx; ix++)
+                set_value(ix, iy_pos, iz, xz_slice.get_value(ix, iz));
         }
+
         /// <summary>
         /// 垂直于x方向的yz切片
         /// </summary>
         private void set_yz_slice(int ix_pos, GridProperty yz_slice)
         {
-            for (int iz = 0; iz < gridStructure.nz; iz++)
-                for (int iy = 0; iy < gridStructure.ny; iy++)
-                    set_value(ix_pos, iy, iz, yz_slice.get_value(iy, iz));
+            for (int iz = 0; iz < grid_structure.nz; iz++)
+            for (int iy = 0; iy < grid_structure.ny; iy++)
+                set_value(ix_pos, iy, iz, yz_slice.get_value(iy, iz));
         }
 
         #endregion
@@ -899,12 +915,12 @@ namespace JAM8.Algorithms.Geometry
         /// <returns></returns>
         public Bitmap draw_image_2d(Color color_of_null, ColorMapEnum color_map_enum)
         {
-            Images.ColorMap colorMap = new(Min.Value, Max.Value, 64, 255, color_map_enum);//根据Grid网格值的范围计算颜色表
-            Bitmap b = new(gridStructure.nx, gridStructure.ny);
+            Images.ColorMap colorMap = new(Min.Value, Max.Value, 64, 255, color_map_enum); //根据Grid网格值的范围计算颜色表
+            Bitmap b = new(grid_structure.nx, grid_structure.ny);
 
             var reverse = reverse_updown_2d();
 
-            for (int j = 0; j < b.Height; j++)//转换为图像
+            for (int j = 0; j < b.Height; j++) //转换为图像
             {
                 for (int i = 0; i < b.Width; i++)
                 {
@@ -916,7 +932,7 @@ namespace JAM8.Algorithms.Geometry
                     }
                     else
                     {
-                        Color color = colorMap.MapValueToColor(cell.Value);//颜色映射表获取对应值的颜色
+                        Color color = colorMap.MapValueToColor(cell.Value); //颜色映射表获取对应值的颜色
                         b.SetPixel(i, j, color);
                     }
                 }
@@ -931,13 +947,13 @@ namespace JAM8.Algorithms.Geometry
         /// <returns></returns>
         public GridProperty reverse_updown_2d()
         {
-            GridProperty reverse = create(gridStructure);//创建一个新的网格体
-                                                         //笛卡尔坐标系to屏幕坐标系（坐标转换）
-            for (int iy = 0; iy < gridStructure.ny; iy++)
+            GridProperty reverse = create(grid_structure); //创建一个新的网格体
+            //笛卡尔坐标系to屏幕坐标系（坐标转换）
+            for (int iy = 0; iy < grid_structure.ny; iy++)
             {
-                for (int ix = 0; ix < gridStructure.nx; ix++)
+                for (int ix = 0; ix < grid_structure.nx; ix++)
                 {
-                    reverse.set_value(ix, gridStructure.ny - iy + 1, get_value(ix, iy));
+                    reverse.set_value(ix, grid_structure.ny - iy + 1, get_value(ix, iy));
                 }
             }
 
@@ -953,11 +969,12 @@ namespace JAM8.Algorithms.Geometry
         public List<SpatialIndex> get_spatialIndex_eq_null()
         {
             List<SpatialIndex> result = [];
-            for (int n = 0; n < gridStructure.N; n++)
+            for (int n = 0; n < grid_structure.N; n++)
             {
                 if (get_value(n) == null)
-                    result.Add(gridStructure.get_spatialIndex(n));
+                    result.Add(grid_structure.get_spatial_index(n));
             }
+
             return result;
         }
 
@@ -968,11 +985,12 @@ namespace JAM8.Algorithms.Geometry
         public List<SpatialIndex> get_spatialIndex_ne_null()
         {
             List<SpatialIndex> result = [];
-            for (int n = 0; n < gridStructure.N; n++)
+            for (int n = 0; n < grid_structure.N; n++)
             {
                 if (get_value(n) != null)
-                    result.Add(gridStructure.get_spatialIndex(n));
+                    result.Add(grid_structure.get_spatial_index(n));
             }
+
             return result;
         }
 
@@ -981,7 +999,7 @@ namespace JAM8.Algorithms.Geometry
         /// </summary>
         public void show_win(string title = null)
         {
-            Grid g = Grid.create(gridStructure);
+            Grid g = Grid.create(grid_structure);
             g.add_gridProperty("GridProperty", this);
             g.showGrid_win(title);
         }
@@ -992,8 +1010,8 @@ namespace JAM8.Algorithms.Geometry
         /// <returns></returns>
         public GridProperty deep_clone()
         {
-            GridProperty gp = create(gridStructure);
-            for (int n = 0; n < gridStructure.N; n++)
+            GridProperty gp = create(grid_structure);
+            for (int n = 0; n < grid_structure.N; n++)
                 gp.set_value(n, get_value(n));
             return gp;
         }
@@ -1004,7 +1022,7 @@ namespace JAM8.Algorithms.Geometry
         /// <returns></returns>
         public Grid convert_to_grid()
         {
-            Grid g = Grid.create(gridStructure);
+            Grid g = Grid.create(grid_structure);
             g.add_gridProperty("gp_name", deep_clone());
             return g;
         }
@@ -1015,36 +1033,288 @@ namespace JAM8.Algorithms.Geometry
         /// <returns></returns>
         public Array convert_to_array()
         {
-            if (gridStructure.dim == Dimension.D2)
+            if (grid_structure.dim == Dimension.D2)
             {
                 // 二维情况
-                double[,] array = new double[gridStructure.nx, gridStructure.ny];
-                for (int iy = 0; iy < gridStructure.ny; iy++)
+                double[,] array = new double[grid_structure.nx, grid_structure.ny];
+                for (int iy = 0; iy < grid_structure.ny; iy++)
                 {
-                    for (int ix = 0; ix < gridStructure.nx; ix++)
+                    for (int ix = 0; ix < grid_structure.nx; ix++)
                     {
                         array[ix, iy] = get_value(ix, iy).Value;
                     }
                 }
+
                 return array; // 返回二维数组
             }
-            if (gridStructure.dim == Dimension.D3)
+
+            if (grid_structure.dim == Dimension.D3)
             {
                 // 三维情况
-                double[,,] array = new double[gridStructure.nx, gridStructure.ny, gridStructure.nz];
-                for (int iz = 0; iz < gridStructure.nz; iz++)
+                double[,,] array = new double[grid_structure.nx, grid_structure.ny, grid_structure.nz];
+                for (int iz = 0; iz < grid_structure.nz; iz++)
                 {
-                    for (int iy = 0; iy < gridStructure.ny; iy++)
+                    for (int iy = 0; iy < grid_structure.ny; iy++)
                     {
-                        for (int ix = 0; ix < gridStructure.nx; ix++)
+                        for (int ix = 0; ix < grid_structure.nx; ix++)
                         {
                             array[ix, iy, iz] = get_value(ix, iy, iz).Value;
                         }
                     }
                 }
+
                 return array; // 返回三维数组
             }
+
             return null;
         }
+
+        #region connected_components_labeling 连通性标记
+
+        public GridProperty connected_components_labeling_2d()
+        {
+            int width = this.grid_structure.nx;
+            int height = this.grid_structure.ny;
+            var gridStructure = this.grid_structure;
+            var result = GridProperty.create(this.grid_structure);
+
+            // 每个像素的临时标签（和 result 一致大小）
+            int[,] labels = new int[width, height];
+
+            // 标签之间的等价关系
+            List<int> parent = new List<int> { 0 }; // parent[0] 是无效标签，占位
+
+            int nextLabel = 1;
+
+            // -------- 第一遍扫描 --------
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    var index = gridStructure.get_array_index(x, y);
+                    if (this.get_value(index) == null || Convert.ToInt32(this.get_value(index)) == 0)
+                        continue;
+
+                    // 查看左边和上边像素的标签
+                    int left = (x > 0) ? labels[x - 1, y] : 0;
+                    int top = (y > 0) ? labels[x, y - 1] : 0;
+
+                    if (left == 0 && top == 0)
+                    {
+                        // 新区域
+                        labels[x, y] = nextLabel;
+                        parent.Add(nextLabel); // 初始化自己为自己的父亲
+                        nextLabel++;
+                    }
+                    else if (left != 0 && top == 0)
+                    {
+                        labels[x, y] = left;
+                    }
+                    else if (left == 0 && top != 0)
+                    {
+                        labels[x, y] = top;
+                    }
+                    else
+                    {
+                        // 都有标签，选择较小的作为主标签
+                        int min = Math.Min(left, top);
+                        int max = Math.Max(left, top);
+                        labels[x, y] = min;
+
+                        // 记录两个标签等价
+                        Union(parent, min, max);
+                    }
+                }
+            }
+
+            // -------- 第二遍扫描 --------
+            Dictionary<int, int> labelMap = new Dictionary<int, int>();
+            int newLabel = 1;
+
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    int label = labels[x, y];
+                    if (label == 0)
+                        continue;
+
+                    // 查找最上层父标签
+                    int root = FindRoot(parent, label);
+
+                    // 给根标签分配一个连续新编号
+                    if (!labelMap.ContainsKey(root))
+                        labelMap[root] = newLabel++;
+
+                    var flatIndex = gridStructure.get_array_index(x, y, 0);
+                    result.set_value(flatIndex, labelMap[root]);
+                }
+            }
+
+            return result;
+        }
+
+        public GridProperty connected_components_labeling_3d()
+        {
+            int nx = this.grid_structure.nx;
+            int ny = this.grid_structure.ny;
+            int nz = this.grid_structure.nz;
+            var gridStructure = this.grid_structure;
+            var result = GridProperty.create(gridStructure);
+
+            // 3D 临时标签数组
+            int[,,] labels = new int[nx, ny, nz];
+            List<int> parent = new List<int> { 0 }; // parent[0] 占位
+            int nextLabel = 1;
+
+            // ---------- 第一遍扫描 ----------
+            for (int z = 0; z < nz; z++)
+            {
+                for (int y = 0; y < ny; y++)
+                {
+                    for (int x = 0; x < nx; x++)
+                    {
+                        int index = gridStructure.get_array_index(x, y, z);
+                        var raw = this.get_value(index);
+                        if (raw == null || !int.TryParse(raw.ToString(), out int val) || val == 0)
+                            continue;
+
+                        // 获取 6-邻域中的已赋标签（左、上、前）
+                        int left = (x > 0) ? labels[x - 1, y, z] : 0;
+                        int top = (y > 0) ? labels[x, y - 1, z] : 0;
+                        int front = (z > 0) ? labels[x, y, z - 1] : 0;
+
+                        var neighbors = new[] { left, top, front }.Where(l => l > 0).ToList();
+
+                        if (neighbors.Count == 0)
+                        {
+                            // 新区域
+                            labels[x, y, z] = nextLabel;
+                            parent.Add(nextLabel);
+                            nextLabel++;
+                        }
+                        else
+                        {
+                            // 使用最小标签
+                            int minLabel = neighbors.Min();
+                            labels[x, y, z] = minLabel;
+
+                            // 记录等价标签
+                            foreach (var neighborLabel in neighbors)
+                                Union(parent, minLabel, neighborLabel);
+                        }
+                    }
+                }
+            }
+
+            // ---------- 第二遍扫描 ----------
+            Dictionary<int, int> labelMap = new Dictionary<int, int>();
+            int newLabel = 1;
+
+            for (int z = 0; z < nz; z++)
+            {
+                for (int y = 0; y < ny; y++)
+                {
+                    for (int x = 0; x < nx; x++)
+                    {
+                        int label = labels[x, y, z];
+                        if (label == 0) continue;
+
+                        int root = FindRoot(parent, label);
+                        if (!labelMap.ContainsKey(root))
+                            labelMap[root] = newLabel++;
+
+                        int flatIndex = gridStructure.get_array_index(x, y, z);
+                        result.set_value(flatIndex, labelMap[root]);
+                    }
+                }
+            }
+
+            return result;
+        }
+
+
+        // 查找标签根
+        private int FindRoot(List<int> parent, int label)
+        {
+            while (parent[label] != label)
+                label = parent[label];
+            return label;
+        }
+
+        // 合并两个标签集合
+        private void Union(List<int> parent, int a, int b)
+        {
+            int rootA = FindRoot(parent, a);
+            int rootB = FindRoot(parent, b);
+            if (rootA != rootB)
+                parent[rootB] = rootA;
+        }
+
+        #endregion
+
+        #region Connectivity Function 连通性函数
+
+        /// <summary>
+        /// 计算连通性函数，用于评价空间点之间的连通性。
+        /// </summary>
+        /// <param name="distance">连通性检查的距离</param>
+        /// <param name="angle">连通性检查的方向（以角度表示）</param>
+        /// <returns>连通性函数的平均值</returns>
+        public double ConnectivityFunction(double distance, double angle)
+        {
+            int width = this.grid_structure.nx; // 网格的宽度
+            int height = this.grid_structure.ny; // 网格的高度
+            double connectivityCount = 0; // 连通点的计数
+            int totalCount = 0; // 总点数，用于计算平均连通性
+
+            // 遍历所有网格中的像素点
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    var index = this.grid_structure.get_array_index(x, y); // 获取当前点的平面索引
+                    if (this.get_value(index) == 0) continue; // 如果当前点的值为0，则跳过
+
+                    // 检查当前点与其他点的连通性
+                    if (IsConnected(x, y, distance, angle)) // 判断(x, y)是否与其他点连通
+                    {
+                        connectivityCount++; // 如果连通，增加计数
+                    }
+
+                    totalCount++; // 增加总点数
+                }
+            }
+
+            // 计算并返回连通性函数的平均值
+            return connectivityCount / totalCount;
+        }
+
+        /// <summary>
+        /// 判断当前点 (x, y) 是否与某个点在给定距离和角度下连通。
+        /// </summary>
+        /// <param name="x">当前点的x坐标</param>
+        /// <param name="y">当前点的y坐标</param>
+        /// <param name="distance">连通性检查的距离</param>
+        /// <param name="angle">连通性检查的方向（以角度表示）</param>
+        /// <returns>如果连通，返回true；否则返回false</returns>
+        private bool IsConnected(int x, int y, double distance, double angle)
+        {
+            // 按照给定的角度和距离计算目标点的坐标
+            int targetX = x + (int)(distance * Math.Cos(angle)); // 根据角度和距离计算目标点的x坐标
+            int targetY = y + (int)(distance * Math.Sin(angle)); // 根据角度和距离计算目标点的y坐标
+
+            // 检查目标点是否在有效范围内
+            if (targetX < 0 || targetX >= this.grid_structure.nx || targetY < 0 || targetY >= this.grid_structure.ny)
+                return false; // 如果目标点超出边界，则返回false
+
+            // 获取目标点的平面索引
+            var targetIndex = this.grid_structure.get_array_index(targetX, targetY);
+
+            // 如果目标点的值和当前点相同，并且都属于感兴趣的类别（例如：值为1的区域），则返回true
+            return this.get_value(targetIndex) == this.get_value(this.grid_structure.get_array_index(x, y));
+        }
+
+        #endregion
     }
 }

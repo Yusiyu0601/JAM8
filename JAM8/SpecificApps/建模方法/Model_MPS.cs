@@ -42,10 +42,10 @@ namespace JAM8.SpecificApps.建模方法
         {
             var gp_ti = Grid.create_from_gslibwin().grid.
                 select_gridProperty_win().grid_property;
-            var gs = gp_ti.gridStructure;
+            var gs = gp_ti.grid_structure;
             var random_seed = 123456;
 
-            var dim = gp_ti.gridStructure.dim;
+            var dim = gp_ti.grid_structure.dim;
             Mould mould;
 
             Dictionary<int, (Mould mould, Patterns patterns)> pats_mg = new();

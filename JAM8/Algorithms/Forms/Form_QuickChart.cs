@@ -23,7 +23,9 @@ namespace JAM8.Algorithms
         /// <param name="x_label"></param>
         /// <param name="y_label"></param>
         /// <param name="main_title"></param>
-        public static void ScatterPlot(IEnumerable<double> x_data, IEnumerable<double> y_data, IEnumerable<string> point_labels = null, string x_label = "x", string y_label = "y", string main_title = "title")
+        public static void ScatterPlot(IEnumerable<double> x_data, IEnumerable<double> y_data,
+            IEnumerable<string> point_labels = null, string x_label = "x", string y_label = "y",
+            string main_title = "title")
         {
             Form_QuickChart frm = new();
             frm.Text = $"{main_title}";
@@ -32,18 +34,26 @@ namespace JAM8.Algorithms
             plt.XLabel(x_label);
             plt.YLabel(y_label);
             plt.Clear();
-            var scatter = plt.AddScatter(x_data.ToArray(), y_data.ToArray(), Color.Black, 1, 5, MarkerShape.filledCircle, LineStyle.None);
-            scatter.DataPointLabels = point_labels.ToArray();
+            var scatter = plt.AddScatter(x_data.ToArray(), y_data.ToArray(), Color.Black, 1, 5,
+                MarkerShape.filledCircle, LineStyle.None);
+            if (point_labels != null) 
+                scatter.DataPointLabels = point_labels.ToArray();
             frm.formsPlot1.Refresh();
-            frm.Show();
+            frm.ShowDialog();
         }
-        public static void ScatterPlot(IEnumerable<float> x_data, IEnumerable<float> y_data, IEnumerable<string> point_labels = null, string x_label = "x", string y_label = "y", string main_title = "title")
+
+        public static void ScatterPlot(IEnumerable<float> x_data, IEnumerable<float> y_data,
+            IEnumerable<string> point_labels = null, string x_label = "x", string y_label = "y",
+            string main_title = "title")
         {
             var x_data1 = x_data.Select(a => (double)a);
             var y_data1 = y_data.Select(a => (double)a);
             ScatterPlot(x_data1, y_data1, point_labels, x_label, y_label, main_title);
         }
-        public void DrawScatter(IEnumerable<double> x_data, IEnumerable<double> y_data, IEnumerable<string> point_labels = null, string x_label = "x", string y_label = "y", string main_title = "title")
+
+        public void DrawScatter(IEnumerable<double> x_data, IEnumerable<double> y_data,
+            IEnumerable<string> point_labels = null, string x_label = "x", string y_label = "y",
+            string main_title = "title")
         {
             Text = $"{main_title}";
             var plt = formsPlot1.Plot;
@@ -51,7 +61,8 @@ namespace JAM8.Algorithms
             plt.XLabel(x_label);
             plt.YLabel(y_label);
             plt.Clear();
-            var scatter = plt.AddScatter(x_data.ToArray(), y_data.ToArray(), Color.Black, 1, 5, MarkerShape.filledCircle, LineStyle.None);
+            var scatter = plt.AddScatter(x_data.ToArray(), y_data.ToArray(), Color.Black, 1, 5,
+                MarkerShape.filledCircle, LineStyle.None);
             scatter.DataPointLabels = point_labels.ToArray();
             formsPlot1.Refresh();
         }
@@ -68,7 +79,9 @@ namespace JAM8.Algorithms
         /// <param name="x_label"></param>
         /// <param name="y_label"></param>
         /// <param name="main_title"></param>
-        public static void LinePlot(IEnumerable<double> x_data, IEnumerable<double> y_data, IEnumerable<string> point_labels = null, string x_label = "x", string y_label = "y", string main_title = "title")
+        public static void LinePlot(IEnumerable<double> x_data, IEnumerable<double> y_data,
+            IEnumerable<string> point_labels = null, string x_label = "x", string y_label = "y",
+            string main_title = "title")
         {
             Form_QuickChart frm = new();
             frm.Text = $"{main_title}";
@@ -77,18 +90,25 @@ namespace JAM8.Algorithms
             plt.XLabel(x_label);
             plt.YLabel(y_label);
             plt.Clear();
-            var scatter = plt.AddScatter(x_data.ToArray(), y_data.ToArray(), Color.Black, 1, 5, MarkerShape.none, LineStyle.Solid);
+            var scatter = plt.AddScatter(x_data.ToArray(), y_data.ToArray(), Color.Black, 1, 5, MarkerShape.none,
+                LineStyle.Solid);
             scatter.DataPointLabels = point_labels.ToArray();
             frm.formsPlot1.Refresh();
             frm.Show();
         }
-        public static void LinePlot(IEnumerable<float> x_data, IEnumerable<float> y_data, IEnumerable<string> point_labels = null, string x_label = "x", string y_label = "y", string main_title = "title")
+
+        public static void LinePlot(IEnumerable<float> x_data, IEnumerable<float> y_data,
+            IEnumerable<string> point_labels = null, string x_label = "x", string y_label = "y",
+            string main_title = "title")
         {
             var x_data1 = x_data.Select(a => (double)a);
             var y_data1 = y_data.Select(a => (double)a);
             LinePlot(x_data1, y_data1, point_labels, x_label, y_label, main_title);
         }
-        public void DrawLine(IEnumerable<double> x_data, IEnumerable<double> y_data, IEnumerable<string> point_labels = null, string x_label = "x", string y_label = "y", string main_title = "title")
+
+        public void DrawLine(IEnumerable<double> x_data, IEnumerable<double> y_data,
+            IEnumerable<string> point_labels = null, string x_label = "x", string y_label = "y",
+            string main_title = "title")
         {
             Text = $"{main_title}";
             var plt = formsPlot1.Plot;
@@ -96,7 +116,8 @@ namespace JAM8.Algorithms
             plt.XLabel(x_label);
             plt.YLabel(y_label);
             plt.Clear();
-            var scatter = plt.AddScatter(x_data.ToArray(), y_data.ToArray(), Color.Black, 1, 5, MarkerShape.none, LineStyle.Solid);
+            var scatter = plt.AddScatter(x_data.ToArray(), y_data.ToArray(), Color.Black, 1, 5, MarkerShape.none,
+                LineStyle.Solid);
             scatter.DataPointLabels = point_labels.ToArray();
             formsPlot1.Refresh();
         }
@@ -113,7 +134,8 @@ namespace JAM8.Algorithms
         /// <param name="x_label"></param>
         /// <param name="y_label"></param>
         /// <param name="main_title"></param>
-        public static void BarPlot(IEnumerable<double> values, IEnumerable<double> positions, string x_label = "x", string y_label = "y", string main_title = "title")
+        public static void BarPlot(IEnumerable<double> values, IEnumerable<double> positions, string x_label = "x",
+            string y_label = "y", string main_title = "title")
         {
             Form_QuickChart frm = new()
             {
@@ -131,13 +153,17 @@ namespace JAM8.Algorithms
             frm.formsPlot1.Refresh();
             frm.Show();
         }
-        public static void BarPlot(IEnumerable<float> values, IEnumerable<float> positions, string x_label = "x", string y_label = "y", string main_title = "title")
+
+        public static void BarPlot(IEnumerable<float> values, IEnumerable<float> positions, string x_label = "x",
+            string y_label = "y", string main_title = "title")
         {
             var values_ = values.Select(a => (double)a);
             var positions_ = positions.Select(a => (double)a);
             BarPlot(values_, positions_, x_label, y_label, main_title);
         }
-        public void DrawBar(IEnumerable<double> values, IEnumerable<double> positions, string x_label = "x", string y_label = "y", string main_title = "title")
+
+        public void DrawBar(IEnumerable<double> values, IEnumerable<double> positions, string x_label = "x",
+            string y_label = "y", string main_title = "title")
         {
             Text = $"{main_title}";
             var plt = formsPlot1.Plot;
@@ -178,6 +204,7 @@ namespace JAM8.Algorithms
             frm.formsPlot1.Refresh();
             frm.Show();
         }
+
         public static void ImagePlot(IList<Bitmap> images, IList<float> xs, IList<float> ys,
             string x_label = "x", string y_label = "y", string main_title = "title")
         {
@@ -196,10 +223,12 @@ namespace JAM8.Algorithms
             {
                 var img = plt.AddImage(images1[i], xs1[i], ys1[i], scale: 2);
             }
+
             plt.AxisScaleLock(true);
             frm.formsPlot1.Refresh();
             frm.Show();
         }
+
         /// <summary>
         /// 绘制二维数组
         /// </summary>
@@ -207,7 +236,8 @@ namespace JAM8.Algorithms
         /// <param name="x_label"></param>
         /// <param name="y_label"></param>
         /// <param name="main_title"></param>
-        public static void ArrayPlot(double[,] array, string x_label = "x", string y_label = "y", string main_title = "title")
+        public static void ArrayPlot(double[,] array, string x_label = "x", string y_label = "y",
+            string main_title = "title")
         {
             Form_QuickChart frm = new()
             {
@@ -229,6 +259,7 @@ namespace JAM8.Algorithms
                     b.SetPixel(idx_dim0, idx_dim1, Color.FromArgb(value, value, value));
                 }
             }
+
             var img = plt.AddImage(b, 0, 0);
             img.HeightInAxisUnits = 5;
             img.WidthInAxisUnits = 5;
@@ -245,7 +276,8 @@ namespace JAM8.Algorithms
         /// <param name="x_label"></param>
         /// <param name="y_label"></param>
         /// <param name="main_title"></param>
-        public static void ArrayPlot(Complex[,] array, int type = 2, string x_label = "x", string y_label = "y", string main_title = "title")
+        public static void ArrayPlot(Complex[,] array, int type = 2, string x_label = "x", string y_label = "y",
+            string main_title = "title")
         {
             int n_dim0 = array.GetLength(0);
             int n_dim1 = array.GetLength(1);
@@ -262,6 +294,7 @@ namespace JAM8.Algorithms
                         array1[idx_dim0, idx_dim1] = (int)array[idx_dim0, idx_dim1].Magnitude;
                 }
             }
+
             ArrayPlot(array1, x_label, y_label, main_title);
         }
 
@@ -280,6 +313,7 @@ namespace JAM8.Algorithms
                     gp.set_value(idx_dim0, idx_dim1, (float?)array[idx_dim0, idx_dim1]);
                 }
             }
+
             gp.show_win();
         }
 
@@ -305,6 +339,7 @@ namespace JAM8.Algorithms
                         array1[idx_dim0, idx_dim1] = array[idx_dim0, idx_dim1].Magnitude;
                 }
             }
+
             ArrayPlot2(array1);
         }
 
@@ -327,6 +362,7 @@ namespace JAM8.Algorithms
                     }
                 }
             }
+
             gp.show_win();
         }
 
@@ -356,8 +392,8 @@ namespace JAM8.Algorithms
                     }
                 }
             }
+
             ArrayPlot2(array1);
         }
-
     }
 }

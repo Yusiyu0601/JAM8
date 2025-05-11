@@ -70,7 +70,7 @@ namespace JAM8.Algorithms.Geometry
             int N_out_of_range = 0;
             foreach (var cdi in cd)
             {
-                int array_index = gs.coord_to_arrayIndex(cdi.coord);
+                int array_index = gs.coord_to_array_index(cdi.coord);
                 CoarsenedCDataItem ccdi = new();
                 foreach (var item in cdi)
                 {

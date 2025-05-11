@@ -55,7 +55,7 @@ namespace JAM8.SpecificApps.研究方法
 
             //建立样式的距离矩阵
             var idx_labels = pats.Select(a => a.Key).ToArray();
-            var labels = idx_labels.Select(a => gs.get_spatialIndex(a).view_text());
+            var labels = idx_labels.Select(a => gs.get_spatial_index(a).view_text());
             var dismat = MyMatrix.create_dismat(df_pats, MyDistanceType.manhattan);
             var locs = CMDSCALE.CMDSCALE_MathNet(dismat, 2);
             string[] series_names = new string[] { "dim1", "dim2" };

@@ -70,7 +70,7 @@ namespace JAM8.Algorithms.Geometry
             var range1 = MyGenerator.range(0, gs_model.N - 1, 1, true);
             var model_random_idxes = SortHelper.FisherYatesShuffle(range1, mt);//乱序
 
-            var range2 = MyGenerator.range(0, ti.gridStructure.N - 1, 1, true);//训练图像
+            var range2 = MyGenerator.range(0, ti.grid_structure.N - 1, 1, true);//训练图像
             var ti_random_idxes = SortHelper.FisherYatesShuffle(range2, mt);//乱序
 
             int progress = 0;
@@ -86,7 +86,7 @@ namespace JAM8.Algorithms.Geometry
                     //state.add_gridProperty($"{progress}", model["re"].deep_clone());
                     MyConsoleHelper.write_string_to_console($"{progress}", DateTime.Now.ToString());
                 }
-                SpatialIndex si_model = gs_model.get_spatialIndex(model_random_idx);//下一个待模拟点
+                SpatialIndex si_model = gs_model.get_spatial_index(model_random_idx);//下一个待模拟点
 
                 if (model["re"].get_value(si_model) == null)//如果某个点没有数据，则需要插值
                 {
@@ -104,7 +104,7 @@ namespace JAM8.Algorithms.Geometry
                     }
                     if (data.Count == 0)
                     {
-                        var ti_array_index = mt.Next(0, ti.gridStructure.N);
+                        var ti_array_index = mt.Next(0, ti.grid_structure.N);
                         var select_value = ti.get_value(ti_array_index);
                         model["re"].set_value(model_random_idx, select_value);
                         //Console.WriteLine(model_random_idx + " no_cd " + select_value);
@@ -157,7 +157,7 @@ namespace JAM8.Algorithms.Geometry
                         m++;
                         if (m == M)
                             break;
-                        var si_ti = ti.gridStructure.get_spatialIndex(ti_random_idx);
+                        var si_ti = ti.grid_structure.get_spatial_index(ti_random_idx);
                         mi_ti.update_from_gridProperty(si_ti, ti);
                         if (mi_ti.neighbor_not_nulls_ids.Count == mi_ti.mould.neighbors_number)
                         {

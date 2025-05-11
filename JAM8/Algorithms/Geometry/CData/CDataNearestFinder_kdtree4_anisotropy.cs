@@ -84,7 +84,7 @@ namespace JAM8.Algorithms.Geometry
             cd_finder.locs = [];//调整前的点坐标
             for (int i = 0; i < cd.N; i++)
             {
-                SpatialIndex si = gs.coord_to_spatialIndex(cd[i].coord);
+                SpatialIndex si = gs.coord_to_spatial_index(cd[i].coord);
 
                 if (si == null)
                     continue;

@@ -104,7 +104,7 @@ namespace JAM8.SpecificApps.工作空间
             {
                 var dict = (Dictionary<string, object>)item2.data;
                 GridProperty gp1 = (GridProperty)dict.First().Value;
-                Grid g = Grid.create(gp1.gridStructure);
+                Grid g = Grid.create(gp1.grid_structure);
                 foreach (var (name, gp) in dict)
                 {
                     g.add_gridProperty(name, (GridProperty)gp);

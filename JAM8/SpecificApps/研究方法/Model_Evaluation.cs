@@ -38,7 +38,7 @@ namespace JAM8.SpecificApps.研究方法
                     if (g["cd"].get_value(n) != null)
                     {
                         All++;
-                        SpatialIndex si_core = g.gridStructure.get_spatialIndex(n);
+                        SpatialIndex si_core = g.gridStructure.get_spatial_index(n);
                         var mi = MouldInstance.create_from_gridProperty(m, si_core, g["re"]);
                         int count_不相同 = 0;
                         for (int i = 1; i < mi.neighbor_values.Count; i++)//统计不相同的节点总数
@@ -85,7 +85,7 @@ namespace JAM8.SpecificApps.研究方法
                     if (g["cd"].get_value(n) != null)
                     {
                         All++;
-                        SpatialIndex si_core = g.gridStructure.get_spatialIndex(n);
+                        SpatialIndex si_core = g.gridStructure.get_spatial_index(n);
                         var mi = MouldInstance.create_from_gridProperty(m, si_core, g["re"]);
                         int count_不相同 = 0;
                         for (int i = 1; i < mi.neighbor_values.Count; i++)//统计不相同的节点总数
@@ -153,7 +153,7 @@ namespace JAM8.SpecificApps.研究方法
 
             var g_re = Grid.create_from_gslibwin("打开Re文件").grid;
 
-            int N_lag = gp_ti.gridStructure.nx / 3;
+            int N_lag = gp_ti.grid_structure.nx / 3;
 
             List<double> lags_ti = new();
             lags_ti.AddRange(Variogram.calc_experiment_variogram(gp_ti, 0, N_lag, 1).gamma);
@@ -185,7 +185,7 @@ namespace JAM8.SpecificApps.研究方法
                 .grid
                 .select_gridProperty_win("选择TI");
 
-            int N_lag = gp_ti.gridStructure.nx / 3;
+            int N_lag = gp_ti.grid_structure.nx / 3;
 
             List<double> lags_ti = new();
 

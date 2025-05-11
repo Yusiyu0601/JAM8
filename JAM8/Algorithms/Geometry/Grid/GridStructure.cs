@@ -21,14 +21,17 @@ namespace JAM8.Algorithms.Geometry
         /// 网格单元的总数
         /// </summary>
         public int N { get; internal set; } = 0;
+
         /// <summary>
         /// x方向网格单元数量
         /// </summary>
         public int nx { get; internal set; } = 1;
+
         /// <summary>
         /// y方向网格单元数量
         /// </summary>
         public int ny { get; internal set; } = 1;
+
         /// <summary>
         /// z方向网格单元数量
         /// </summary>
@@ -38,10 +41,12 @@ namespace JAM8.Algorithms.Geometry
         /// x方向网格单元尺寸，默认等于1
         /// </summary>
         public float xsiz { get; internal set; } = 1;
+
         /// <summary>
         /// y方向网格单元尺寸，默认等于1
         /// </summary>
         public float ysiz { get; internal set; } = 1;
+
         /// <summary>
         /// z方向网格单元尺寸，默认等于1
         /// </summary>
@@ -51,10 +56,12 @@ namespace JAM8.Algorithms.Geometry
         /// x方向长度，等于nx*xsiz
         /// </summary>
         public float xextent { get; internal set; } = 1;
+
         /// <summary>
         /// y方向长度，等于ny*ysiz
         /// </summary>
         public float yextent { get; internal set; } = 1;
+
         /// <summary>
         /// z方向长度，等于nz*zsiz
         /// </summary>
@@ -64,10 +71,12 @@ namespace JAM8.Algorithms.Geometry
         /// x方向的网格点起始点，默认等于xsiz的一半
         /// </summary>
         public float xmn { get; internal set; } = 0.5f;
+
         /// <summary>
         /// y方向的网格点起始点，默认等于ysiz的一半
         /// </summary>
         public float ymn { get; internal set; } = 0.5f;
+
         /// <summary>
         /// z方向的网格点起始点，默认等于zsiz的一半
         /// </summary>
@@ -83,38 +92,40 @@ namespace JAM8.Algorithms.Geometry
 
         #region 实例函数
 
-
         /// <summary>
-        /// 根据spatialIndex计算arrayIndex，ix、iy、iz从0开始，到N=nx*ny*nz-1结束
+        /// 根据spatial_index计算array_index，ix、iy、iz从0开始，到N=nx*ny*nz-1结束
         /// </summary>
         /// <param name="ix"></param>
         /// <param name="iy"></param>
         /// <param name="iz"></param>
-        /// <returns> 如果 spatialIndex(ix,iy,iz)不在GridStructure范围内，则返回-1 </returns>
-        public int get_arrayIndex(int ix, int iy, int iz)
+        /// <returns> 如果 根据spatial_index计算array_index(ix,iy,iz)不在GridStructure范围内，则返回-1 </returns>
+        public int get_array_index(int ix, int iy, int iz = 0)
         {
             if (ix < 0 || ix >= nx || iy < 0 || iy >= ny || iz < 0 || iz >= nz)
             {
                 return -1; // 索引超出范围
             }
+
             return iz * ny * nx + iy * nx + ix;
         }
+
         /// <summary>
         /// 根据spatialIndex计算arrayIndex，spatialIndex的ix、iy、iz从0开始，到N=nx*ny*nz-1结束
         /// </summary>
         /// <param name="si"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public int get_arrayIndex(SpatialIndex si)
+        public int get_array_index(SpatialIndex si)
         {
-            return get_arrayIndex(si.ix, si.iy, si.iz);
+            return get_array_index(si.ix, si.iy, si.iz);
         }
+
         /// <summary>
         /// 根据array索引计算spatial索引，arrayIndex从0开始
         /// </summary>
         /// <param name="array_index"></param>
         /// <returns></returns>
-        public SpatialIndex get_spatialIndex(int array_index)
+        public SpatialIndex get_spatial_index(int array_index)
         {
             return index_mapper[array_index];
         }
@@ -136,7 +147,7 @@ namespace JAM8.Algorithms.Geometry
         /// 打印
         /// </summary>
         /// <returns></returns>
-        public string view_text()
+        public string to_string()
         {
             return $"\n\tGridStructure {dim}_[{nx}_{ny}_{nz}]_[{xsiz}_{ysiz}_{zsiz}]_[{xmn}_{ymn}_{zmn}]\n";
         }
@@ -144,11 +155,11 @@ namespace JAM8.Algorithms.Geometry
         #region coord 与 spatialIndex 互相转换
 
         /// <summary>
-        /// spatialIndex 转换为 coord
+        /// spatial_index 转换为 coord
         /// </summary>
         /// <param name="si"></param>
         /// <returns></returns>
-        public Coord spatialIndex_to_coord(SpatialIndex si)
+        public Coord spatial_index_to_coord(SpatialIndex si)
         {
             if (si.dim != dim)
                 return null;
@@ -164,6 +175,7 @@ namespace JAM8.Algorithms.Geometry
                     coord = Coord.create(x, y);
                 }
             }
+
             if (dim == Dimension.D3)
             {
                 if (si.ix >= 0 && si.ix < nx && si.iy >= 0 && si.iy < ny && si.iz >= 0 && si.iz < nz)
@@ -174,14 +186,16 @@ namespace JAM8.Algorithms.Geometry
                     coord = Coord.create(x, y, z);
                 }
             }
+
             return coord;
         }
+
         /// <summary>
         /// coord 转换为 spatialIndex
         /// </summary>
         /// <param name="coord"></param>
         /// <returns></returns>
-        public SpatialIndex coord_to_spatialIndex(Coord coord)
+        public SpatialIndex coord_to_spatial_index(Coord coord)
         {
             if (dim != coord.dim)
                 return null;
@@ -195,6 +209,7 @@ namespace JAM8.Algorithms.Geometry
                 if (ix >= 0 && ix < nx && iy >= 0 && iy < ny)
                     si = SpatialIndex.create(ix, iy);
             }
+
             if (dim == Dimension.D3)
             {
                 int ix = (int)((coord.x - xmn + 0.5 * xsiz) / xsiz);
@@ -203,6 +218,7 @@ namespace JAM8.Algorithms.Geometry
                 if (ix >= 0 && ix < nx && iy >= 0 && iy < ny && iz >= 0 && iz < nz)
                     si = SpatialIndex.create(ix, iy, iz);
             }
+
             return si;
         }
 
@@ -215,12 +231,12 @@ namespace JAM8.Algorithms.Geometry
         /// </summary>
         /// <param name="si"></param>
         /// <returns></returns>
-        public Coord arrayIndex_to_coord(int arrayIndex)
+        public Coord array_index_to_coord(int arrayIndex)
         {
-            if (arrayIndex < 0 || arrayIndex >= N)//不在0~N-1范围内
+            if (arrayIndex < 0 || arrayIndex >= N) //不在0~N-1范围内
                 return null;
 
-            SpatialIndex si = get_spatialIndex(arrayIndex);
+            SpatialIndex si = get_spatial_index(arrayIndex);
 
             Coord c = null;
 
@@ -233,6 +249,7 @@ namespace JAM8.Algorithms.Geometry
                     c = Coord.create(x, y);
                 }
             }
+
             if (dim == Dimension.D3)
             {
                 if (si.ix >= 0 && si.ix < nx && si.iy >= 0 && si.iy < ny && si.iz >= 0 && si.iz < nz)
@@ -243,14 +260,16 @@ namespace JAM8.Algorithms.Geometry
                     c = Coord.create(x, y, z);
                 }
             }
+
             return c;
         }
+
         /// <summary>
         /// coord 转换为 arrayIndex
         /// </summary>
         /// <param name="coord"></param>
         /// <returns></returns>
-        public int coord_to_arrayIndex(Coord coord)
+        public int coord_to_array_index(Coord coord)
         {
             if (dim != coord.dim)
                 return -1;
@@ -264,6 +283,7 @@ namespace JAM8.Algorithms.Geometry
                 if (ix >= 0 && ix < nx && iy >= 0 && iy < ny)
                     si = SpatialIndex.create(ix, iy);
             }
+
             if (dim == Dimension.D3)
             {
                 int ix = (int)((coord.x - xmn + 0.5 * xsiz) / xsiz);
@@ -273,10 +293,10 @@ namespace JAM8.Algorithms.Geometry
                     si = SpatialIndex.create(ix, iy, iz);
             }
 
-            if (si == null)//coord转为array_index时，可能发生超出范围的情况，此时返回-1
+            if (si == null) //coord转为array_index时，可能发生超出范围的情况，此时返回-1
                 return -1;
 
-            return get_arrayIndex(si);
+            return get_array_index(si);
         }
 
         #endregion
@@ -288,12 +308,14 @@ namespace JAM8.Algorithms.Geometry
         /// <summary>
         /// 私有构造函数，避免直接实例化
         /// </summary>
-        private GridStructure() { }
+        private GridStructure()
+        {
+        }
 
         /// <summary>
         /// 通用方法：根据给定参数初始化 GridStructure。
         /// </summary>
-        private static GridStructure InitializeGridStructure(
+        private static GridStructure init(
             int nx, int ny, int nz,
             float xsiz, float ysiz, float zsiz,
             float xmn, float ymn, float zmn)
@@ -323,15 +345,16 @@ namespace JAM8.Algorithms.Geometry
         /// </summary>
         public static GridStructure create_simple(int nx, int ny, int nz)
         {
-            return InitializeGridStructure(nx, ny, nz, 1.0f, 1.0f, 1.0f, 0.5f, 0.5f, 0.5f);
+            return init(nx, ny, nz, 1.0f, 1.0f, 1.0f, 0.5f, 0.5f, 0.5f);
         }
 
         /// <summary>
         /// 创建 GridStructure，当 nz 等于 1 时，是 2D 网格结构，否则是 3D 网格结构。
         /// </summary>
-        public static GridStructure create(int nx, int ny, int nz, float xsiz, float ysiz, float zsiz, float xmn, float ymn, float zmn)
+        public static GridStructure create(int nx, int ny, int nz, float xsiz, float ysiz, float zsiz, float xmn,
+            float ymn, float zmn)
         {
-            return InitializeGridStructure(nx, ny, nz, xsiz, ysiz, zsiz, xmn, ymn, zmn);
+            return init(nx, ny, nz, xsiz, ysiz, zsiz, xmn, ymn, zmn);
         }
 
         /// <summary>
@@ -344,7 +367,9 @@ namespace JAM8.Algorithms.Geometry
                 Console.WriteLine(MyExceptions.Geometry_IndexException);
                 return null;
             }
-            return InitializeGridStructure(nx, ny, nz, gs_old.xsiz, gs_old.ysiz, gs_old.zsiz, gs_old.xmn, gs_old.ymn, gs_old.zmn);
+
+            return init(nx, ny, nz, gs_old.xsiz, gs_old.ysiz, gs_old.zsiz, gs_old.xmn, gs_old.ymn,
+                gs_old.zmn);
         }
 
         /// <summary>
@@ -352,7 +377,7 @@ namespace JAM8.Algorithms.Geometry
         /// </summary>
         public static GridStructure create(GridStructure gs)
         {
-            return InitializeGridStructure(gs.nx, gs.ny, gs.nz, gs.xsiz, gs.ysiz, gs.zsiz, gs.xmn, gs.ymn, gs.zmn);
+            return init(gs.nx, gs.ny, gs.nz, gs.xsiz, gs.ysiz, gs.zsiz, gs.xmn, gs.ymn, gs.zmn);
         }
 
         /// <summary>
@@ -372,17 +397,20 @@ namespace JAM8.Algorithms.Geometry
                     s2 += item.ToString();
                     continue;
                 }
+
                 if (item == ']')
                 {
                     b = false;
                     s2 += item.ToString();
                     s1.Add(s2.Trim('[', ']'));
                 }
+
                 if (b)
                 {
                     s2 += item.ToString();
                 }
             }
+
             var nx_ny_nz = s1[0].Split('_');
             int nx = int.Parse(nx_ny_nz[0]);
             int ny = int.Parse(nx_ny_nz[1]);
@@ -396,7 +424,7 @@ namespace JAM8.Algorithms.Geometry
             float ymn = float.Parse(xmn_ymn_zmn[1]);
             float zmn = float.Parse(xmn_ymn_zmn[2]);
 
-            return InitializeGridStructure(nx, ny, nz, xsiz, ysiz, zsiz, xmn, ymn, zmn);
+            return init(nx, ny, nz, xsiz, ysiz, zsiz, xmn, ymn, zmn);
         }
 
         /// <summary>
@@ -437,13 +465,12 @@ namespace JAM8.Algorithms.Geometry
                 Capacity = gs.N
             };
             for (int iz = 0; iz < gs.nz; iz++)
-                for (int iy = 0; iy < gs.ny; iy++)
-                    for (int ix = 0; ix < gs.nx; ix++)
-                    {
-                        indexMapper.Add(gs.dim == Dimension.D2 ?
-                             SpatialIndex.create(ix, iy) :
-                             SpatialIndex.create(ix, iy, iz));
-                    }
+            for (int iy = 0; iy < gs.ny; iy++)
+            for (int ix = 0; ix < gs.nx; ix++)
+            {
+                indexMapper.Add(gs.dim == Dimension.D2 ? SpatialIndex.create(ix, iy) : SpatialIndex.create(ix, iy, iz));
+            }
+
             return indexMapper;
         }
 
@@ -465,6 +492,7 @@ namespace JAM8.Algorithms.Geometry
                 return left.Equals(right);
             }
         }
+
         //判断!=
         public static bool operator !=(GridStructure left, GridStructure right)
         {
@@ -485,19 +513,20 @@ namespace JAM8.Algorithms.Geometry
             {
                 return false;
             }
+
             GridStructure _gs = (GridStructure)obj;
             return dim == _gs.dim && N == _gs.N
-                && nx == _gs.nx && ny == _gs.ny && nz == _gs.nz
-                && xsiz == _gs.xsiz && ysiz == _gs.ysiz && zsiz == _gs.zsiz
-                && xmn == _gs.xmn && ymn == _gs.ymn && zmn == _gs.zmn;
+                                  && nx == _gs.nx && ny == _gs.ny && nz == _gs.nz
+                                  && xsiz == _gs.xsiz && ysiz == _gs.ysiz && zsiz == _gs.zsiz
+                                  && xmn == _gs.xmn && ymn == _gs.ymn && zmn == _gs.zmn;
         }
 
         public override int GetHashCode()
         {
             return dim.GetHashCode() ^ N.GetHashCode()
-                ^ nx.GetHashCode() ^ ny.GetHashCode() ^ nz.GetHashCode()
-                ^ xsiz.GetHashCode() ^ ysiz.GetHashCode() ^ zsiz.GetHashCode()
-                ^ xmn.GetHashCode() ^ ymn.GetHashCode() ^ zmn.GetHashCode();
+                                     ^ nx.GetHashCode() ^ ny.GetHashCode() ^ nz.GetHashCode()
+                                     ^ xsiz.GetHashCode() ^ ysiz.GetHashCode() ^ zsiz.GetHashCode()
+                                     ^ xmn.GetHashCode() ^ ymn.GetHashCode() ^ zmn.GetHashCode();
         }
 
         #endregion

@@ -74,7 +74,7 @@ namespace JAM8.Console.Pages
             GridProperty gp = GridProperty.create(gs);
             for (int n = 0; n < gs.N; n++)
             {
-                var c = gs.arrayIndex_to_coord(n);
+                var c = gs.array_index_to_coord(n);
                 var offset = Coord.create(c.x - (rx + 1), c.y - (ry + 1));
                 var dist = Math.Sqrt(Math.Pow(offset.x / scale_x, 2) + Math.Pow(offset.y / scale_y, 2));
                 var semiv = stdev * stdev - Math.Pow(stdev, 2) * (1 - Math.Exp(-Math.Pow(dist, 2)));
@@ -151,7 +151,7 @@ namespace JAM8.Console.Pages
             sw.Restart();
             for (int n = 0; n < gs.N; n++)
             {
-                var c = gs.arrayIndex_to_coord(n);
+                var c = gs.array_index_to_coord(n);
                 var offset = Coord.create(c.x - (rx + 1), c.y - (ry + 1), c.z - (rz + 1));
                 var dist = Math.Sqrt(Math.Pow(offset.x / scale_x, 2) + Math.Pow(offset.y / scale_y, 2) + Math.Pow(offset.z / scale_z, 2));
                 var semiv = stdev * stdev - Math.Pow(stdev, 2) * (1 - Math.Exp(-Math.Pow(dist, 2)));

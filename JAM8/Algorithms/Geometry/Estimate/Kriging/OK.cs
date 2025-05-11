@@ -85,7 +85,7 @@ namespace JAM8.Algorithms.Geometry
 
                 for (int n = 0; n < gs_re.N; n++)//计算工区网格的所有节点
                 {
-                    SpatialIndex si = gs_re.get_spatialIndex(n);
+                    SpatialIndex si = gs_re.get_spatial_index(n);
                     if (g["estimate"].get_value(n) == null)//如果该点没有数据，则需要插值
                     {
                         var cd_founds4 = cd_finder4.find(si, max_k_cdi);
@@ -206,7 +206,7 @@ namespace JAM8.Algorithms.Geometry
                     flag.Add(n);
                     MyConsoleProgress.Print(flag.Count, gs_re.N, "OK[并行]");
 
-                    SpatialIndex si = gs_re.get_spatialIndex(n);
+                    SpatialIndex si = gs_re.get_spatial_index(n);
                     if (g["estimate"].get_value(n) == null)//如果某个点没有数据，则需要插值
                     {
                         var cd_founds = cd_finder4.find(si, max_k_cdi);

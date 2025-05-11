@@ -84,7 +84,7 @@ namespace JAM8.Algorithms.Forms
             if (success)
             {
                 var listItem = new ListViewItem(g.grid_name);  // 第一列
-                listItem.SubItems.Add(g.gridStructure.view_text()); // 第二列
+                listItem.SubItems.Add(g.gridStructure.to_string()); // 第二列
                 listView1.Items.Add(listItem); // 添加到 ListView
                 listView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
             }

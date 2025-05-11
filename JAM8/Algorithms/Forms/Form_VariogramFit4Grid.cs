@@ -225,11 +225,11 @@ namespace JAM8.Algorithms.Forms
             int N_lag = trackBar1.Value;
             double azimuth = trackBar2.Value;
             var gp = g[listBox1.SelectedItem.ToString()];
-            if (gp.gridStructure.dim == Dimension.D2)
+            if (gp.grid_structure.dim == Dimension.D2)
             {
                 (h, gamma, N_pair) = Variogram.calc_experiment_variogram(gp, azimuth, N_lag, 2);
             }
-            else if (gp.gridStructure.dim == Dimension.D3)
+            else if (gp.grid_structure.dim == Dimension.D3)
             {
                 (h, gamma, N_pair) = Variogram.calc_3d_horizontal_experiment_variogram(gp, azimuth, N_lag, 2);
             }
@@ -243,11 +243,11 @@ namespace JAM8.Algorithms.Forms
             int N_lag = trackBar1.Value;
             double azimuth = trackBar2.Value;
             var gp = g[listBox1.SelectedItem.ToString()];
-            if (gp.gridStructure.dim == Dimension.D2)
+            if (gp.grid_structure.dim == Dimension.D2)
             {
                 (h, gamma, N_pair) = Variogram.calc_experiment_variogram(gp, azimuth, N_lag, 2);
             }
-            else if (gp.gridStructure.dim == Dimension.D3)
+            else if (gp.grid_structure.dim == Dimension.D3)
             {
                 (h, gamma, N_pair) = Variogram.calc_3d_horizontal_experiment_variogram(gp, azimuth, N_lag, 2);
             }
@@ -420,7 +420,7 @@ namespace JAM8.Algorithms.Forms
         private void button5_Click(object sender, EventArgs e)
         {
             var gp = g[listBox1.SelectedItem.ToString()];
-            int N_lag = gp.gridStructure.nz;
+            int N_lag = gp.grid_structure.nz;
             var (h, gamma, N_pair) = Variogram.calc_3d_vertical_experiment_variogram(gp, N_lag, 1);
             Form_VariogramFit frm = new(h, gamma, N_pair);
             frm.Show();

@@ -32,7 +32,7 @@ namespace JAM8.SpecificApps.研究方法
 
             //缩放到固定尺寸
             var gs = GridStructure.create_simple(100, 100, 1);
-            if (gs != TI.gridStructure)
+            if (gs != TI.grid_structure)
                 TI = TI.resize(gs);
 
             Console.Write("是否进行倒角变换[仅二值图像采用，0 => 否 ; 1 => 是]\n\t");
@@ -60,7 +60,7 @@ namespace JAM8.SpecificApps.研究方法
         /// <returns></returns>
         static Grid get_anchors_distance_model_2d(GridProperty ti, string distanceType = "模式")
         {
-            var gs = ti.gridStructure;
+            var gs = ti.grid_structure;
 
             //锚点距离模型
             var g_anchors = Grid.create(gs);
@@ -81,7 +81,7 @@ namespace JAM8.SpecificApps.研究方法
                         for (int ix = 0; ix < gs.nx; ix += 15)
                         {
                             //锚点位置
-                            var anchor_array_index = gs.get_arrayIndex(SpatialIndex.create(ix, iy));
+                            var anchor_array_index = gs.get_array_index(SpatialIndex.create(ix, iy));
                             var anchor_neighbors = find_neighbors(gs, pats, anchor_array_index, 4, 4);
 
                             MyConsoleHelper.write_string_to_console(anchor_array_index.ToString());
@@ -121,7 +121,7 @@ namespace JAM8.SpecificApps.研究方法
                         MyConsoleProgress.Print(flag, array_indexes.Count, "计算所有位置的实验变差函数");
 
                         var (region, index_out_of_bounds) =
-                            ti.get_region_by_center(gs.get_spatialIndex(n), radius, radius);
+                            ti.get_region_by_center(gs.get_spatial_index(n), radius, radius);
                         int N_lag = radius;
                         // if (index_out_of_bounds) //丢弃不完整的region
                         //     continue;
@@ -185,7 +185,7 @@ namespace JAM8.SpecificApps.研究方法
                             //添加锚点位置的距离
                             g_anchors.add_gridProperty(SpatialIndex.create(ix, iy).view_text());
 
-                            var anchor_loc = gs.get_arrayIndex(SpatialIndex.create(ix, iy));
+                            var anchor_loc = gs.get_array_index(SpatialIndex.create(ix, iy));
                             var anchor_lags = lags_locs[anchor_loc];
 
                             foreach (var (idx, lags) in lags_locs)
@@ -224,12 +224,12 @@ namespace JAM8.SpecificApps.研究方法
         static List<MouldInstance> find_neighbors(GridStructure gs, Patterns pats, int coreArrayIndex, int rx, int ry)
         {
             List<MouldInstance> neighbors = [];
-            SpatialIndex core_si = gs.get_spatialIndex(coreArrayIndex);
+            SpatialIndex core_si = gs.get_spatial_index(coreArrayIndex);
             for (int dx = -rx; dx <= rx; dx++)
             {
                 for (int dy = -ry; dy <= ry; dy++)
                 {
-                    var neighbor_arrayIndex = gs.get_arrayIndex(core_si.offset(dx, dy));
+                    var neighbor_arrayIndex = gs.get_array_index(core_si.offset(dx, dy));
                     if (pats.ContainsKey(neighbor_arrayIndex))
                         neighbors.Add(pats[neighbor_arrayIndex]);
                 }
@@ -288,7 +288,7 @@ namespace JAM8.SpecificApps.研究方法
                             var fragment = Property.deep_clone();
                             fragment.set_values_by_condition(right, null, CompareType.GreaterThan);
                             fragment.set_values_by_condition(left, null, CompareType.LessThan);
-                            if (fragment.N_Nulls < fragment.gridStructure.N * 0.99)
+                            if (fragment.N_Nulls < fragment.grid_structure.N * 0.99)
                                 fragments.Add($"[{i}] : {left}-{right}", fragment);
                         }
 
@@ -327,7 +327,7 @@ namespace JAM8.SpecificApps.研究方法
                             var fragment = Property.deep_clone();
                             fragment.set_values_by_condition((float?)right, null, CompareType.GreaterThan);
                             fragment.set_values_by_condition((float?)left, null, CompareType.LessThan);
-                            if (fragment.N_Nulls < fragment.gridStructure.N * 0.99)
+                            if (fragment.N_Nulls < fragment.grid_structure.N * 0.99)
                                 fragments.Add($"[{i}] : {left}-{right}", fragment);
                         }
 
@@ -351,7 +351,7 @@ namespace JAM8.SpecificApps.研究方法
                             double[] N_X = new double[gs.nx];
                             double[] N_Y = new double[gs.nx];
                             //计算统计所有非NUll值的点落在坐标系刻度里的数量
-                            for (int i = 0; i < fragment.gridStructure.N; i++)
+                            for (int i = 0; i < fragment.grid_structure.N; i++)
                             {
                                 if (fragment.get_value(i) == null)
                                     continue;
@@ -386,12 +386,12 @@ namespace JAM8.SpecificApps.研究方法
                             double dists = 0;
                             long dist_counter = 0;
                             //计算统计所有非NUll值的点之间距离
-                            for (int i = 0; i < fragment.gridStructure.N; i++)
+                            for (int i = 0; i < fragment.grid_structure.N; i++)
                             {
                                 if (fragment.get_value(i) == null)
                                     continue;
                                 var IJK1 = gs.index_mapper[i];
-                                for (int j = 0; j < fragment.gridStructure.N; j++)
+                                for (int j = 0; j < fragment.grid_structure.N; j++)
                                 {
                                     if (i == j)
                                         continue;
@@ -517,7 +517,7 @@ namespace JAM8.SpecificApps.研究方法
                     for (int ix = 0; ix < gs.nx; ix += 15)
                     {
                         //锚点位置
-                        var anchor_array_index = gs.get_arrayIndex(SpatialIndex.create(ix, iy));
+                        var anchor_array_index = gs.get_array_index(SpatialIndex.create(ix, iy));
                         var anchor_neighbors = find_neighbors(gs, pats, anchor_array_index, 4, 4);
 
                         MyConsoleHelper.write_string_to_console(anchor_array_index.ToString());
@@ -548,7 +548,7 @@ namespace JAM8.SpecificApps.研究方法
                     flag++;
                     MyConsoleProgress.Print(flag, array_indexes.Count, "计算所有位置的实验变差函数");
 
-                    var (region, index_out_of_bounds) = TI.get_region_by_center(gs.get_spatialIndex(n), radius, radius);
+                    var (region, index_out_of_bounds) = TI.get_region_by_center(gs.get_spatial_index(n), radius, radius);
                     int N_lag = radius;
                     //if (index_out_of_bounds)//丢弃不完整的region
                     //    continue;
@@ -571,7 +571,7 @@ namespace JAM8.SpecificApps.研究方法
                         //添加锚点位置的距离
                         //g_anchors.add_gridProperty(SpatialIndex.create(ix, iy).view_text());
 
-                        var anchor_loc = gs.get_arrayIndex(SpatialIndex.create(ix, iy));
+                        var anchor_loc = gs.get_array_index(SpatialIndex.create(ix, iy));
                         var anchor_lags = lags_locs[anchor_loc];
 
                         foreach (var (idx, lags) in lags_locs)
@@ -623,7 +623,7 @@ namespace JAM8.SpecificApps.研究方法
 
                     g_anchors.add_gridProperty(SpatialIndex.create(ix, iy).view_text());
 
-                    var anchor_arrayIndex = gs.get_arrayIndex(SpatialIndex.create(ix, iy)); //锚点位置
+                    var anchor_arrayIndex = gs.get_array_index(SpatialIndex.create(ix, iy)); //锚点位置
                     var anchor_neighbors = find_neighbors(gs, pats, anchor_arrayIndex, 3, 3);
                     Parallel.ForEach(pats, item =>
                     {
@@ -659,7 +659,7 @@ namespace JAM8.SpecificApps.研究方法
             {
                 for (int n2 = 0; n2 < gs.N; n2++)
                 {
-                    var world_distance = SpatialIndex.calc_dist(gs.get_spatialIndex(n1), gs.get_spatialIndex(n2));
+                    var world_distance = SpatialIndex.calc_dist(gs.get_spatial_index(n1), gs.get_spatial_index(n2));
                     distance_average.Add(world_distance);
                 }
             }
@@ -676,7 +676,7 @@ namespace JAM8.SpecificApps.研究方法
                         continue;
 
                     var distance = MyDistance.calc_manhattan(pats[n1].neighbor_values, pats[n2].neighbor_values);
-                    var world_distance = SpatialIndex.calc_dist(gs.get_spatialIndex(n1), gs.get_spatialIndex(n2));
+                    var world_distance = SpatialIndex.calc_dist(gs.get_spatial_index(n1), gs.get_spatial_index(n2));
                     ordered.Add((distance, world_distance));
                 }
 
@@ -735,7 +735,7 @@ namespace JAM8.SpecificApps.研究方法
                 flag++;
                 MyConsoleProgress.Print(flag, locs_random.Count, "计算所有位置的实验变差函数");
 
-                var (region, index_out_of_bounds) = ti.get_region_by_center(gs.get_spatialIndex(n), radius, radius);
+                var (region, index_out_of_bounds) = ti.get_region_by_center(gs.get_spatial_index(n), radius, radius);
                 int N_lag = radius;
                 if (index_out_of_bounds) //丢弃不完整的region
                     continue;
@@ -785,7 +785,7 @@ namespace JAM8.SpecificApps.研究方法
             #region MDS降维
 
             var idx_labels = lags_different_locs.Keys.ToArray();
-            var labels = idx_labels.Select(a => gs.get_spatialIndex(a).view_text());
+            var labels = idx_labels.Select(a => gs.get_spatial_index(a).view_text());
             var data = lags_different_locs.Values.ToArray();
             var dismat = MyMatrix.create_dismat(data, MyDistanceType.manhattan);
             var locs = CMDSCALE.CMDSCALE_MathNet(dismat, 2);
@@ -1156,7 +1156,7 @@ namespace JAM8.SpecificApps.研究方法
                             var fragment = GridProperty.create(Property,
                                 (right, null, CompareType.GreaterThan),
                                 (left, null, CompareType.LessThan));
-                            if (fragment.N_Nulls < fragment.gridStructure.N * 0.99)
+                            if (fragment.N_Nulls < fragment.grid_structure.N * 0.99)
                                 fragments.Add($"[{i}] : {left}-{right}", fragment);
                         }
 
@@ -1195,7 +1195,7 @@ namespace JAM8.SpecificApps.研究方法
                                 ((float?)right, null, CompareType.GreaterThan),
                                 ((float?)left, null, CompareType.LessThan)
                             );
-                            if (fragment.N_Nulls < fragment.gridStructure.N * 0.99)
+                            if (fragment.N_Nulls < fragment.grid_structure.N * 0.99)
                                 fragments.Add($"[{i}] : {left}-{right}", fragment);
                         }
 
@@ -1219,7 +1219,7 @@ namespace JAM8.SpecificApps.研究方法
                             double[] N_X = new double[gs.nx];
                             double[] N_Y = new double[gs.nx];
                             //计算统计所有非NUll值的点落在坐标系刻度里的数量
-                            for (int n = 0; n < fragment.gridStructure.N; n++)
+                            for (int n = 0; n < fragment.grid_structure.N; n++)
                             {
                                 if (fragment.get_value(n) == null)
                                     continue;
@@ -1255,12 +1255,12 @@ namespace JAM8.SpecificApps.研究方法
                             double dists = 0;
                             long dist_counter = 0;
                             //计算统计所有非空值的点之间距离
-                            for (int i = 0; i < fragment.gridStructure.N; i++)
+                            for (int i = 0; i < fragment.grid_structure.N; i++)
                             {
                                 if (fragment.get_value(i) == null)
                                     continue;
                                 var IJK1 = gs.index_mapper[i]; //index_mapper修改过（请注意）
-                                for (int j = 0; j < fragment.gridStructure.N; j++)
+                                for (int j = 0; j < fragment.grid_structure.N; j++)
                                 {
                                     if (i == j)
                                         continue;
@@ -1356,7 +1356,7 @@ namespace JAM8.SpecificApps.研究方法
                     flag++;
                     MyConsoleProgress.Print(flag, locs_random.Count, "计算所有位置的实验变差函数");
 
-                    var (region, index_out_of_bounds) = ti.get_region_by_center(gs.get_spatialIndex(n), radius, radius);
+                    var (region, index_out_of_bounds) = ti.get_region_by_center(gs.get_spatial_index(n), radius, radius);
                     var n_lag = radius;
 
                     //if (index_out_of_bounds)//丢弃不完整的region
@@ -1382,7 +1382,7 @@ namespace JAM8.SpecificApps.研究方法
                 {
                     for (var n2 = 0; n2 < gs.N; n2++)
                     {
-                        var world_distance = SpatialIndex.calc_dist(gs.get_spatialIndex(n1), gs.get_spatialIndex(n2));
+                        var world_distance = SpatialIndex.calc_dist(gs.get_spatial_index(n1), gs.get_spatial_index(n2));
                         dists.Add(world_distance);
                     }
                 }
@@ -1401,7 +1401,7 @@ namespace JAM8.SpecificApps.研究方法
                         {
                             var distance = MyDistance.calc_hsim(lags_different_locs[n1], lags_different_locs[n2]);
                             var world_distance =
-                                SpatialIndex.calc_dist(gs.get_spatialIndex(n1), gs.get_spatialIndex(n2));
+                                SpatialIndex.calc_dist(gs.get_spatial_index(n1), gs.get_spatial_index(n2));
                             ordered.Add((distance, world_distance));
                         }
                     }

@@ -90,7 +90,7 @@ namespace JAM8.Algorithms.Geometry
                     Add(propertyName, GridProperty.create(gridStructure));
                 else//更新gp
                 {
-                    if (gp.gridStructure == gridStructure)
+                    if (gp.grid_structure == gridStructure)
                         this[propertyName] = gp;
                     else
                         Console.WriteLine(GridStructure.Exception_NotEquals);
@@ -198,7 +198,7 @@ namespace JAM8.Algorithms.Geometry
         public string view_text()
         {
             string str = $"\n * * * Name = {grid_name}\tN_gridProperties = {N_gridProperties} * * *\n";
-            str += gridStructure.view_text();
+            str += gridStructure.to_string();
             for (int i = 0; i < N_gridProperties; i++)
                 str += $"\n\t{i + 1} [{propertyNames[i]}]\n";
             str += $"\n *     *     *     *     *     *     *\n";
@@ -329,7 +329,7 @@ namespace JAM8.Algorithms.Geometry
         {
             Console.Write($"\n写入GSLIB文件路径: {fileName}\n");//打印文件路径
             using StreamWriter sw = new(fileName);
-            string gridSize = gridStructure.view_text().Trim('\n').Trim('\t');
+            string gridSize = gridStructure.to_string().Trim('\n').Trim('\t');
             sw.WriteLine($"{gridName} = {gridSize}");//输出GSLIB数据的标题
             sw.WriteLine(N_gridProperties);//输出变量数目
             for (int i = 0; i < N_gridProperties; i++)

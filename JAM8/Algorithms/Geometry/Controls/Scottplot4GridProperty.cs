@@ -83,13 +83,13 @@ namespace JAM8.Algorithms.Geometry
                 comboBox1.Items.Add(cmap.Name);
             comboBox1.SelectedIndex = comboBox1.Items.IndexOf("Jet");
 
-            if (_gp.gridStructure.dim == Dimension.D3)
+            if (_gp.grid_structure.dim == Dimension.D3)
             {
                 comboBox2.Visible = true;
                 numericUpDown1.Visible = true;
                 trackBar1.Visible = true;
 
-                label5.Text = $"[nx={_gp.gridStructure.nx}  ny={_gp.gridStructure.ny}  nz={_gp.gridStructure.nz}]";
+                label5.Text = $"[nx={_gp.grid_structure.nx}  ny={_gp.grid_structure.ny}  nz={_gp.grid_structure.nz}]";
             }
             else
             {
@@ -97,7 +97,7 @@ namespace JAM8.Algorithms.Geometry
                 numericUpDown1.Visible = false;
                 trackBar1.Visible = false;
 
-                label5.Text = $"[nx={_gp.gridStructure.nx}  ny={_gp.gridStructure.ny}]";
+                label5.Text = $"[nx={_gp.grid_structure.nx}  ny={_gp.grid_structure.ny}]";
             }
 
             re_draw_viewGrid();
@@ -111,7 +111,7 @@ namespace JAM8.Algorithms.Geometry
         /// <param name="value"></param>
         public void assign_value_in_viewGrid(int view_ix, int view_iy, float? value)
         {
-            if (_gp.gridStructure.dim == Dimension.D2)
+            if (_gp.grid_structure.dim == Dimension.D2)
             {
                 _gp.set_value(view_ix, view_iy, value);//对于2D，_viewGrid与_gp相同
             }
@@ -121,25 +121,25 @@ namespace JAM8.Algorithms.Geometry
                 if (comboBox2.Text == "XY")
                 {
                     numericUpDown1.Minimum = 1;
-                    numericUpDown1.Maximum = _gp.gridStructure.nz;
+                    numericUpDown1.Maximum = _gp.grid_structure.nz;
                     trackBar1.Minimum = 1;
-                    trackBar1.Maximum = _gp.gridStructure.nz;
+                    trackBar1.Maximum = _gp.grid_structure.nz;
                     _gp.set_slice((int)numericUpDown1.Value, GridSliceType.xy_slice, _viewGrid);
                 }
                 if (comboBox2.Text == "YZ")
                 {
                     numericUpDown1.Minimum = 1;
-                    numericUpDown1.Maximum = _gp.gridStructure.nx;
+                    numericUpDown1.Maximum = _gp.grid_structure.nx;
                     trackBar1.Minimum = 1;
-                    trackBar1.Maximum = _gp.gridStructure.nx;
+                    trackBar1.Maximum = _gp.grid_structure.nx;
                     _gp.set_slice((int)numericUpDown1.Value, GridSliceType.yz_slice, _viewGrid);
                 }
                 if (comboBox2.Text == "XZ")
                 {
                     numericUpDown1.Minimum = 1;
-                    numericUpDown1.Maximum = _gp.gridStructure.ny;
+                    numericUpDown1.Maximum = _gp.grid_structure.ny;
                     trackBar1.Minimum = 1;
-                    trackBar1.Maximum = _gp.gridStructure.ny;
+                    trackBar1.Maximum = _gp.grid_structure.ny;
                     _gp.set_slice((int)numericUpDown1.Value, GridSliceType.xz_slice, _viewGrid);
                 }
             }
@@ -179,12 +179,12 @@ namespace JAM8.Algorithms.Geometry
         private static double?[,] Grid2Intensities(GridProperty gp)
         {
             //grid网格顺时针旋转90度
-            double?[,] intensities = new double?[gp.gridStructure.ny, gp.gridStructure.nx];
-            for (int j = 0; j < gp.gridStructure.ny; j++)
+            double?[,] intensities = new double?[gp.grid_structure.ny, gp.grid_structure.nx];
+            for (int j = 0; j < gp.grid_structure.ny; j++)
             {
-                for (int i = 0; i < gp.gridStructure.nx; i++)
+                for (int i = 0; i < gp.grid_structure.nx; i++)
                 {
-                    int I = gp.gridStructure.ny - j - 1;
+                    int I = gp.grid_structure.ny - j - 1;
                     int J = i;
                     intensities[I, J] = gp.get_value(i, j);
                 }
@@ -221,7 +221,7 @@ namespace JAM8.Algorithms.Geometry
         //根据实际情况，获取实际显示的模型
         private void get_viewGrid()
         {
-            if (_gp.gridStructure.dim == Dimension.D2)
+            if (_gp.grid_structure.dim == Dimension.D2)
             {
                 _viewGrid = _gp;
             }
@@ -230,25 +230,25 @@ namespace JAM8.Algorithms.Geometry
                 if (comboBox2.Text == "XY")
                 {
                     numericUpDown1.Minimum = 1;
-                    numericUpDown1.Maximum = _gp.gridStructure.nz;
+                    numericUpDown1.Maximum = _gp.grid_structure.nz;
                     trackBar1.Minimum = 1;
-                    trackBar1.Maximum = _gp.gridStructure.nz;
+                    trackBar1.Maximum = _gp.grid_structure.nz;
                     _viewGrid = _gp.get_slice((int)numericUpDown1.Value, GridSliceType.xy_slice);
                 }
                 if (comboBox2.Text == "YZ")
                 {
                     numericUpDown1.Minimum = 1;
-                    numericUpDown1.Maximum = _gp.gridStructure.nx;
+                    numericUpDown1.Maximum = _gp.grid_structure.nx;
                     trackBar1.Minimum = 1;
-                    trackBar1.Maximum = _gp.gridStructure.nx;
+                    trackBar1.Maximum = _gp.grid_structure.nx;
                     _viewGrid = _gp.get_slice((int)numericUpDown1.Value, GridSliceType.yz_slice);
                 }
                 if (comboBox2.Text == "XZ")
                 {
                     numericUpDown1.Minimum = 1;
-                    numericUpDown1.Maximum = _gp.gridStructure.ny;
+                    numericUpDown1.Maximum = _gp.grid_structure.ny;
                     trackBar1.Minimum = 1;
-                    trackBar1.Maximum = _gp.gridStructure.ny;
+                    trackBar1.Maximum = _gp.grid_structure.ny;
                     _viewGrid = _gp.get_slice((int)numericUpDown1.Value, GridSliceType.xz_slice);
                 }
             }

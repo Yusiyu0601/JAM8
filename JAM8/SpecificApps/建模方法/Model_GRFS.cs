@@ -58,7 +58,7 @@ namespace JAM8.SpecificApps.建模方法
             Parallel.For(0, gs_extent.N, i =>
             {
                 MyConsoleProgress.Print(flag++, gs_extent.N, "gauss random field: ");
-                var mouldInstance = MouldInstance.create_from_gridProperty(mould, gs_extent.get_spatialIndex(i), g_extent["origin"]);
+                var mouldInstance = MouldInstance.create_from_gridProperty(mould, gs_extent.get_spatial_index(i), g_extent["origin"]);
                 if (mouldInstance.neighbor_nulls_ids.Count == 0)
                     g_extent["gauss"].set_value(i, mouldInstance.neighbor_values.Average(a => a.Value));
             });
@@ -128,7 +128,7 @@ namespace JAM8.SpecificApps.建模方法
             GridProperty gp = GridProperty.create(gs);
             for (int n = 0; n < gs.N; n++)
             {
-                var c = gs.arrayIndex_to_coord(n);
+                var c = gs.array_index_to_coord(n);
                 var offset = Coord.create(c.x - (rx + 1), c.y - (ry + 1));
                 var dist = Math.Sqrt(Math.Pow(offset.x / scale_x, 2) + Math.Pow(offset.y / scale_y, 2));
                 var semiv = stdev * stdev - Math.Pow(stdev, 2) * (1 - Math.Exp(-Math.Pow(dist, 2)));
@@ -201,7 +201,7 @@ namespace JAM8.SpecificApps.建模方法
             sw.Restart();
             for (int n = 0; n < gs.N; n++)
             {
-                var c = gs.arrayIndex_to_coord(n);
+                var c = gs.array_index_to_coord(n);
                 var offset = Coord.create(c.x - (rx + 1), c.y - (ry + 1), c.z - (rz + 1));
                 var dist = Math.Sqrt(Math.Pow(offset.x / scale_x, 2) + Math.Pow(offset.y / scale_y, 2) + Math.Pow(offset.z / scale_z, 2));
                 var semiv = stdev * stdev - Math.Pow(stdev, 2) * (1 - Math.Exp(-Math.Pow(dist, 2)));

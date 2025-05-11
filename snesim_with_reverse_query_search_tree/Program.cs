@@ -58,13 +58,13 @@ namespace snesim_with_reverse_query_search_tree
                 var (input_grid, input_fileName) = Grid.create_from_gslibwin("Load Training Image");
                 GridProperty TI = input_grid.select_gridProperty_win("Select Property as Training Image").grid_property;
                 Output.WriteLine($"\n\tfileName  {input_fileName}");
-                Output.WriteLine(TI.gridStructure.view_text());
+                Output.WriteLine(TI.grid_structure.to_string());
 
                 //4. Set Simulation Grid Size
                 Output.WriteLine(ConsoleColor.Yellow, "Set Simulation Grid Size");
                 GridStructure re_gs = GridStructure.create_simple(100, 100, 1);
                 re_gs = GridStructure.create_win(re_gs, "Set Simulation Grid Size");
-                Output.WriteLine(re_gs.view_text());
+                Output.WriteLine(re_gs.to_string());
 
                 //5. Load Conditional Data
                 string is_use_cd = EasyConsole.Input.ReadString("use conditional data(2d) or not? (input Y or N) => ");
@@ -101,13 +101,13 @@ namespace snesim_with_reverse_query_search_tree
                 var (input_grid, input_fileName) = Grid.create_from_gslibwin("Load Training Image");
                 GridProperty TI = input_grid.select_gridProperty_win("Select Property as Training Image").grid_property;
                 Output.WriteLine($"\n\tfileName  {input_fileName}");
-                Output.WriteLine(TI.gridStructure.view_text());
+                Output.WriteLine(TI.grid_structure.to_string());
 
                 //4. Set Simulation Grid Size
                 Output.WriteLine(ConsoleColor.Yellow, "Set Simulation Grid Size");
                 GridStructure re_gs = GridStructure.create_simple(100, 100, 30);
                 re_gs = GridStructure.create_win(re_gs, "Set Simulation Grid Size");
-                Output.WriteLine(re_gs.view_text());
+                Output.WriteLine(re_gs.to_string());
 
                 //5. Load Conditional Data
                 string is_use_cd = EasyConsole.Input.ReadString("use conditional data(3d) or not? (input Y or N) => ");

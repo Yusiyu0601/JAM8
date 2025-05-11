@@ -89,7 +89,7 @@ namespace JAM8.Algorithms.Geometry
                 grid_name = grid.grid_name,
                 path = grid_path,
                 null_value = null_value,
-                grid_structure = grid.gridStructure.view_text(), // 获取网格结构的文本描述
+                grid_structure = grid.gridStructure.to_string(), // 获取网格结构的文本描述
             };
 
             // 获取现有的网格项列表

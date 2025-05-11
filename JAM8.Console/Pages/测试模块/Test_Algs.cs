@@ -1,4 +1,5 @@
 ﻿using EasyConsole;
+using JAM8.Algorithms;
 using JAM8.Algorithms.Forms;
 using JAM8.Algorithms.Geometry;
 using JAM8.Algorithms.Numerics;
@@ -39,9 +40,53 @@ namespace JAM8.Console.Pages
                     .Add("CData2测试", CData2测试)
                     .Add("Patterns测试", Patterns测试)
                     .Add("TEST_DistanceTransform", TEST_DistanceTransform)
+                    .Add("Test_GridProperty_connected_components_labeling",
+                        Test_GridProperty_connected_components_labeling)
+                    .Add("Test_GridProperty_connectivity_function",
+                        Test_GridProperty_connectivity_function)
                 ;
 
             menu.Display();
+        }
+
+        private void Test_GridProperty_connectivity_function()
+        {
+            int distanceSteps = 10;
+            double maxDistance = 50;
+
+            GridProperty gp = Grid.create_from_gslibwin().grid.select_gridProperty_win("选择GridProperty").grid_property;
+            gp.set_values_by_condition(1, null, CompareType.NotEqual);
+            gp.show_win();
+
+            List<double> connectivityValues = new List<double>(); // 用于存储每个滞后距离的连通性值
+            List<double> distances = new List<double>(); // 用于存储每个滞后距离
+
+            // 计算从最小距离到最大距离的连通性函数
+            for (int i = 1; i <= distanceSteps; i++)
+            {
+                double distance = (maxDistance / distanceSteps) * i; // 当前滞后距离
+                double connectivity = gp.ConnectivityFunction(distance, Math.PI / 4); // 角度设置为45度
+                distances.Add(distance);
+                connectivityValues.Add(connectivity);
+            }
+
+            // 输出每个距离对应的连通性值
+            for (int i = 0; i < distances.Count; i++)
+            {
+                System.Console.Out.WriteLine($"Distance: {distances[i]}, Connectivity: {connectivityValues[i]}");
+            }
+
+            Form_QuickChart.ScatterPlot(distances, connectivityValues, null,
+                "x", "y", "title");
+        }
+
+        private void Test_GridProperty_connected_components_labeling()
+        {
+            GridProperty gp = Grid.create_from_gslibwin().grid.select_gridProperty_win("选择GridProperty").grid_property;
+            gp.set_values_by_condition(1, null, CompareType.NotEqual);
+            gp.show_win();
+
+            gp.connected_components_labeling_3d().show_win();
         }
 
         private void TEST_DistanceTransform()
@@ -91,7 +136,7 @@ namespace JAM8.Console.Pages
             if (ti == null)
                 return;
 
-            GridStructure re_gs = ti.gridStructure;
+            GridStructure re_gs = ti.grid_structure;
             Grid sim_grid = Grid.create(re_gs); //包含概率体数据、硬数据（赋值在模拟网格中）
 
             Output.WriteLine(ConsoleColor.Yellow, "打开cd");
@@ -110,7 +155,7 @@ namespace JAM8.Console.Pages
             var soft_cd = Grid.create_from_gslibwin().grid.select_gridProperty_win("选择软条件数据").grid_property;
             sim_grid.add_gridProperty("soft_cd", soft_cd); //将cd赋值给grid
 
-            Mould mould = ti.gridStructure.dim == Dimension.D2
+            Mould mould = ti.grid_structure.dim == Dimension.D2
                 ? Mould.create_by_ellipse(10, 10, 1)
                 : Mould.create_by_ellipse(7, 7, 3, 1);
             mould = Mould.create_by_mould(mould, 4);
@@ -229,7 +274,7 @@ namespace JAM8.Console.Pages
                 return;
 
             var ti = g.first_gridProperty();
-            Mould mould = ti.gridStructure.dim == Dimension.D2
+            Mould mould = ti.grid_structure.dim == Dimension.D2
                 ? Mould.create_by_ellipse(10, 10, 1)
                 : Mould.create_by_ellipse(7, 7, 3, 1);
             mould = Mould.create_by_mould(mould, 40);
@@ -274,10 +319,10 @@ namespace JAM8.Console.Pages
             double sum_35percent = 0;
 
             Snesim snesim = Snesim.create();
-            GridStructure re_gs = ti.gridStructure;
+            GridStructure re_gs = ti.grid_structure;
             GridStructure re_gs_2d = GridStructure.create_simple(300, 300, 1);
             GridStructure re_gs_3d = GridStructure.create_simple(80, 80, 30);
-            re_gs = ti.gridStructure.dim == Dimension.D2 ? re_gs_2d : re_gs_3d;
+            re_gs = ti.grid_structure.dim == Dimension.D2 ? re_gs_2d : re_gs_3d;
 
             //(var _, first) = snesim.run(ti, null, re_gs, 1001, mould, 1, 0);
             Output.WriteLine(ConsoleColor.Red, $"时间:{first}");
@@ -317,7 +362,7 @@ namespace JAM8.Console.Pages
                 return;
 
             var ti = g.first_gridProperty();
-            Mould mould = ti.gridStructure.dim == Dimension.D2
+            Mould mould = ti.grid_structure.dim == Dimension.D2
                 ? Mould.create_by_ellipse(10, 10, 1)
                 : Mould.create_by_ellipse(7, 7, 3, 1);
 
@@ -328,7 +373,7 @@ namespace JAM8.Console.Pages
 
             Snesim snesim = Snesim.create();
 
-            GridStructure re_gs = ti.gridStructure;
+            GridStructure re_gs = ti.grid_structure;
 
             CData2 cd = CData2.read_from_gslib_win().cdata;
 

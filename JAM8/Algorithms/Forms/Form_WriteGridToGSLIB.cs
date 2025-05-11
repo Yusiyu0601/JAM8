@@ -67,7 +67,7 @@ namespace JAM8.Algorithms.Geometry
         private string get_first_50_lines(Grid g)
         {
             string text = "";
-            string gridSize = g.gridStructure.view_text().Trim('\n').Trim('\t');
+            string gridSize = g.gridStructure.to_string().Trim('\n').Trim('\t');
             text += "gridName" + gridSize + "\r\n";//输出GSLIB数据的标题
             text += g.N_gridProperties + "\r\n";//输出变量数目
             for (int i = 0; i < g.N_gridProperties; i++)

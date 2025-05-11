@@ -315,7 +315,7 @@ namespace JAM8.Tests
             SimulationPath path = SimulationPath.create(gs, 1, new Random());
             for (int i = 10; i <= gs.N / 2; i++)
             {
-                path.freeze(gs.get_spatialIndex(i));
+                path.freeze(gs.get_spatial_index(i));
             }
             while (false == path.is_visit_over())
             {
@@ -534,14 +534,14 @@ namespace JAM8.Tests
         public static void Coord_Test()
         {
             GridStructure gs = GridStructure.create_win();
-            Console.WriteLine(gs.view_text());
+            Console.WriteLine(gs.to_string());
             for (int i = -100; i < 100; i++)
             {
                 Coord c = Coord.create((float)(0.1 * i), 0);
-                SpatialIndex si = gs.coord_to_spatialIndex(c);
+                SpatialIndex si = gs.coord_to_spatial_index(c);
                 if (si != null)
                 {
-                    Coord c2 = gs.spatialIndex_to_coord(si);
+                    Coord c2 = gs.spatial_index_to_coord(si);
                     Console.WriteLine($@"{c.view_text()}  	  {si.view_text()}   	  {c2.view_text()}");
                 }
             }

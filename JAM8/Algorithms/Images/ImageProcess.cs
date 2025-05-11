@@ -778,7 +778,7 @@ namespace JAM8.Algorithms.Images
                 }
             DataMapper dm = new();
             dm.Reset((double)gp.Min, (double)gp.Max, 0, 255);
-            for (int n = 0; n < gp.gridStructure.N; n++)
+            for (int n = 0; n < gp.grid_structure.N; n++)
             {
                 gp.set_value(n, (float?)dm.MapAToB(gp.get_value(n).Value));
             }

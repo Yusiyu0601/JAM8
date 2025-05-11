@@ -15,26 +15,26 @@
         private void Display()
         {
             if (_gp == null) return;
-            txt_ICount.Text = _gp.gridStructure.nx.ToString();
-            txt_JCount.Text = _gp.gridStructure.ny.ToString();
-            txt_KCount.Text = _gp.gridStructure.nz.ToString();
-            txt_ISize.Text = _gp.gridStructure.xsiz.ToString();
-            txt_JSize.Text = _gp.gridStructure.ysiz.ToString();
-            txt_KSize.Text = _gp.gridStructure.zsiz.ToString();
-            txt_OriginCellX.Text = _gp.gridStructure.xmn.ToString();
-            txt_OriginCellY.Text = _gp.gridStructure.ymn.ToString();
-            txt_OriginCellZ.Text = _gp.gridStructure.zmn.ToString();
+            txt_ICount.Text = _gp.grid_structure.nx.ToString();
+            txt_JCount.Text = _gp.grid_structure.ny.ToString();
+            txt_KCount.Text = _gp.grid_structure.nz.ToString();
+            txt_ISize.Text = _gp.grid_structure.xsiz.ToString();
+            txt_JSize.Text = _gp.grid_structure.ysiz.ToString();
+            txt_KSize.Text = _gp.grid_structure.zsiz.ToString();
+            txt_OriginCellX.Text = _gp.grid_structure.xmn.ToString();
+            txt_OriginCellY.Text = _gp.grid_structure.ymn.ToString();
+            txt_OriginCellZ.Text = _gp.grid_structure.zmn.ToString();
 
             txt_MinValue.Text = _gp.Min.ToString();
             txt_MaxValue.Text = _gp.Max.ToString();
             txt_MeanValue.Text = _gp.buffer.Average().ToString();
 
-            txt_CellCount.Text = _gp.gridStructure.N.ToString();
+            txt_CellCount.Text = _gp.grid_structure.N.ToString();
             txt_CellCountOfNull.Text = _gp.N_Nulls.ToString();
 
 
             List<double> data = [];
-            for (int i = 0; i < _gp.gridStructure.N; i++)
+            for (int i = 0; i < _gp.grid_structure.N; i++)
             {
                 if (_gp.get_value(i) != null)
                 {

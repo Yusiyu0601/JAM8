@@ -251,7 +251,7 @@ namespace JAM8.Algorithms.Geometry
         /// <returns></returns>
         public static Mould create_by_gridProperty(SpatialIndex core_in_gridProperty, GridProperty gp)
         {
-            GridStructure gs = gp.gridStructure;
+            GridStructure gs = gp.grid_structure;
             if (gs.dim != core_in_gridProperty.dim)
                 return null;
             return create_by_location(core_in_gridProperty, gp.get_spatialIndex_ne_null());

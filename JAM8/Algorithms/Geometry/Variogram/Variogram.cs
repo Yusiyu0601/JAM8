@@ -255,7 +255,7 @@ namespace JAM8.Algorithms.Geometry
             double[] gamma = new double[N_lag];
             int[] N_pair = new int[N_lag];
 
-            GridStructure gs = gp.gridStructure;
+            GridStructure gs = gp.grid_structure;
             double dx_lag_unit = lag_unit * Math.Cos(Math.PI * azimuth / 180.0); //单位滞后距旋转后的x分量
             double dy_lag_unit = lag_unit * Math.Sin(Math.PI * azimuth / 180.0); //单位滞后距旋转后的y分量
 
@@ -305,7 +305,7 @@ namespace JAM8.Algorithms.Geometry
             double[] gamma = new double[N_lag];
             int[] N_pair = new int[N_lag];
 
-            GridStructure gs = gp.gridStructure;
+            GridStructure gs = gp.grid_structure;
             double dx_lag_unit = lag_unit * Math.Cos(Math.PI * azimuth / 180.0); //单位滞后距旋转后的x分量
             double dy_lag_unit = lag_unit * Math.Sin(Math.PI * azimuth / 180.0); //单位滞后距旋转后的y分量
 
@@ -358,7 +358,7 @@ namespace JAM8.Algorithms.Geometry
             double[] gamma = new double[N_lag - 1];
             int[] N_pair = new int[N_lag - 1];
 
-            GridStructure gs = gp.gridStructure;
+            GridStructure gs = gp.grid_structure;
 
             for (int lag_idx = 1; lag_idx < N_lag; lag_idx++) //计算所有滞后距的变差值
             {

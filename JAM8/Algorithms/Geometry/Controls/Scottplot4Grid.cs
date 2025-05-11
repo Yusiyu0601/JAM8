@@ -122,13 +122,13 @@ namespace JAM8.Algorithms.Geometry
         {
             _gp = _g[cb_gridProperty.Text];
 
-            if (_gp.gridStructure.dim == Dimension.D3)
+            if (_gp.grid_structure.dim == Dimension.D3)
             {
                 cb_xy_yz_zx.Visible = true;
                 numericUpDown1.Visible = true;
                 trackBar1.Visible = true;
 
-                toolStripLabel1.Text = $"[nx={_gp.gridStructure.nx}  ny={_gp.gridStructure.ny}  nz={_gp.gridStructure.nz}]";
+                toolStripLabel1.Text = $"[nx={_gp.grid_structure.nx}  ny={_gp.grid_structure.ny}  nz={_gp.grid_structure.nz}]";
             }
             else
             {
@@ -136,7 +136,7 @@ namespace JAM8.Algorithms.Geometry
                 numericUpDown1.Visible = false;
                 trackBar1.Visible = false;
 
-                toolStripLabel1.Text = $"[nx={_gp.gridStructure.nx}  ny={_gp.gridStructure.ny}]";
+                toolStripLabel1.Text = $"[nx={_gp.grid_structure.nx}  ny={_gp.grid_structure.ny}]";
             }
 
             redraw_viewGrid();
@@ -173,12 +173,12 @@ namespace JAM8.Algorithms.Geometry
         private static double?[,] Grid2Intensities(GridProperty gp)
         {
             //grid网格顺时针旋转90度
-            double?[,] intensities = new double?[gp.gridStructure.ny, gp.gridStructure.nx];
-            for (int j = 0; j < gp.gridStructure.ny; j++)
+            double?[,] intensities = new double?[gp.grid_structure.ny, gp.grid_structure.nx];
+            for (int j = 0; j < gp.grid_structure.ny; j++)
             {
-                for (int i = 0; i < gp.gridStructure.nx; i++)
+                for (int i = 0; i < gp.grid_structure.nx; i++)
                 {
-                    int I = gp.gridStructure.ny - j - 1;
+                    int I = gp.grid_structure.ny - j - 1;
                     int J = i;
                     intensities[I, J] = gp.get_value(i, j);
                 }
@@ -197,11 +197,11 @@ namespace JAM8.Algorithms.Geometry
         {
             if (checkBox1.Checked == true)
             {
-                if (_view_2d_gp.gridStructure.nx > _view_2d_gp.gridStructure.ny)
+                if (_view_2d_gp.grid_structure.nx > _view_2d_gp.grid_structure.ny)
                     formsPlot1.Plot.AxisScaleLock(true, ScottPlot.EqualScaleMode.PreserveY);
-                if (_view_2d_gp.gridStructure.nx < _view_2d_gp.gridStructure.ny)
+                if (_view_2d_gp.grid_structure.nx < _view_2d_gp.grid_structure.ny)
                     formsPlot1.Plot.AxisScaleLock(true, ScottPlot.EqualScaleMode.PreserveX);
-                if (_view_2d_gp.gridStructure.nx == _view_2d_gp.gridStructure.ny)
+                if (_view_2d_gp.grid_structure.nx == _view_2d_gp.grid_structure.ny)
                     formsPlot1.Plot.AxisScaleLock(true, ScottPlot.EqualScaleMode.ZoomOut);
             }
             else
@@ -246,7 +246,7 @@ namespace JAM8.Algorithms.Geometry
             //根据实际情况，获取实际显示的模型
             void get_viewGrid()
             {
-                if (_gp.gridStructure.dim == Dimension.D2)
+                if (_gp.grid_structure.dim == Dimension.D2)
                 {
                     _view_2d_gp = _gp.deep_clone();
                 }
@@ -255,25 +255,25 @@ namespace JAM8.Algorithms.Geometry
                     if (cb_xy_yz_zx.Text == "XY")
                     {
                         numericUpDown1.Minimum = 0;
-                        numericUpDown1.Maximum = _gp.gridStructure.nz - 1;
+                        numericUpDown1.Maximum = _gp.grid_structure.nz - 1;
                         trackBar1.Minimum = 0;
-                        trackBar1.Maximum = _gp.gridStructure.nz - 1;
+                        trackBar1.Maximum = _gp.grid_structure.nz - 1;
                         _view_2d_gp = _gp.get_slice((int)numericUpDown1.Value, GridSliceType.xy_slice);
                     }
                     if (cb_xy_yz_zx.Text == "YZ")
                     {
                         numericUpDown1.Minimum = 0;
-                        numericUpDown1.Maximum = _gp.gridStructure.nx - 1;
+                        numericUpDown1.Maximum = _gp.grid_structure.nx - 1;
                         trackBar1.Minimum = 0;
-                        trackBar1.Maximum = _gp.gridStructure.nx - 1;
+                        trackBar1.Maximum = _gp.grid_structure.nx - 1;
                         _view_2d_gp = _gp.get_slice((int)numericUpDown1.Value, GridSliceType.yz_slice);
                     }
                     if (cb_xy_yz_zx.Text == "XZ")
                     {
                         numericUpDown1.Minimum = 0;
-                        numericUpDown1.Maximum = _gp.gridStructure.ny - 1;
+                        numericUpDown1.Maximum = _gp.grid_structure.ny - 1;
                         trackBar1.Minimum = 0;
-                        trackBar1.Maximum = _gp.gridStructure.ny - 1;
+                        trackBar1.Maximum = _gp.grid_structure.ny - 1;
                         _view_2d_gp = _gp.get_slice((int)numericUpDown1.Value, GridSliceType.xz_slice);
                     }
                 }
@@ -288,7 +288,7 @@ namespace JAM8.Algorithms.Geometry
                     string[] str = _filter_string.Split(',');
                     float min = float.Parse(str[0]);
                     float max = float.Parse(str[1]);
-                    for (int n = 0; n < _view_2d_gp.gridStructure.N; n++)
+                    for (int n = 0; n < _view_2d_gp.grid_structure.N; n++)
                     {
                         if (_view_2d_gp.get_value(n) >= min &&
                             _view_2d_gp.get_value(n) <= max)
@@ -424,7 +424,7 @@ namespace JAM8.Algorithms.Geometry
 
         private void 保存View2dGridToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Grid g = Grid.create(_view_2d_gp.gridStructure);
+            Grid g = Grid.create(_view_2d_gp.grid_structure);
             g.add_gridProperty("view2d_gp", _view_2d_gp);
             Grid.save_to_gslibwin(g);
         }
@@ -432,7 +432,7 @@ namespace JAM8.Algorithms.Geometry
         private void 保存ToolStripMenuItem1_Click(object sender, EventArgs e)
         {
 
-            Grid g = Grid.create(_gp.gridStructure);
+            Grid g = Grid.create(_gp.grid_structure);
             g.add_gridProperty(cb_gridProperty.Text, _gp);
             Grid.save_to_gslibwin(g);
         }

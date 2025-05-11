@@ -21,7 +21,7 @@ namespace JAM8.Algorithms.Geometry
         [Obsolete]
         public static GridProperty Chamfer34(GridProperty property, double? targetValue)
         {
-            GridStructure gs = property.gridStructure;
+            GridStructure gs = property.grid_structure;
             GridProperty chamfer34 = GridProperty.create(gs);
             for (int n = 0; n < gs.N; n++)
             {
@@ -84,9 +84,9 @@ namespace JAM8.Algorithms.Geometry
         /// <returns>每个像素到目标值的欧几里得距离</returns>
         public static GridProperty EuclideanDistanceTransform(GridProperty property, float? target_value)
         {
-            if (property.gridStructure.dim == Dimension.D2)
+            if (property.grid_structure.dim == Dimension.D2)
                 return EuclideanDistanceTransform2D(property, target_value);
-            else if (property.gridStructure.dim == Dimension.D3)
+            else if (property.grid_structure.dim == Dimension.D3)
                 return EuclideanDistanceTransform3D(property, target_value);
             else
                 throw new Exception("不支持的维度");
@@ -100,7 +100,7 @@ namespace JAM8.Algorithms.Geometry
         /// <returns>每个像素到目标值的欧几里得距离</returns>
         static GridProperty EuclideanDistanceTransform2D(GridProperty property, double? targetValue)
         {
-            GridStructure gs = property.gridStructure;
+            GridStructure gs = property.grid_structure;
             GridProperty result = GridProperty.create(gs);
 
             int width = gs.nx;
@@ -156,7 +156,7 @@ namespace JAM8.Algorithms.Geometry
         /// <returns>每个像素到目标值的欧几里得距离</returns>
         static GridProperty EuclideanDistanceTransform3D(GridProperty property, double? targetValue)
         {
-            GridStructure gs = property.gridStructure;
+            GridStructure gs = property.grid_structure;
             GridProperty result = GridProperty.create(gs);
 
             int width = gs.nx;

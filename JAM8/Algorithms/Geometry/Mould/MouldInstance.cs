@@ -100,7 +100,7 @@ namespace JAM8.Algorithms.Geometry
             neighbor_not_nulls_ids.Clear(); //清空数据
 
             //记录中心点的arrayindex
-            core_arrayIndex = gp_source.gridStructure.get_arrayIndex(core);
+            core_arrayIndex = gp_source.grid_structure.get_array_index(core);
             //中心点单独提取
             core_value = gp_source.get_value(core);
 
@@ -212,12 +212,12 @@ namespace JAM8.Algorithms.Geometry
         public static List<MouldInstance> create_from_gridProperty(Mould mould, GridProperty gp_source)
         {
             // 预分配实例列表的容量，避免多次扩容
-            List<MouldInstance> instances = new(gp_source.gridStructure.N);
+            List<MouldInstance> instances = new(gp_source.grid_structure.N);
 
-            for (int n = 0; n < gp_source.gridStructure.N; n++)
+            for (int n = 0; n < gp_source.grid_structure.N; n++)
             {
-                MyConsoleProgress.Print(n, gp_source.gridStructure.N, "提取模式");
-                var loc = gp_source.gridStructure.get_spatialIndex(n);
+                MyConsoleProgress.Print(n, gp_source.grid_structure.N, "提取模式");
+                var loc = gp_source.grid_structure.get_spatial_index(n);
                 var mould_instance = create(mould); // 创建新的MouldInstance
                 mould_instance.update_from_gridProperty(loc, gp_source); // 更新MouldInstance
                 instances.Add(mould_instance); // 将创建的实例添加到结果列表

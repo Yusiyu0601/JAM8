@@ -59,7 +59,7 @@ namespace JAM8.Algorithms.Geometry
                 MyConsoleProgress.Print(progress, visit_re_idxes.Count, "snesim");
 
                 //下一个待模拟点
-                SpatialIndex visit_re_next_si = gs_re.get_spatialIndex(model_random_idx);
+                SpatialIndex visit_re_next_si = gs_re.get_spatial_index(model_random_idx);
 
                 //如果某个点没有数据，则需要插值
                 if (g_result["re"].get_value(visit_re_next_si) == null)
@@ -70,7 +70,7 @@ namespace JAM8.Algorithms.Geometry
                     //如果模板实例没有任何条件数据，则从训练图像里随机抽取一个值赋给模拟网格（ds相似度的做法，后期可能改成snesim的概率抽样）
                     if (scan_re_mi.neighbor_not_nulls_ids.Count == 0)
                     {
-                        var ti_array_index = mt.Next(0, ti.gridStructure.N);
+                        var ti_array_index = mt.Next(0, ti.grid_structure.N);
                         var select_value = ti.get_value(ti_array_index);
                         g_result["re"].set_value(model_random_idx, select_value);
                     }
@@ -116,7 +116,7 @@ namespace JAM8.Algorithms.Geometry
         private Dictionary<float?, float> get_cpdf(MouldInstance scan_re_mi, GridProperty ti, List<float?> categories)
         {
             //中心点的索引，默认（0，0）或者（0，0，0）
-            SpatialIndex core_ti = ti.gridStructure.dim == Dimension.D2 ? SpatialIndex.create(0, 0) : SpatialIndex.create(0, 0, 0);
+            SpatialIndex core_ti = ti.grid_structure.dim == Dimension.D2 ? SpatialIndex.create(0, 0) : SpatialIndex.create(0, 0, 0);
 
             //根据数据事件创建扫描训练图像的模板
             var trim_scan_re_mi = scan_re_mi.trim(CompareType.NotEqual, null);
@@ -140,10 +140,10 @@ namespace JAM8.Algorithms.Geometry
 
 
             //串行扫描训练图像
-            for (int visit_ti_idx = 0; visit_ti_idx < ti.gridStructure.N; visit_ti_idx++)
+            for (int visit_ti_idx = 0; visit_ti_idx < ti.grid_structure.N; visit_ti_idx++)
             {
                 //扫描训练图像的下个位置
-                var visit_ti_next_si = ti.gridStructure.get_spatialIndex(visit_ti_idx);
+                var visit_ti_next_si = ti.grid_structure.get_spatial_index(visit_ti_idx);
 
                 //扫描训练图像，获取模板实例
                 scan_ti_mi.update_from_gridProperty(visit_ti_next_si, ti);

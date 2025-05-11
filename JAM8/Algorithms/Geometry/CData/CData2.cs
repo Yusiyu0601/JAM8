@@ -108,7 +108,7 @@ namespace JAM8.Algorithms.Geometry
                     float x = Convert.ToSingle(buffer[idx_record, x_series_index]);
                     float y = Convert.ToSingle(buffer[idx_record, y_series_index]);
                     coord = Coord.create(x, y);
-                    si = target_gs.coord_to_spatialIndex(coord);
+                    si = target_gs.coord_to_spatial_index(coord);
                     if (si != null)//保留落在grid范围内的cdi
                     {
                         MyRecord record = buffer.get_record(idx_record);//从原始表里提取记录，然后修改
@@ -123,7 +123,7 @@ namespace JAM8.Algorithms.Geometry
                     float y = Convert.ToSingle(buffer[idx_record, y_series_index]);
                     float z = Convert.ToSingle(buffer[idx_record, z_series_index]);
                     coord = Coord.create(x, y, z);
-                    si = target_gs.coord_to_spatialIndex(coord);
+                    si = target_gs.coord_to_spatial_index(coord);
                     if (si != null)//保留落在grid范围内的cdi
                     {
                         MyRecord record = buffer.get_record(idx_record);//从原始表里提取记录，然后修改
@@ -277,16 +277,16 @@ namespace JAM8.Algorithms.Geometry
             CData2 cd = new()
             {
                 property_names = [grid_property_name],
-                target_gs = gp.gridStructure
+                target_gs = gp.grid_structure
             };
-            if (gp.gridStructure.dim == Dimension.D2)
+            if (gp.grid_structure.dim == Dimension.D2)
             {
                 cd.dim = Dimension.D2;
                 cd.x_series_index = 0;
                 cd.y_series_index = 1;
                 cd.buffer = MyDataFrame.create(["x", "y", grid_property_name]);
             }
-            if (gp.gridStructure.dim == Dimension.D3)
+            if (gp.grid_structure.dim == Dimension.D3)
             {
                 cd.dim = Dimension.D3;
                 cd.x_series_index = 0;
@@ -296,9 +296,9 @@ namespace JAM8.Algorithms.Geometry
             }
 
             //遍历所有节点，判断是否满足条件
-            for (int n = 0; n < gp.gridStructure.N; n++)
+            for (int n = 0; n < gp.grid_structure.N; n++)
             {
-                Coord c = gp.gridStructure.arrayIndex_to_coord(n);
+                Coord c = gp.grid_structure.array_index_to_coord(n);
                 float? currentValue = gp.get_value(n);
 
                 //根据compare_type，判断是否保留等于compared_value的节点，用switch语法
@@ -333,7 +333,7 @@ namespace JAM8.Algorithms.Geometry
             {
                 return (-1, null);
             }
-            if (target_gs != gp.gridStructure)
+            if (target_gs != gp.grid_structure)
                 return (-1, null);
 
             int not_match_number = 0;

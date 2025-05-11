@@ -99,7 +99,7 @@ namespace JAM8.Tests
             SpatialIndex core = SpatialIndex.create(g.gridStructure.nx / 2, g.gridStructure.ny / 2, g.gridStructure.nz / 2);
             for (int n = 0; n < g.gridStructure.N; n++)
             {
-                SpatialIndex si = g.gridStructure.get_spatialIndex(n);
+                SpatialIndex si = g.gridStructure.get_spatial_index(n);
                 var dsi = SpatialIndex.create(si.ix - core.ix, si.iy - core.iy, si.iz - core.iz);
                 var anis_dist = AnisotropicDistance.calc_anis_distance_power2(rm, dsi);
                 dict.Add(dsi.view_text(), anis_dist);
@@ -122,7 +122,7 @@ namespace JAM8.Tests
             g.add_gridProperty("circle");
             for (int n = 0; n < g.gridStructure.N; n++)
             {
-                SpatialIndex si = g.gridStructure.get_spatialIndex(n);
+                SpatialIndex si = g.gridStructure.get_spatial_index(n);
                 c = Coord.create(si.ix, si.iy, si.iz);
                 anis_dist = AnisotropicDistance.calc_anis_dist(rm, Coord.create(50, 50, 50), c);
                 if (anis_dist < 50)
@@ -157,7 +157,7 @@ namespace JAM8.Tests
             g.add_gridProperty("circle");
             for (int n = 0; n < g.gridStructure.N; n++)
             {
-                SpatialIndex si = g.gridStructure.get_spatialIndex(n);
+                SpatialIndex si = g.gridStructure.get_spatial_index(n);
                 c = Coord.create(si.ix, si.iy);
                 anis_dist = AnisotropicDistance.calc_anis_dist(rm, Coord.create(50, 50), c);
                 if (anis_dist < 25)
@@ -249,10 +249,10 @@ namespace JAM8.Tests
         {
             GridStructure gs = GridStructure.create_win();
             CData cd = CData.read_from_gslibwin().cdata;
-            var si = gs.get_spatialIndex(20);
-            Coord c = gs.spatialIndex_to_coord(si);
+            var si = gs.get_spatial_index(20);
+            Coord c = gs.spatial_index_to_coord(si);
             Console.WriteLine(c.view_text());
-            SpatialIndex si1 = gs.coord_to_spatialIndex(c);
+            SpatialIndex si1 = gs.coord_to_spatial_index(c);
             Console.WriteLine(si1.view_text());
         }
 
@@ -300,19 +300,19 @@ namespace JAM8.Tests
         {
             GridStructure gs_left = GridStructure.create_simple(100, 100, 1);
             GridStructure gs_right = GridStructure.create_simple(100, 100, 1);
-            Console.WriteLine($@"{gs_left.view_text()}  {gs_right.view_text()}");
+            Console.WriteLine($@"{gs_left.to_string()}  {gs_right.to_string()}");
             Console.WriteLine(gs_left == gs_right);
 
 
             gs_left = GridStructure.create_simple(100, 200, 1);
             gs_right = GridStructure.create_simple(100, 100, 1);
-            Console.WriteLine($@"{gs_left.view_text()}  {gs_right.view_text()}");
+            Console.WriteLine($@"{gs_left.to_string()}  {gs_right.to_string()}");
             Console.WriteLine(gs_left == gs_right);
 
 
             gs_left = GridStructure.create_simple(100, 200, 1);
             gs_right = gs_left;
-            Console.WriteLine($@"{gs_left.view_text()}  {gs_right.view_text()}");
+            Console.WriteLine($@"{gs_left.to_string()}  {gs_right.to_string()}");
             Console.WriteLine(gs_left == gs_right);
         }
 
@@ -419,7 +419,7 @@ namespace JAM8.Tests
             g.add_gridProperty("dist");
             for (int n = 0; n < g.gridStructure.N; n++)
             {
-                var core = g.gridStructure.get_spatialIndex(n);
+                var core = g.gridStructure.get_spatial_index(n);
                 var data_event = MouldInstance.create_from_gridProperty(mould, core, g[0]);
                 if (data_event.neighbor_nulls_ids.Count == 0)
                 {
@@ -448,7 +448,7 @@ namespace JAM8.Tests
             for (int n = 0; n < gs.N; n++)
             {
                 MyConsoleProgress.Print(n, gs.N, "提取样式");
-                var pattern = MouldInstance.create_from_gridProperty(mould, gs.get_spatialIndex(n), g.first_gridProperty());
+                var pattern = MouldInstance.create_from_gridProperty(mould, gs.get_spatial_index(n), g.first_gridProperty());
                 if (pattern.neighbor_nulls_ids.Count == 0)
                     patterns_cb.Add(pattern);
             }
