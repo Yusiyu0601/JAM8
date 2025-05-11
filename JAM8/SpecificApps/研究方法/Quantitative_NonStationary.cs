@@ -24,11 +24,11 @@ namespace JAM8.SpecificApps.研究方法
         public static void Test_GetAnchorsDistanceModel()
         {
             //加载TI
-            Form_GridCatalog frm = new();
-            if (frm.ShowDialog() != DialogResult.OK)
-                return;
-            var TI = frm.selected_grids[0].select_gridProperty_win("选择TI").grid_property;
-            // var TI = Grid.create_from_gslibwin().grid.select_gridProperty_win("选择TI").grid_property;
+            // Form_GridCatalog frm = new();
+            // if (frm.ShowDialog() != DialogResult.OK)
+            //     return;
+            // var TI = frm.selected_grids[0].select_gridProperty_win("选择TI").grid_property;
+            var TI = Grid.create_from_gslibwin().grid.select_gridProperty_win("选择TI").grid_property;
 
             //缩放到固定尺寸
             var gs = GridStructure.create_simple(100, 100, 1);

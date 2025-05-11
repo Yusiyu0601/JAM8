@@ -53,6 +53,7 @@
             button2 = new Button();
             label13 = new Label();
             comboBox1 = new ComboBox();
+            button3 = new Button();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDown1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDown2).BeginInit();
@@ -242,7 +243,7 @@
             // 
             // button1
             // 
-            button1.Location = new Point(157, 12);
+            button1.Location = new Point(129, 12);
             button1.Name = "button1";
             button1.Size = new Size(174, 36);
             button1.TabIndex = 33;
@@ -280,11 +281,22 @@
             comboBox1.TabIndex = 71;
             comboBox1.SelectedIndexChanged += comboBox1_SelectedIndexChanged;
             // 
+            // button3
+            // 
+            button3.Location = new Point(345, 12);
+            button3.Name = "button3";
+            button3.Size = new Size(85, 36);
+            button3.TabIndex = 73;
+            button3.Text = "另存为";
+            button3.UseVisualStyleBackColor = true;
+            button3.Click += button3_Click;
+            // 
             // Form_VariogramFit
             // 
             AutoScaleDimensions = new SizeF(11F, 24F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1192, 561);
+            Controls.Add(button3);
             Controls.Add(label13);
             Controls.Add(comboBox1);
             Controls.Add(button2);
@@ -351,5 +363,6 @@
         private Button button2;
         private Label label13;
         private ComboBox comboBox1;
+        private Button button3;
     }
 }

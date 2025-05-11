@@ -17,13 +17,14 @@ namespace JAM8.Algorithms.Forms
         private void dataGridView1_RowPostPaint(object sender, DataGridViewRowPostPaintEventArgs e)
         {
             //自动编号，与数据无关
-            Rectangle rectangle = new(e.RowBounds.Location.X, e.RowBounds.Location.Y, dataGridView1.RowHeadersWidth - 4, e.RowBounds.Height);
+            Rectangle rectangle = new(e.RowBounds.Location.X, e.RowBounds.Location.Y, dataGridView1.RowHeadersWidth - 4,
+                e.RowBounds.Height);
             TextRenderer.DrawText(e.Graphics,
-                  (e.RowIndex + 1).ToString(),
-                   dataGridView1.RowHeadersDefaultCellStyle.Font,
-                   rectangle,
-                   dataGridView1.RowHeadersDefaultCellStyle.ForeColor,
-                   TextFormatFlags.VerticalCenter | TextFormatFlags.Right);
+                (e.RowIndex + 1).ToString(),
+                dataGridView1.RowHeadersDefaultCellStyle.Font,
+                rectangle,
+                dataGridView1.RowHeadersDefaultCellStyle.ForeColor,
+                TextFormatFlags.VerticalCenter | TextFormatFlags.Right);
         }
 
         public Form_VariogramFit()
@@ -44,6 +45,7 @@ namespace JAM8.Algorithms.Forms
                 MessageBox.Show("输入的实验变差函数不正确");
                 return;
             }
+
             this.h = h;
             this.gamma = gamma;
             this.N_pair = N_pair;
@@ -51,7 +53,7 @@ namespace JAM8.Algorithms.Forms
             {
                 { "h", h },
                 { "gamma", gamma },
-                { "N_pair",N_pair.Select(a => (double)a).ToArray() }
+                { "N_pair", N_pair.Select(a => (double)a).ToArray() }
             };
 
             MyDataFrame df = MyDataFrame.create(["h", "gamma", "N_pairs"]);
@@ -162,6 +164,7 @@ namespace JAM8.Algorithms.Forms
                 textBox5.Text = numericUpDown2.Value.ToString();
                 textBox6.Text = numericUpDown3.Value.ToString();
             }
+
             draw();
         }
 
@@ -173,6 +176,7 @@ namespace JAM8.Algorithms.Forms
                 textBox5.Text = numericUpDown2.Value.ToString();
                 textBox6.Text = numericUpDown3.Value.ToString();
             }
+
             draw();
         }
 
@@ -184,6 +188,7 @@ namespace JAM8.Algorithms.Forms
                 textBox5.Text = numericUpDown2.Value.ToString();
                 textBox6.Text = numericUpDown3.Value.ToString();
             }
+
             draw();
         }
 
@@ -213,9 +218,10 @@ namespace JAM8.Algorithms.Forms
             textBox4.Text = variogram_fit.range.ToString();
             textBox5.Text = variogram_fit.sill.ToString();
             textBox6.Text = variogram_fit.nugget.ToString();
-            numericUpDown1.Maximum = (decimal)(variogram_fit.range > h.Last() ? variogram_fit.range * 2 : h.Last());//人工修改变程的最大值
-            numericUpDown2.Maximum = (decimal)(variogram_fit.sill * 1.2);//基台值显示范围
-            numericUpDown3.Maximum = (decimal)(gamma.Max() * 1.2);//nugget显示范围
+            numericUpDown1.Maximum =
+                (decimal)(variogram_fit.range > h.Last() ? variogram_fit.range * 2 : h.Last()); //人工修改变程的最大值
+            numericUpDown2.Maximum = (decimal)(variogram_fit.sill * 1.2); //基台值显示范围
+            numericUpDown3.Maximum = (decimal)(gamma.Max() * 1.2); //nugget显示范围
             numericUpDown1.DecimalPlaces = 3;
             numericUpDown2.DecimalPlaces = 3;
             numericUpDown3.DecimalPlaces = 3;
@@ -243,7 +249,7 @@ namespace JAM8.Algorithms.Forms
             //自动拟合
             List<double> x_fit = new();
             List<double> y_fit = new();
-            double step = (h.Max() - h.Min()) / 100.0;//步长
+            double step = (h.Max() - h.Min()) / 100.0; //步长
             double maxLagDistance = h.Last();
             //根据拟合的模型进行等间距重采样
             for (double lag = 0; lag < maxLagDistance * 1.05; lag += step)
@@ -251,7 +257,9 @@ namespace JAM8.Algorithms.Forms
                 x_fit.Add(lag);
                 y_fit.Add(variogram_fit.calc_variogram((float)lag));
             }
-            formsPlot1.Plot.AddScatter(x_fit.ToArray(), y_fit.ToArray(), Color.Green, lineWidth: 2, markerSize: 0, label: "球状模型");
+
+            formsPlot1.Plot.AddScatter(x_fit.ToArray(), y_fit.ToArray(), Color.Green, lineWidth: 2, markerSize: 0,
+                label: "球状模型");
 
             //手工调节
             List<double> x_manual = new();
@@ -266,7 +274,9 @@ namespace JAM8.Algorithms.Forms
                 x_manual.Add(lag);
                 y_manual.Add(variogram_manual.calc_variogram((float)lag));
             }
-            formsPlot1.Plot.AddScatter(x_manual.ToArray(), y_manual.ToArray(), Color.Blue, lineWidth: 2, markerSize: 0, label: "球状模型");
+
+            formsPlot1.Plot.AddScatter(x_manual.ToArray(), y_manual.ToArray(), Color.Blue, lineWidth: 2, markerSize: 0,
+                label: "球状模型");
 
 
             formsPlot1.Refresh();
@@ -288,6 +298,7 @@ namespace JAM8.Algorithms.Forms
                 MessageBox.Show("输入的实验变差函数不正确");
                 return;
             }
+
             init_controls(h, gamma, N_pair);
             numericUpDown1.Enabled = true;
             numericUpDown2.Enabled = true;
@@ -317,6 +328,24 @@ namespace JAM8.Algorithms.Forms
         {
             if (h != null)
                 init_controls(h, gamma, N_pair);
+        }
+
+        //另存为Excel文件
+        private void button3_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog sfd = new()
+            {
+                Filter = "Excel文件|*.xlsx",
+                Title = "另存为Excel文件"
+            };
+            if (sfd.ShowDialog() == DialogResult.OK)
+            {
+                string fileName = sfd.FileName;
+                MyDataFrame df = MyDataFrame.create(["h", "gamma", "N_pairs"]);
+                for (int i = 0; i < h.Length; i++)
+                    df.add_record([h[i], gamma[i], N_pair[i]]);
+                MyDataFrame.write_to_excel(df, fileName);
+            }
         }
     }
 }
