@@ -13,7 +13,9 @@ namespace JAM8.Algorithms.Geometry
         //simulation path 模拟路径
         public SimulationPath path { get; internal set; }
 
-        private Snesim() { }
+        private Snesim()
+        {
+        }
 
         /// <summary>
         /// Snesim's multi-grid simulation method
@@ -41,7 +43,7 @@ namespace JAM8.Algorithms.Geometry
             (int rx, int ry, int rz) template, GridProperty TI, CData2 cd, GridStructure gs_re,
             int progress_for_retrieve_inverse = 0)
         {
-            Stopwatch sw = new();//检测模拟时间
+            Stopwatch sw = new(); //检测模拟时间
             sw.Start();
 
             Grid g = Grid.create(gs_re);
@@ -56,13 +58,14 @@ namespace JAM8.Algorithms.Geometry
 
             for (int multi_grid = multigrid_count; multi_grid >= 1; multi_grid--)
             {
-                var mould = gs_re.dim == Dimension.D2 ?
-                    Mould.create_by_ellipse(template.rx, template.ry, multi_grid) :
-                    Mould.create_by_ellipse(template.rx, template.ry, template.rz, multi_grid);
+                var mould = gs_re.dim == Dimension.D2
+                    ? Mould.create_by_ellipse(template.rx, template.ry, multi_grid)
+                    : Mould.create_by_ellipse(template.rx, template.ry, template.rz, multi_grid);
 
                 mould = Mould.create_by_mould(mould, max_number);
 
-                var (re_mg, time_) = run(TI, current_cd, gs_re, random_seed, mould, multi_grid, progress_for_retrieve_inverse);
+                var (re_mg, time_) = run(TI, current_cd, gs_re, random_seed, mould, multi_grid,
+                    progress_for_retrieve_inverse);
 
                 g.add_gridProperty($"{multi_grid}", re_mg[0]);
 
@@ -106,7 +109,7 @@ namespace JAM8.Algorithms.Geometry
             int progress_for_retrieve_inverse = 0)
         {
             Random rnd = new(random_seed);
-            Grid result = Grid.create(gs_re);//Create a grid based on the gs_re. 根据gs_re创建grid工区 
+            Grid result = Grid.create(gs_re); //Create a grid based on the gs_re. 根据gs_re创建grid工区 
 
             //Assign the value of cd to the model. 把cd赋值到模型中
             if (cd != null)
@@ -124,9 +127,9 @@ namespace JAM8.Algorithms.Geometry
                 return (null, 0.0);
 
             Dictionary<float?, int> nod_cut = [];
-            Dictionary<float?, float> pdf = [];//global facies probability 全局相概率
-            Dictionary<float?, float> cpdf = [];//conditional constraint probability 条件约束相概率
-            List<float?> categories = [];//The value range of discrete variables 离散变量的取值范围
+            Dictionary<float?, float> pdf = []; //global facies probability 全局相概率
+            Dictionary<float?, float> cpdf = []; //conditional constraint probability 条件约束相概率
+            List<float?> categories = []; //The value range of discrete variables 离散变量的取值范围
 
             var category_freq = TI.discrete_category_freq(false);
             for (int i = 0; i < category_freq.Count; i++)
@@ -156,10 +159,11 @@ namespace JAM8.Algorithms.Geometry
                     sw.Stop();
                     // 将 tick 转换为毫秒
                     double elapsedMicroseconds = (sw.ElapsedTicks / (double)Stopwatch.Frequency) * 1_000;
-                    totalElapsedTime += (long)elapsedMicroseconds;  // 累加时长
+                    totalElapsedTime += (long)elapsedMicroseconds; // 累加时长
                     df_time.add_record([path.progress, elapsedMicroseconds, totalElapsedTime]);
                     sw.Restart();
                 }
+
                 MyConsoleProgress.Print(path.progress, $"snesim multigrid_level{multigrid_level}");
                 var si = path.visit_next();
                 var value_si = result["re"].get_value(si);
@@ -173,6 +177,7 @@ namespace JAM8.Algorithms.Geometry
                     nod_cut[value]++;
                 }
             }
+
             sw.Stop();
             return (result, totalElapsedTime);
         }
@@ -191,14 +196,15 @@ namespace JAM8.Algorithms.Geometry
                 if (progress <= progress_for_retrieve_inverse)
                     core_values = tree.retrieve_inverse(dataEvent, 1);
                 else
-                    core_values = tree.retrieve(dataEvent, 1);
+                    // core_values = tree.retrieve(dataEvent, 1);
+                    core_values = tree.retrieve_recursive(dataEvent, 1);
 
                 //There is the number of retrieved duplicates, and the conditional probability
                 //is calculated
                 //有取回重复数，计算条件概率
                 if (core_values != null)
                 {
-                    int sumrepl = 0;//Total number of repetitions 重复数总数
+                    int sumrepl = 0; //Total number of repetitions 重复数总数
                     sumrepl = core_values.Sum(a => a.Value);
 
                     //Calculate cpdf
@@ -206,9 +212,11 @@ namespace JAM8.Algorithms.Geometry
                     {
                         cpdf.Add(category, core_values[category] / (float)sumrepl);
                     }
+
                     return cpdf;
                 }
             }
+
             return null;
         }
 

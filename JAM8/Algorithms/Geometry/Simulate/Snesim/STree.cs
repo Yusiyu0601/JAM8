@@ -12,7 +12,9 @@ namespace JAM8.Algorithms.Geometry
     /// </summary>
     public class STree
     {
-        private STree() { }
+        private STree()
+        {
+        }
 
         /// <summary>
         /// root of search tree
@@ -46,10 +48,7 @@ namespace JAM8.Algorithms.Geometry
         /// </summary>
         public int tree_depth
         {
-            get
-            {
-                return mould.neighbors_number + 1;
-            }
+            get { return mould.neighbors_number + 1; }
         }
 
         /// <summary>
@@ -58,7 +57,7 @@ namespace JAM8.Algorithms.Geometry
         /// </summary>
         public List<Dictionary<float?, STreeNode[]>> stree_nodes_with_levels = null;
 
-        public MyDataFrame df = null;//Statistics on the number of access nodes and calculation time 统计访问节点数量和计算时间
+        public MyDataFrame df = null; //Statistics on the number of access nodes and calculation time 统计访问节点数量和计算时间
 
         /// <summary>
         /// Create a search tree 创建搜索树
@@ -76,6 +75,7 @@ namespace JAM8.Algorithms.Geometry
                 MessageBox.Show("变量值过多，请检查训练图像是否为连续变量");
                 return null;
             }
+
             distinct.Sort();
 
             STree tree = new()
@@ -86,7 +86,8 @@ namespace JAM8.Algorithms.Geometry
             };
             tree.init_tree();
             tree.init_reverse_query_structure();
-            MyConsoleHelper.write_string_to_console("Total number of search tree nodes", tree.get_nodes_count().ToString());
+            MyConsoleHelper.write_string_to_console("Total number of search tree nodes",
+                tree.get_nodes_count().ToString());
 
             tree.df = MyDataFrame.create(["访问节点总数", "计算时间(毫秒)"]);
 
@@ -98,8 +99,8 @@ namespace JAM8.Algorithms.Geometry
         /// </summary>
         private void init_tree()
         {
-            var patterns = Patterns.create(mould, TI);//提取TI所有pattern
-            long id = 0;//节点id
+            var patterns = Patterns.create(mould, TI); //提取TI所有pattern
+            long id = 0; //节点id
 
             #region 创建根节点
 
@@ -107,8 +108,8 @@ namespace JAM8.Algorithms.Geometry
             root = new STreeNode
             {
                 value = -99.99f, // root 节点值初始化为 -99.99
-                id = id++,       // 自增 ID
-                guid = "r",      // "r" 代表 root
+                id = id++, // 自增 ID
+                guid = "r", // "r" 代表 root
                 depth_in_tree = -1, // 根节点深度为 -1
                 core_values_repl = categories.ToDictionary(
                     category => category,
@@ -121,13 +122,13 @@ namespace JAM8.Algorithms.Geometry
                 category => (float?)category,
                 category => new STreeNode
                 {
-                    value = category,        // 子节点的值为当前分类
-                    id = id++,               // 分配唯一 ID
-                    guid = $"r{category}",   // GUID，例如 "r1"
-                    depth_in_tree = 0,       // 子节点深度为 0
+                    value = category, // 子节点的值为当前分类
+                    id = id++, // 分配唯一 ID
+                    guid = $"r{category}", // GUID，例如 "r1"
+                    depth_in_tree = 0, // 子节点深度为 0
                     core_values_repl = [], // 空的 core_values_repl
-                    children = [],  // 空的 children
-                    father = root            // 父节点正确设置为 root
+                    children = [], // 空的 children
+                    father = root // 父节点正确设置为 root
                 }
             );
 
@@ -146,9 +147,9 @@ namespace JAM8.Algorithms.Geometry
                 {
                     //判断temp_node的重复数是否包含分类变量值
                     if (temp_node.core_values_repl.ContainsKey(pattern.core_value))
-                        temp_node.core_values_repl[pattern.core_value] += 1;//存在则加1
+                        temp_node.core_values_repl[pattern.core_value] += 1; //存在则加1
                     else
-                        temp_node.core_values_repl.Add(pattern.core_value, 1);//不存在则新建，并赋值为1
+                        temp_node.core_values_repl.Add(pattern.core_value, 1); //不存在则新建，并赋值为1
 
                     //如果当前节点没有孩子节点，跳出循环
                     if (neighbor_idx + 1 == pattern.mould.neighbors_number)
@@ -160,22 +161,24 @@ namespace JAM8.Algorithms.Geometry
                     {
                         temp_node.children[child_value] = new STreeNode
                         {
-                            value = child_value,                          // 设置新节点的值
-                            id = id++,                                    // 分配一个唯一的自增 ID
-                            guid = $"{temp_node.guid}{child_value}",      // GUID 继承父节点的 GUID，并附加子节点的值
-                            core_values_repl = [],                        // 初始化 core_values_repl 为一个空字典
-                            depth_in_tree = temp_node.depth_in_tree + 1,  // 子节点的深度比父节点深一层
-                            father = temp_node,                           // 设置父节点为当前的 temp_node
-                            children = []                                 // 初始化子节点的 children 为一个空字典
+                            value = child_value, // 设置新节点的值
+                            id = id++, // 分配一个唯一的自增 ID
+                            guid = $"{temp_node.guid}{child_value}", // GUID 继承父节点的 GUID，并附加子节点的值
+                            core_values_repl = [], // 初始化 core_values_repl 为一个空字典
+                            depth_in_tree = temp_node.depth_in_tree + 1, // 子节点的深度比父节点深一层
+                            father = temp_node, // 设置父节点为当前的 temp_node
+                            children = [] // 初始化子节点的 children 为一个空字典
                         };
                     }
-                    temp_node = temp_node.children[child_value];//用孩子节点更新temp node，进入下一层
+
+                    temp_node = temp_node.children[child_value]; //用孩子节点更新temp node，进入下一层
                 }
             }
 
             #endregion
         }
 
+        //反向辅助结构
         private void init_reverse_query_structure()
         {
             stree_nodes_with_levels = [];
@@ -184,17 +187,17 @@ namespace JAM8.Algorithms.Geometry
             {
                 { -1, new STreeNode[] { root } }
             };
-            stree_nodes_with_levels.Add(level_root);//Add the first level (i.e., root). 添加第1层(即root)
+            stree_nodes_with_levels.Add(level_root); //Add the first level (i.e., root). 添加第1层(即root)
 
-            List<STreeNode> temp_nodes = [root];//Temporary node, initialized as root. 临时节点，初始化为root
-            for (int level = 1; level < tree_depth; level++)//Add level i. 添加第i层
+            List<STreeNode> temp_nodes = [root]; //Temporary node, initialized as root. 临时节点，初始化为root
+            for (int level = 1; level < tree_depth; level++) //Add level i. 添加第i层
             {
                 MyConsoleProgress.Print(level, tree_depth, "Construct a reverse query structure");
 
                 List<STreeNode> nodes_level = [];
-                foreach (var node in temp_nodes)//Query all nodes on the ith layer. 查询第i层所有nodes
+                foreach (var node in temp_nodes) //Query all nodes on the ith layer. 查询第i层所有nodes
                     nodes_level.AddRange(node.children.Values);
-                temp_nodes = nodes_level;//Update temp_nodes. 更新temp_nodes
+                temp_nodes = nodes_level; //Update temp_nodes. 更新temp_nodes
 
                 Dictionary<float?, STreeNode[]> nodes_level_category = [];
                 //Classify nodes of different categories in this layer. 对该层中不同category的node进行分类
@@ -211,16 +214,17 @@ namespace JAM8.Algorithms.Geometry
         /// <returns></returns>
         private int get_nodes_count()
         {
-            int nodes_count = 1;//初始化为1
-            List<STreeNode> nodes_temp = [root];//Temporary node collection 临时节点集合
-            for (int level = 0; level <= tree_depth; level++)//添加第i层
+            int nodes_count = 1; //初始化为1
+            List<STreeNode> nodes_temp = [root]; //Temporary node collection 临时节点集合
+            for (int level = 0; level <= tree_depth; level++) //添加第i层
             {
                 List<STreeNode> nodes_level = [];
-                foreach (var node in nodes_temp)//查询第i层所有nodes
+                foreach (var node in nodes_temp) //查询第i层所有nodes
                     nodes_level.AddRange(node.children.Values);
-                nodes_temp = nodes_level;//更新
+                nodes_temp = nodes_level; //更新
                 nodes_count += nodes_level.Count;
             }
+
             return nodes_count;
         }
 
@@ -238,7 +242,7 @@ namespace JAM8.Algorithms.Geometry
             List<Dictionary<float?, int>> core_values_all_levels = [];
 
             int node_max = 0; // Maximum number of valid nodes 有效节点的最大数量
-            List<STreeNode> temp_level_nodes = [root];//Temp node collection (initialized to root) 临时节点集合，初始化为root
+            List<STreeNode> temp_level_nodes = [root]; //Temp node collection (initialized to root) 临时节点集合，初始化为root
 
             //总数与当前层
             int Sum = 0, Level = 0;
@@ -250,7 +254,7 @@ namespace JAM8.Algorithms.Geometry
             for (int neighbor_idx = 0; neighbor_idx <= data_event.neighbor_not_nulls_ids.Last(); neighbor_idx++)
             {
                 List<STreeNode> nodes_temp = [];
-                float? neighbor_value = data_event[neighbor_idx];//邻居节点取值
+                float? neighbor_value = data_event[neighbor_idx]; //邻居节点取值
 
                 //At this time, if the current neighbor node set is empty, then record all the child nodes of the nodes
                 //(the previous neighbor nodes) in the temporary node set.
@@ -272,6 +276,7 @@ namespace JAM8.Algorithms.Geometry
                         if (node.children.TryGetValue(neighbor_value, out STreeNode value))
                             nodes_temp.Add(value);
                     }
+
                     node_max++;
 
                     // Initialize the core_values dictionary with keys as categorical variables (categories) and
@@ -286,14 +291,15 @@ namespace JAM8.Algorithms.Geometry
                         category => nodes_temp.Sum(node => node.core_values_repl.GetValueOrDefault(category, 0))
                     );
 
-                    core_values_all_levels.Add(core_values);//Record the repetition number of this layer.记录该层的重复数
+                    core_values_all_levels.Add(core_values); //Record the repetition number of this layer.记录该层的重复数
                 }
 
-                temp_level_nodes = nodes_temp;//update 更新
+                temp_level_nodes = nodes_temp; //update 更新
 
                 Sum += nodes_temp.Count;
                 Level = nodes_temp.Count;
             }
+
             sw.Stop();
 
             // 将 tick 转换为毫秒
@@ -303,14 +309,14 @@ namespace JAM8.Algorithms.Geometry
             // 输出结果
             return core_values_all_levels
                 .AsEnumerable()
-                .Reverse()// Reverse the order of the set. 反转集合的顺序
+                .Reverse() // Reverse the order of the set. 反转集合的顺序
                 .FirstOrDefault(core_values
-                => core_values.Sum(a => a.Value) > cd_min);// Find the first element that meets the condition,
-                                                           // which is that the sum of all 'Value' in 'core_values' is greater
-                                                           // than 'cd_min'. If there is no element that meets the condition,
-                                                           // return 'null'.
-                                                           // 查找第一个符合条件的元素,条件是 core_values 中所有 Value 的总和大于
-                                                           // cd_min。如果没有符合条件的元素，返回 null。
+                    => core_values.Sum(a => a.Value) > cd_min); // Find the first element that meets the condition,
+            // which is that the sum of all 'Value' in 'core_values' is greater
+            // than 'cd_min'. If there is no element that meets the condition,
+            // return 'null'.
+            // 查找第一个符合条件的元素,条件是 core_values 中所有 Value 的总和大于
+            // cd_min。如果没有符合条件的元素，返回 null。
         }
 
         /// <summary>
@@ -329,10 +335,11 @@ namespace JAM8.Algorithms.Geometry
             {
                 sb.Append(data_event[i] == null ? "n" : data_event[i].ToString());
             }
+
             var Guid = sb.ToString();
 
-            List<int> cd_indexes = [.. data_event.neighbor_not_nulls_ids];//深度复制
-            cd_indexes.Reverse();//Reverse, from large to small. 反转，由大到小
+            List<int> cd_indexes = [.. data_event.neighbor_not_nulls_ids]; //深度复制
+            cd_indexes.Reverse(); //Reverse, from large to small. 反转，由大到小
 
             //The duplicate number result obtained by final statistics 最终统计得到的重复数结果
             Dictionary<float?, int> result = null;
@@ -353,7 +360,7 @@ namespace JAM8.Algorithms.Geometry
                 {
                     ConcurrentBag<STreeNode> temp_nodes = [];
                     flag++;
-                    var levels_above = cd_indexes.GetRange(flag, cd_indexes.Count - flag);//above是针对当前level的前几个cd
+                    var levels_above = cd_indexes.GetRange(flag, cd_indexes.Count - flag); //above是针对当前level的前几个cd
 
                     #region 并行计算
 
@@ -379,9 +386,10 @@ namespace JAM8.Algorithms.Geometry
                                 if (node.guid[idx_real] != Guid[idx_real])
                                 {
                                     matched = false;
-                                    break;//If one doesn't work, just give up. 有一个不行，就放弃吧
+                                    break; //If one doesn't work, just give up. 有一个不行，就放弃吧
                                 }
                             }
+
                             if (matched)
                                 temp_nodes.Add(node);
                         });
@@ -439,5 +447,71 @@ namespace JAM8.Algorithms.Geometry
             return result;
         }
 
+        #region 递归版本
+
+        /// <summary>
+        /// 递归版本：从搜索树里取回数据事件的重复数
+        /// </summary>
+        /// <param name="data_event"></param>
+        /// <param name="cd_min"></param>
+        /// <returns></returns>
+        public Dictionary<float?, int> retrieve_recursive(MouldInstance data_event, int cd_min)
+        {
+            List<Dictionary<float?, int>> core_values_all_levels = [];
+
+            // 递归辅助函数
+            Dictionary<float?, int> Traverse(List<STreeNode> nodes, int neighbor_idx)
+            {
+                if (neighbor_idx > data_event.neighbor_not_nulls_ids.Last())
+                    return null;
+
+                float? neighbor_value = data_event[neighbor_idx];
+                List<STreeNode> next_nodes = [];
+
+                if (neighbor_value == null)
+                {
+                    foreach (var node in nodes)
+                        next_nodes.AddRange(node.children.Values);
+                }
+                else
+                {
+                    foreach (var node in nodes)
+                    {
+                        if (node.children.TryGetValue(neighbor_value, out STreeNode value))
+                            next_nodes.Add(value);
+                    }
+
+                    var core_values = categories.ToDictionary(
+                        category => category,
+                        category => next_nodes.Sum(node => node.core_values_repl.GetValueOrDefault(category, 0))
+                    );
+                    core_values_all_levels.Add(core_values);
+                }
+
+                // 递归到下一层
+                var result = Traverse(next_nodes, neighbor_idx + 1);
+                if (result != null)
+                    return result;
+
+                // 反向查找满足条件的层
+                if (core_values_all_levels.Count > 0)
+                {
+                    var reversed = core_values_all_levels.AsEnumerable().Reverse();
+                    foreach (var core_values in reversed)
+                    {
+                        if (core_values.Sum(a => a.Value) > cd_min)
+                            return core_values;
+                    }
+                }
+
+                return null;
+            }
+
+            var res = Traverse([root], 0);
+
+            return res;
+        }
+
+        #endregion
     }
 }

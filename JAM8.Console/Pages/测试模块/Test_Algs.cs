@@ -51,8 +51,8 @@ namespace JAM8.Console.Pages
 
         private void Test_GridProperty_connectivity_function()
         {
-            int distanceSteps = 10;
-            double maxDistance = 50;
+            int distanceSteps = 50;
+            double maxDistance = 100;
 
             GridProperty gp = Grid.create_from_gslibwin().grid.select_gridProperty_win("选择GridProperty").grid_property;
             gp.set_values_by_condition(1, null, CompareType.NotEqual);
@@ -65,7 +65,7 @@ namespace JAM8.Console.Pages
             for (int i = 1; i <= distanceSteps; i++)
             {
                 double distance = (maxDistance / distanceSteps) * i; // 当前滞后距离
-                double connectivity = gp.ConnectivityFunction(distance, Math.PI / 4); // 角度设置为45度
+                double connectivity = gp.ConnectivityFunction(distance, Math.PI / 2); // 角度设置为45度
                 distances.Add(distance);
                 connectivityValues.Add(connectivity);
             }
@@ -272,10 +272,9 @@ namespace JAM8.Console.Pages
 
             if (g == null)
                 return;
-
             var ti = g.first_gridProperty();
             Mould mould = ti.grid_structure.dim == Dimension.D2
-                ? Mould.create_by_ellipse(10, 10, 1)
+                ? Mould.create_by_ellipse(7, 7, 1)
                 : Mould.create_by_ellipse(7, 7, 3, 1);
             mould = Mould.create_by_mould(mould, 40);
 
@@ -320,7 +319,7 @@ namespace JAM8.Console.Pages
 
             Snesim snesim = Snesim.create();
             GridStructure re_gs = ti.grid_structure;
-            GridStructure re_gs_2d = GridStructure.create_simple(300, 300, 1);
+            GridStructure re_gs_2d = GridStructure.create_simple(101, 101, 1);
             GridStructure re_gs_3d = GridStructure.create_simple(80, 80, 30);
             re_gs = ti.grid_structure.dim == Dimension.D2 ? re_gs_2d : re_gs_3d;
 
@@ -329,9 +328,9 @@ namespace JAM8.Console.Pages
 
             CData2 cd = CData2.read_from_gslib_win().cdata;
 
-            for (int j = 0; j < 10; j++)
+            for (int j = 0; j < 1; j++)
             {
-                var (result, time) = snesim.run(ti, cd, re_gs, 1001, mould, 1, 35);
+                var (result, time) = snesim.run(ti, cd, re_gs, 1001, mould, 1, 0);
                 sum_35percent += time;
                 Output.WriteLine(ConsoleColor.Red, $"时间:{time}");
                 result.showGrid_win();
@@ -364,7 +363,7 @@ namespace JAM8.Console.Pages
             var ti = g.first_gridProperty();
             Mould mould = ti.grid_structure.dim == Dimension.D2
                 ? Mould.create_by_ellipse(10, 10, 1)
-                : Mould.create_by_ellipse(7, 7, 3, 1);
+                : Mould.create_by_ellipse(5, 5, 2, 1);
 
             mould = Mould.create_by_mould(mould, 40);
 
@@ -377,14 +376,15 @@ namespace JAM8.Console.Pages
 
             CData2 cd = CData2.read_from_gslib_win().cdata;
 
-            var corsened_cd = cd.coarsened(re_gs).coarsened_cd;
+            // var corsened_cd = cd.coarsened(re_gs).coarsened_cd;
 
-            var (re, time) = snesim.run(1001, 3, 40, (10, 10, 1), ti, cd, re_gs, 0);
+            var (re, time) = snesim.run(1001, 3, 35, (5, 5, 2),
+                ti, cd, re_gs, 0);
 
             re.showGrid_win();
-
-            var (not_match_number, not_match_array_index) =
-                corsened_cd.check_match(re.first_gridProperty(), corsened_cd.property_names[0]);
+            //
+            // var (not_match_number, not_match_array_index) =
+            //     corsened_cd.check_match(re.first_gridProperty(), corsened_cd.property_names[0]);
 
             //re?.showGrid_win();
             Output.WriteLine(ConsoleColor.Red, $"{time}毫秒");
