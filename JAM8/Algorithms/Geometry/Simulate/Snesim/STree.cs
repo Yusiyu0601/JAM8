@@ -228,6 +228,8 @@ namespace JAM8.Algorithms.Geometry
             return nodes_count;
         }
 
+        #region retrieve迭代版本
+
         /// <summary>
         /// Retrieve the duplicate count of data events from the search tree. 从搜索树里取回数据事件的重复数
         /// </summary>
@@ -447,7 +449,9 @@ namespace JAM8.Algorithms.Geometry
             return result;
         }
 
-        #region 递归版本
+        #endregion
+
+        #region retrieve递归版本
 
         /// <summary>
         /// 递归版本：从搜索树里取回数据事件的重复数

@@ -20,24 +20,24 @@ namespace JAM8.Utilities
         {
             //参考方法: https://www.cnblogs.com/Iconnector/p/10320579.html
 
-            List<double> all = new();//所有的集合数据					
+            List<double> all = new(); //所有的集合数据					
             HashSet<double> repeated = new(); //得到没有重复的hashset				
             foreach (List<double> item in lists)
             {
                 foreach (double index in item)
                 {
                     if (all.Contains(index))
-                        repeated.Add(index);//得到所有重复的集合的元素									
-                    all.Add(index);//得到所有的集合的元素									
+                        repeated.Add(index); //得到所有重复的集合的元素									
+                    all.Add(index); //得到所有的集合的元素									
                 }
             }
 
 
-            foreach (var setkey in repeated)//循环重复的值					
+            foreach (var setkey in repeated) //循环重复的值					
             {
-                List<double> templist = null;//临时						
+                List<double> templist = null; //临时						
                 List<List<double>> removelist = new();
-                foreach (var item in lists)//循环					
+                foreach (var item in lists) //循环					
                 {
                     if (item.Contains(setkey))
                     {
@@ -53,13 +53,16 @@ namespace JAM8.Utilities
                         }
                     }
                 }
+
                 foreach (var item in removelist)
                 {
                     lists.Remove(item);
                 }
+
                 removelist.Clear();
                 lists.Add(templist);
             }
+
             return lists;
         }
 
@@ -78,6 +81,7 @@ namespace JAM8.Utilities
             {
                 throw new ArgumentNullException(nameof(array));
             }
+
             int N = array.Count;
             array = array.OrderBy(a => a).ToArray();
             int endIndex = N / 2;
@@ -123,12 +127,47 @@ namespace JAM8.Utilities
                     i_Pos = i;
                 }
             }
+
             return (value, i_Pos);
         }
 
         #endregion
 
         #region 查找众数
+
+        /// <summary>
+        /// 泛型版本：计算数组元素的众数及其统计量
+        /// </summary>
+        /// <typeparam name="T">元素类型，需实现IEquatable和IComparable</typeparam>
+        /// <param name="array">输入数组</param>
+        /// <param name="keepNull">是否保留null（仅对可空类型有效）</param>
+        /// <returns>(众数，众数的频数)</returns>
+        public static (T? mode, int count) FindMode<T>(IList<T?> array, bool keepNull = true)
+            where T : struct, IEquatable<T>, IComparable<T>
+        {
+            var dict = new Dictionary<T?, int?>();
+            foreach (var item in array)
+            {
+                if (!keepNull && item == null) continue;
+                if (dict.ContainsKey(item))
+                    dict[item]++;
+                else
+                    dict[item] = 1;
+            }
+
+            T? mode = default;
+            int maxCount = 0;
+            foreach (var kv in dict)
+            {
+                if (kv.Value > maxCount)
+                {
+                    maxCount = kv.Value ?? 0;
+                    mode = kv.Key;
+                }
+            }
+
+            return (mode, maxCount);
+        }
 
         /// <summary>
         /// 计算数组元素的众数及其统计量
@@ -139,11 +178,12 @@ namespace JAM8.Utilities
         public static (int?, int) FindMode(int?[] array, bool KeepNull)
         {
             //去重复计算(数值，频数)
-            var (distinct, counts) = MyDistinct.distinct(array, KeepNull);
+            var (distinct, counts) = MyDistinct.distinct<int>(array, KeepNull);
             //查找值最大的索引
             var (_, max_index) = FindMax(counts);
             return (distinct[max_index], counts[max_index]);
         }
+
         /// <summary>
         /// 计算数组元素的众数及其统计量
         /// </summary>
@@ -158,6 +198,7 @@ namespace JAM8.Utilities
             var (_, max_index) = FindMax(counts);
             return (distinct[max_index], counts[max_index]);
         }
+
         /// <summary>
         /// 计算数组元素的众数及其统计量
         /// </summary>
@@ -171,6 +212,7 @@ namespace JAM8.Utilities
             var (_, max_index) = FindMax(counts);
             return (distinct[max_index], counts[max_index]);
         }
+
         /// <summary>
         /// 计算数组元素的众数及其统计量
         /// </summary>
@@ -199,6 +241,7 @@ namespace JAM8.Utilities
             var (_, max_index) = FindMax(counts);
             return (distinct[max_index], counts[max_index]);
         }
+
         /// <summary>
         /// 计算数组元素的众数及其统计量
         /// </summary>
@@ -213,6 +256,7 @@ namespace JAM8.Utilities
             var (_, max_index) = FindMax(counts);
             return (distinct[max_index], counts[max_index]);
         }
+
         /// <summary>
         /// 计算数组元素的众数及其统计量
         /// </summary>
@@ -221,11 +265,12 @@ namespace JAM8.Utilities
         public static (double, int) FindMode(double[] array)
         {
             //去重复计算(数值，频数)
-            var (distinct, counts) =MyDistinct.distinct(array);
+            var (distinct, counts) = MyDistinct.distinct(array);
             //查找值最大的索引
             var (_, max_index) = FindMax(counts);
             return (distinct[max_index], counts[max_index]);
         }
+
         /// <summary>
         /// 计算数组元素的众数及其统计量
         /// </summary>
@@ -234,7 +279,7 @@ namespace JAM8.Utilities
         public static (double, int) FindMode(List<double> array)
         {
             //去重复计算(数值，频数)
-            var (distinct, counts) =MyDistinct.distinct(array);
+            var (distinct, counts) = MyDistinct.distinct(array);
             //查找值最大的索引
             var (_, max_index) = FindMax(counts);
             return (distinct[max_index], counts[max_index]);
@@ -252,9 +297,9 @@ namespace JAM8.Utilities
         public static Tuple<List<int?>, List<int>, List<int>, List<int>> GetSegments(List<int?> Elements)
         {
             int N = Elements.Count;
-            Elements.Add(int.MaxValue);//增加1个最大值，便于处理最后一个值
-            int idx = -1;//元素索引
-            int flag = 0;//标记，从0开始，进入下一个Segment则增加1
+            Elements.Add(int.MaxValue); //增加1个最大值，便于处理最后一个值
+            int idx = -1; //元素索引
+            int flag = 0; //标记，从0开始，进入下一个Segment则增加1
             List<int> Segment_flag = new();
             List<int> Segment_idx1 = new();
             List<int> Segment_idx2 = new();
@@ -267,6 +312,7 @@ namespace JAM8.Utilities
                 {
                     break;
                 }
+
                 if (Elements[idx] != Elements[idx + 1])
                 {
                     //当前元素与下一个元素不相同，表明出现1个新Segment，标记flag加1
@@ -274,8 +320,10 @@ namespace JAM8.Utilities
                     flag++;
                     continue;
                 }
+
                 Segment_flag.Add(flag);
             }
+
             //找出不重复的元素
             var distinct = MyDistinct.distinct(Segment_flag);
             for (int i = 0; i < distinct.Item2.Length; i++)
@@ -287,8 +335,11 @@ namespace JAM8.Utilities
                 Segment_length.Add(segment_idx2 - segment_idx1 + 1);
                 Segment_code.Add(Elements[segment_idx1]);
             }
-            return new Tuple<List<int?>, List<int>, List<int>, List<int>>(Segment_code, Segment_idx1, Segment_idx2, Segment_length);
+
+            return new Tuple<List<int?>, List<int>, List<int>, List<int>>(Segment_code, Segment_idx1, Segment_idx2,
+                Segment_length);
         }
+
         /// <summary>
         /// 从1个元素数组中提取连续的段Segment，返回每个段Segment的值、起始索引、终止索引
         /// </summary>
@@ -297,9 +348,9 @@ namespace JAM8.Utilities
         public static Tuple<List<double?>, List<int>, List<int>, List<int>> GetSegments(List<double?> Elements)
         {
             int N = Elements.Count;
-            Elements.Add(double.MaxValue);//增加1个最大值，便于处理最后一个值
-            int idx = -1;//元素索引
-            int flag = 0;//标记，从0开始，进入下一个Segment则增加1
+            Elements.Add(double.MaxValue); //增加1个最大值，便于处理最后一个值
+            int idx = -1; //元素索引
+            int flag = 0; //标记，从0开始，进入下一个Segment则增加1
             List<int> Segment_flag = new();
             List<int> Segment_idx1 = new();
             List<int> Segment_idx2 = new();
@@ -312,6 +363,7 @@ namespace JAM8.Utilities
                 {
                     break;
                 }
+
                 if (Elements[idx] != Elements[idx + 1])
                 {
                     //当前元素与下一个元素不相同，表明出现1个新Segment，标记flag加1
@@ -319,8 +371,10 @@ namespace JAM8.Utilities
                     flag++;
                     continue;
                 }
+
                 Segment_flag.Add(flag);
             }
+
             //找出不重复的元素
             var distinct = MyDistinct.distinct(Segment_flag);
             for (int i = 0; i < distinct.Item2.Length; i++)
@@ -332,7 +386,9 @@ namespace JAM8.Utilities
                 Segment_length.Add(segment_idx2 - segment_idx1 + 1);
                 Segment_code.Add(Elements[segment_idx1]);
             }
-            return new Tuple<List<double?>, List<int>, List<int>, List<int>>(Segment_code, Segment_idx1, Segment_idx2, Segment_length);
+
+            return new Tuple<List<double?>, List<int>, List<int>, List<int>>(Segment_code, Segment_idx1, Segment_idx2,
+                Segment_length);
         }
 
         #endregion
@@ -357,8 +413,10 @@ namespace JAM8.Utilities
                     Console.Write("{0:F3}", array.ElementAt(n));
                     Console.Write("\t");
                 }
+
                 Console.Write("\n");
             }
+
             if (Mode == 1)
             {
                 for (int n = 0; n < array.Count(); n++)
@@ -381,10 +439,12 @@ namespace JAM8.Utilities
             {
                 temp = Console.ReadLine()!.Split(new char[] { ' ' });
             }
+
             if (SplitCode == 1)
             {
                 temp = Console.ReadLine()!.Split(new char[] { ';' });
             }
+
             if (SplitCode == 2)
             {
                 temp = Console.ReadLine()!.Split(new char[] { ',' });
@@ -394,6 +454,7 @@ namespace JAM8.Utilities
             {
                 data.Add(double.Parse(temp[i]));
             }
+
             return data.ToArray();
         }
 
@@ -418,6 +479,7 @@ namespace JAM8.Utilities
                     Console.Write("{0:F3}", array[i, j]);
                     Console.Write("\t");
                 }
+
                 Console.WriteLine(@"	");
             }
         }
@@ -512,9 +574,9 @@ namespace JAM8.Utilities
                     for (int row = 0; row < rows; row++)
                     {
                         T key = input_2dArray[row, col];
-                        if (valueMapper.ContainsKey(key))//如果Element是valueMapper中的key，则更改该Element值
+                        if (valueMapper.ContainsKey(key)) //如果Element是valueMapper中的key，则更改该Element值
                             output_2dArray[row, col] = valueMapper[key];
-                        else//否则使用原值
+                        else //否则使用原值
                             output_2dArray[row, col] = key;
                     }
                 }

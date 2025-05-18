@@ -44,9 +44,25 @@ namespace JAM8.Console.Pages
                         Test_GridProperty_connected_components_labeling)
                     .Add("Test_GridProperty_connectivity_function",
                         Test_GridProperty_connectivity_function)
+                    .Add("GridProperty_去噪点", GridProperty_去噪点)
                 ;
 
             menu.Display();
+        }
+
+        private void GridProperty_去噪点()
+        {
+            var gp = Grid.create_from_gslibwin().grid.select_gridProperty_win("选择GridProperty").grid_property;
+            gp.show_win("原始");
+
+            var result = gp.deep_clone();
+            Mould mould = Mould.create_by_ellipse(5, 5, 1);
+            for (int n = 0; n < gp.grid_structure.N; n++)
+            {
+                var pattern = MouldInstance.create_from_gridProperty(mould, gp.grid_structure.get_spatial_index(n), gp);
+                // var (a, b) = MyArrayHelper.FindMode(pattern.neighbor_values.Select(a => (double)a.Value), false);
+
+            }
         }
 
         private void Test_GridProperty_connectivity_function()

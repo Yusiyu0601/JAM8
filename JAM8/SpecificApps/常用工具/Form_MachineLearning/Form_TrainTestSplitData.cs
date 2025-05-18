@@ -62,7 +62,7 @@ namespace JAM8.SpecificApps.常用工具
             {
                 string series_name_categories = comboBox1.Text;//属类别的序列名称
                 var series_output = df.get_series<string>(series_name_categories);
-                var (_, categories, counts) = MyDistinct.distinct(series_output);//类别去重
+                var (categories, counts) = MyDistinct.distinct(series_output);//类别去重
                 Dictionary<string, List<int>> dict = new();
                 foreach (var item in categories)
                     dict.Add(item, new List<int>());
