@@ -1235,7 +1235,7 @@ namespace JAM8.Algorithms.Geometry
 
 
         // 查找标签根
-        private int FindRoot(List<int> parent, int label)
+        int FindRoot(List<int> parent, int label)
         {
             while (parent[label] != label)
                 label = parent[label];
@@ -1243,7 +1243,7 @@ namespace JAM8.Algorithms.Geometry
         }
 
         // 合并两个标签集合
-        private void Union(List<int> parent, int a, int b)
+        void Union(List<int> parent, int a, int b)
         {
             int rootA = FindRoot(parent, a);
             int rootB = FindRoot(parent, b);

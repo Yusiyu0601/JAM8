@@ -10,7 +10,9 @@ namespace JAM8.Algorithms.Geometry
     /// </summary>
     public class Grid : Dictionary<string, GridProperty>
     {
-        private Grid() { }
+        private Grid()
+        {
+        }
 
         #region attribute 属性
 
@@ -20,10 +22,7 @@ namespace JAM8.Algorithms.Geometry
 
         public List<string> propertyNames
         {
-            get
-            {
-                return Keys.ToList();
-            }
+            get { return Keys.ToList(); }
         }
 
         /// <summary>
@@ -41,6 +40,7 @@ namespace JAM8.Algorithms.Geometry
                     return null;
             }
         }
+
         public object tag { get; set; }
 
         /// <summary>
@@ -48,10 +48,7 @@ namespace JAM8.Algorithms.Geometry
         /// </summary>
         public int N_gridProperties
         {
-            get
-            {
-                return Keys.Count;
-            }
+            get { return Keys.Count; }
         }
 
         #endregion
@@ -67,9 +64,9 @@ namespace JAM8.Algorithms.Geometry
         /// <param name="newName"></param>
         public void replace_propertyName(string oldName, string newName)
         {
-            if (ContainsKey(oldName))//存在旧名称的属性
+            if (ContainsKey(oldName)) //存在旧名称的属性
             {
-                if (!ContainsKey(newName))//不存在新名称的属性
+                if (!ContainsKey(newName)) //不存在新名称的属性
                 {
                     var gp = base[oldName];
                     Remove(oldName);
@@ -77,6 +74,7 @@ namespace JAM8.Algorithms.Geometry
                 }
             }
         }
+
         /// <summary>
         /// 增加GridProperty，如果已经存在propertyName，则不会添加，也不返回提示
         /// </summary>
@@ -86,9 +84,9 @@ namespace JAM8.Algorithms.Geometry
             //如果没有以propertyName为名的属性，则增加propertyName，并扩充Buffer
             if (!ContainsKey(propertyName))
             {
-                if (gp == null)//如果没有提供了属性，则新建一个属性
+                if (gp == null) //如果没有提供了属性，则新建一个属性
                     Add(propertyName, GridProperty.create(gridStructure));
-                else//更新gp
+                else //更新gp
                 {
                     if (gp.grid_structure == gridStructure)
                         this[propertyName] = gp;
@@ -97,6 +95,7 @@ namespace JAM8.Algorithms.Geometry
                 }
             }
         }
+
         /// <summary>
         /// 删除Property
         /// </summary>
@@ -139,6 +138,7 @@ namespace JAM8.Algorithms.Geometry
         {
             return this[propertyName].get_value(arrayIndex);
         }
+
         /// <summary>
         /// 根据spatialIndex获取指定propertyName的网格单元值
         /// </summary>
@@ -149,6 +149,7 @@ namespace JAM8.Algorithms.Geometry
         {
             return this[propertyName].get_value(si);
         }
+
         /// <summary>
         /// 根据arrayIndex给指定propertyName的网格单元值赋值
         /// </summary>
@@ -159,6 +160,7 @@ namespace JAM8.Algorithms.Geometry
         {
             this[propertyName].set_value(arrayIndex, value);
         }
+
         /// <summary>
         /// 根据spatialIndex给指定propertyName的网格单元值赋值
         /// </summary>
@@ -181,13 +183,14 @@ namespace JAM8.Algorithms.Geometry
         public GridProperty get_EType()
         {
             var result = GridProperty.create(gridStructure);
-            for (int n = 0; n < gridStructure.N; n++)//逐网格单元计算
+            for (int n = 0; n < gridStructure.N; n++) //逐网格单元计算
             {
                 float? sum = 0.0f;
                 for (int m = 0; m < N_gridProperties; m++)
                     sum += this[m].get_value(n);
                 result.set_value(n, sum /= N_gridProperties);
             }
+
             return result;
         }
 
@@ -272,7 +275,7 @@ namespace JAM8.Algorithms.Geometry
                         // 第1行是Grid名称
                         if (flag == 0)
                         {
-                            string s = line.TrimEnd(['\r']);//Grid名称
+                            string s = line.TrimEnd(['\r']); //Grid名称
                             //如果grid_name为空，则使用GSLIB文件的第1行作为名称
                             if (grid_name == null)
                                 this.grid_name = s.Split(['{', '('])[0];
@@ -320,6 +323,7 @@ namespace JAM8.Algorithms.Geometry
                 Console.WriteLine(remainingBuffer);
             }
         }
+
         /// <summary>
         /// 输出Grid到GSLIB
         /// </summary>
@@ -327,30 +331,30 @@ namespace JAM8.Algorithms.Geometry
         /// <param name="nullValue"></param>
         public void save_to_gslib(string fileName, string gridName, float nullValue)
         {
-            Console.Write($"\n写入GSLIB文件路径: {fileName}\n");//打印文件路径
+            Console.Write($"\n写入GSLIB文件路径: {fileName}\n"); //打印文件路径
             using StreamWriter sw = new(fileName);
             string gridSize = gridStructure.to_string().Trim('\n').Trim('\t');
-            sw.WriteLine($"{gridName} = {gridSize}");//输出GSLIB数据的标题
-            sw.WriteLine(N_gridProperties);//输出变量数目
+            sw.WriteLine($"{gridName} = {gridSize}"); //输出GSLIB数据的标题
+            sw.WriteLine(N_gridProperties); //输出变量数目
             for (int i = 0; i < N_gridProperties; i++)
             {
-                sw.WriteLine(propertyNames[i]);//输出属性名称
+                sw.WriteLine(propertyNames[i]); //输出属性名称
             }
-            for (int n = 0; n < gridStructure.N; n++)//逐行输出数据
+
+            for (int n = 0; n < gridStructure.N; n++) //逐行输出数据
             {
                 MyConsoleProgress.Print(n, gridStructure.N - 1, "输出数据:Grid => GSLIB");
                 string line_str = string.Empty;
-                for (int col = 0; col < N_gridProperties; col++)//逐列输出数据
+                for (int col = 0; col < N_gridProperties; col++) //逐列输出数据
                 {
                     string temp = string.Empty;
                     float? value = get_value(n, propertyNames[col]);
-                    temp = value == null ?
-                        nullValue.ToString("E3") :
-                        value.Value.ToString("E3");
+                    temp = value == null ? nullValue.ToString("E3") : value.Value.ToString("E3");
                     line_str += temp;
                     if (col < N_gridProperties - 1)
                         line_str += " ";
                 }
+
                 sw.WriteLine(line_str);
             }
         }
@@ -364,10 +368,10 @@ namespace JAM8.Algorithms.Geometry
         {
             try
             {
-                Thread mThread = new(delegate ()
+                Thread mThread = new(delegate()
                 {
                     Form_Scottplot4Grid frm = new(this, title);
-                    frm.ShowDialog();
+                    frm.ShowDialog();//这里存在一个bug
                 });
                 mThread.SetApartmentState(ApartmentState.STA);
                 mThread.Start();
@@ -376,7 +380,6 @@ namespace JAM8.Algorithms.Geometry
             {
                 MessageBox.Show(ex.ToString());
             }
-
         }
 
         /// <summary>
@@ -430,6 +433,7 @@ namespace JAM8.Algorithms.Geometry
             {
                 g.add_gridProperty(property_name, null);
             }
+
             return g;
         }
 

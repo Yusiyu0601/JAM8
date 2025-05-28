@@ -126,16 +126,16 @@ namespace JAM8.Algorithms.Geometry
             if (tree == null)
                 return (null, 0.0);
 
-            Dictionary<float?, int> nod_cut = [];
-            Dictionary<float?, float> pdf = []; //global facies probability 全局相概率
-            Dictionary<float?, float> cpdf = []; //conditional constraint probability 条件约束相概率
+            Dictionary<int, int> nod_cut = [];
+            Dictionary<int, float> pdf = []; //global facies probability 全局相概率
+            Dictionary<int, float> cpdf = []; //conditional constraint probability 条件约束相概率
             List<float?> categories = []; //The value range of discrete variables 离散变量的取值范围
 
             var category_freq = TI.discrete_category_freq(false);
             for (int i = 0; i < category_freq.Count; i++)
             {
-                nod_cut.Add(category_freq[i].value, 0);
-                pdf.Add(category_freq[i].value, category_freq[i].freq);
+                nod_cut.Add((int)category_freq[i].value, 0);
+                pdf.Add((int)category_freq[i].value, category_freq[i].freq);
                 categories.Add(category_freq[i].value);
             }
 
@@ -172,9 +172,9 @@ namespace JAM8.Algorithms.Geometry
                     var dataEvent = MouldInstance.create_from_gridProperty(mould, si, result["re"]);
                     cpdf = get_cpdf(dataEvent, tree, path.progress, progress_for_retrieve_inverse);
                     cpdf ??= pdf;
-                    var value = cdf_sampler.sample(cpdf, (float)rnd.NextDouble());
+                    var value = cdf_sampler.sample<int>(cpdf, (float)rnd.NextDouble());
                     result["re"].set_value(si, value);
-                    nod_cut[value]++;
+                    // nod_cut[value]++;
                 }
             }
 
@@ -182,17 +182,17 @@ namespace JAM8.Algorithms.Geometry
             return (result, totalElapsedTime);
         }
 
-        private Dictionary<float?, float> get_cpdf(MouldInstance dataEvent, STree tree, double progress,
+        private Dictionary<int, float> get_cpdf(MouldInstance dataEvent, STree tree, double progress,
             int progress_for_retrieve_inverse = 0)
         {
-            var cpdf = new Dictionary<float?, float>();
+            var cpdf = new Dictionary<int, float>();
 
             //In the case of conditional data, a cpdf of the conditional data is
             //retrieved from the search tree.
             //有条件数据的情况,从搜索树取回条件数据的cpdf
             if (dataEvent.neighbor_not_nulls_ids.Count != 0)
             {
-                Dictionary<float?, int> core_values;
+                Dictionary<int, int> core_values;
                 if (progress <= progress_for_retrieve_inverse)
                     core_values = tree.retrieve_inverse(dataEvent, 1);
                 else

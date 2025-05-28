@@ -13,7 +13,6 @@ namespace JAM8.Algorithms.Numerics
     {
         private cdf_sampler()
         {
-
         }
 
         /// <summary>
@@ -45,6 +44,7 @@ namespace JAM8.Algorithms.Numerics
                     break;
                 }
             }
+
             return value;
         }
 
@@ -77,6 +77,7 @@ namespace JAM8.Algorithms.Numerics
                     break;
                 }
             }
+
             return value;
         }
 
@@ -109,8 +110,49 @@ namespace JAM8.Algorithms.Numerics
                     result = value;
                     break;
                 }
+
                 i++;
             }
+
+            return result;
+        }
+
+        /// <summary>
+        /// 从 "value-freq" 字典中进行随机抽样，要求所有 freq 之和等于 1
+        /// </summary>
+        /// <typeparam name="T">值的类型</typeparam>
+        /// <param name="value_freq_discrete">所有值与其频率组成的字典，频率总和应为 1</param>
+        /// <param name="p">0 到 1 之间的随机数</param>
+        /// <returns>根据频率抽样得到的值</returns>
+        public static T sample<T>(Dictionary<T, float> value_freq_discrete, float p)
+        {
+            float max_p = 0;
+            T result = default;
+            int i = 0;
+
+            foreach (var (value, freq) in value_freq_discrete)
+            {
+                float min_p;
+                if (i == 0)
+                {
+                    min_p = 0;
+                    max_p = freq;
+                }
+                else
+                {
+                    min_p = max_p;
+                    max_p = min_p + freq;
+                }
+
+                if (p >= min_p && p < max_p)
+                {
+                    result = value;
+                    break;
+                }
+
+                i++;
+            }
+
             return result;
         }
     }

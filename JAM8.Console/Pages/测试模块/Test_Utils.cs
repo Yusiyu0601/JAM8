@@ -10,6 +10,8 @@ namespace JAM8.Console.Pages
 {
     public class Test_Utils : Page
     {
+        #region 基本不用动的方法
+
         public Test_Utils(EasyConsole.Program program) : base("Test_Utils", program)
         {
         }
@@ -28,6 +30,8 @@ namespace JAM8.Console.Pages
             Program.NavigateBack();
         }
 
+        #endregion
+
         private void Perform()
         {
             var menu = new EasyConsole.Menu()
@@ -35,9 +39,31 @@ namespace JAM8.Console.Pages
                     .Add("MyConsoleProgress测试", MyConsoleProgress测试)
                     .Add("MyDataFrame create测试", MyDataFrame_create测试)
                     .Add("distinct测试", distinct测试)
+                    .Add("Mode众数计算测试", Mode众数计算测试)
                 ;
 
             menu.Display();
+        }
+
+        private void Mode众数计算测试()
+        {
+            void PrintResult<T>(string testName, IList<T> data, bool keepNull = true)
+            {
+                var (mode, count) = MyArrayHelper.FindMode(data, keepNull);
+                System.Console.WriteLine($"{testName}: 众数 = {(mode == null ? "null" : mode.ToString())}, 频数 = {count}");
+            }
+
+            // 测试用例
+            PrintResult("TestInt", new List<int> { 1, 2, 2, 3, 3, 3, 4 });
+            PrintResult("TestNullableInt keepNull=true", new int?[] { 1, 2, 2, null, 3, null, null }, true);
+            PrintResult("TestNullableInt keepNull=false", new int?[] { 1, 2, 2, null, 3, null, null }, false);
+            PrintResult("TestString keepNull=true",
+                new List<string> { "apple", "banana", "apple", null, "banana", null }, true);
+            PrintResult("TestString keepNull=false",
+                new List<string> { "apple", "banana", "apple", null, "banana", null }, false);
+            PrintResult("TestEmpty", new List<int>());
+            PrintResult("TestAllSame", new List<string> { "same", "same", "same" });
+            PrintResult("TestMultipleModes", new List<int> { 1, 1, 2, 2, 3 });
         }
 
         private void distinct测试()

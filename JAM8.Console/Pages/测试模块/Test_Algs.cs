@@ -52,17 +52,29 @@ namespace JAM8.Console.Pages
 
         private void GridProperty_去噪点()
         {
-            var gp = Grid.create_from_gslibwin().grid.select_gridProperty_win("选择GridProperty").grid_property;
+            GridStructure gs = GridStructure.create_win();
+            var g = Grid.create(gs);
+            OpenFileDialog ofd = new();
+            if (ofd.ShowDialog() != DialogResult.OK)
+                return;
+
+            g.read_from_gslib(ofd.FileName, 0, -99);
+            var gp = g.first_gridProperty();
+
             gp.show_win("原始");
 
             var result = gp.deep_clone();
-            Mould mould = Mould.create_by_ellipse(5, 5, 1);
+            Mould mould = Mould.create_by_ellipse(3, 3, 3, 1);
             for (int n = 0; n < gp.grid_structure.N; n++)
             {
+                MyConsoleProgress.Print(n, gp.grid_structure.N, "去噪点");
                 var pattern = MouldInstance.create_from_gridProperty(mould, gp.grid_structure.get_spatial_index(n), gp);
-                // var (a, b) = MyArrayHelper.FindMode(pattern.neighbor_values.Select(a => (double)a.Value), false);
-
+                var values = pattern.neighbor_values;
+                var (a, b) = MyArrayHelper.FindMode(values, false);
+                result.set_value(n, a);
             }
+
+            result.show_win("去噪点");
         }
 
         private void Test_GridProperty_connectivity_function()
@@ -363,25 +375,21 @@ namespace JAM8.Console.Pages
         {
             Output.WriteLine(ConsoleColor.Yellow, "load training image");
             Grid g = null;
-            Form_GridCatalog frm = new();
-            if (frm.ShowDialog() != DialogResult.OK)
-            {
-                g = Grid.create_from_gslibwin().grid;
-            }
-            else
-            {
-                g = frm.selected_grids.FirstOrDefault();
-            }
+            g = Grid.create_from_gslibwin().grid;
+            // Form_GridCatalog frm = new();
+            // if (frm.ShowDialog() != DialogResult.OK)
+            // {
+            //     g = Grid.create_from_gslibwin().grid;
+            // }
+            // else
+            // {
+            //     g = frm.selected_grids.FirstOrDefault();
+            // }
 
             if (g == null)
                 return;
 
             var ti = g.first_gridProperty();
-            Mould mould = ti.grid_structure.dim == Dimension.D2
-                ? Mould.create_by_ellipse(10, 10, 1)
-                : Mould.create_by_ellipse(5, 5, 2, 1);
-
-            mould = Mould.create_by_mould(mould, 40);
 
             //手动测试
             int progress_for_inverse_retrieve = EasyConsole.Input.ReadInt("逆向查询占比", 0, 100);
@@ -394,8 +402,8 @@ namespace JAM8.Console.Pages
 
             // var corsened_cd = cd.coarsened(re_gs).coarsened_cd;
 
-            var (re, time) = snesim.run(1001, 3, 35, (5, 5, 2),
-                ti, cd, re_gs, 0);
+            var (re, time) = snesim.run(1001, 3, 35, (10,10, 5),
+                ti, cd, re_gs, progress_for_inverse_retrieve);
 
             re.showGrid_win();
             //

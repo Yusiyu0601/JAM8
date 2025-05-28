@@ -1,10 +1,14 @@
-﻿using EasyConsole;
+﻿using System.Diagnostics;
+using System.Text;
+using EasyConsole;
 
 namespace JAM8.Console.Pages
 {
     class Test_Somethings : Page
     {
-        public Test_Somethings(EasyConsole.Program program) : base("Test_Somethings", program) { }
+        public Test_Somethings(EasyConsole.Program program) : base("Test_Somethings", program)
+        {
+        }
 
         public override void Display()
         {
@@ -23,18 +27,68 @@ namespace JAM8.Console.Pages
         private void Perform()
         {
             var menu = new EasyConsole.Menu()
-
-           .Add("退出", CommonFunctions.Cancel)
-           .Add("基于排序位置的加权方法", 基于排序位置的加权方法)
-           .Add("线性衰减权重计算", 线性衰减权重计算)
-           .Add("对数衰减权重计算", 对数衰减权重计算)
-           .Add("高斯函数衰减权重计算", 高斯函数衰减权重计算)
-           .Add("莫兰指数", 莫兰指数)
-           .Add("分形维数", 分形维数)
-           .Add("SpatialEntropy", SpatialEntropy)
-           ;
+                    .Add("退出", CommonFunctions.Cancel)
+                    .Add("基于排序位置的加权方法", 基于排序位置的加权方法)
+                    .Add("线性衰减权重计算", 线性衰减权重计算)
+                    .Add("对数衰减权重计算", 对数衰减权重计算)
+                    .Add("高斯函数衰减权重计算", 高斯函数衰减权重计算)
+                    .Add("莫兰指数", 莫兰指数)
+                    .Add("分形维数", 分形维数)
+                    .Add("SpatialEntropy", SpatialEntropy)
+                    .Add("string与数组效率对比", string与数组效率对比)
+                ;
 
             menu.Display();
+        }
+
+        private void string与数组效率对比()
+        {
+            int N = 200000; // 比较次数
+            int M = 1000;
+
+            List<int> list = new List<int>();
+            string str = string.Empty;
+            Random rnd = new();
+            for (int m = 0; m < M; m++)
+            {
+                int val = rnd.Next(0, 2);
+                list.Add(val);
+                str += val; // 使用字符串拼接
+            }
+
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+            int temp = 0;
+            for (int n = 0; n < N; n++)
+            {
+                for (int m = 0; m < M; m++)
+                {
+                    //简单比较
+                    if (list[m] == list[M - m - 1])
+                        temp++;
+                }
+            }
+
+            stopwatch.Stop();
+            System.Console.WriteLine($@"List<int> 耗时: {stopwatch.ElapsedMilliseconds} 毫秒, 结果: {temp}");
+
+            stopwatch.Reset();
+
+            stopwatch.Start();
+
+            int temp2 = 0;
+            for (int n = 0; n < N; n++)
+            {
+                for (int m = 0; m < M; m++)
+                {
+                    //简单比较
+                    if (str[m] == str[M - m - 1])
+                        temp2++;
+                }
+            }
+
+            stopwatch.Stop();
+            System.Console.WriteLine($@"string 耗时: {stopwatch.ElapsedMilliseconds} 毫秒, 结果: {temp2}");
         }
 
         private void SpatialEntropy()
@@ -69,14 +123,15 @@ namespace JAM8.Console.Pages
 
                 return entropy;
             }
+
             // 生成随机分布网格
             static double[,] GenerateRandomGrid(int rows, int cols, double variation)
             {
                 var rand = new Random();
                 double[,] grid = new double[rows, cols];
                 for (int i = 0; i < rows; i++)
-                    for (int j = 0; j < cols; j++)
-                        grid[i, j] = rand.NextDouble() * variation;
+                for (int j = 0; j < cols; j++)
+                    grid[i, j] = rand.NextDouble() * variation;
                 return grid;
             }
 
@@ -85,8 +140,8 @@ namespace JAM8.Console.Pages
             {
                 double[,] grid = new double[rows, cols];
                 for (int i = 0; i < rows; i++)
-                    for (int j = 0; j < cols; j++)
-                        grid[i, j] = 0.5; // 恒定值
+                for (int j = 0; j < cols; j++)
+                    grid[i, j] = 0.5; // 恒定值
                 return grid;
             }
 
@@ -104,7 +159,8 @@ namespace JAM8.Console.Pages
         class FractalDimensionCalculator
         {
             // 差分盒子计数法计算分形维数
-            public static double CalculateFractalDimension(double[,] data, int minBoxSize = 5, int maxBoxSize = -1, int numBoxes = 10)
+            public static double CalculateFractalDimension(double[,] data, int minBoxSize = 5, int maxBoxSize = -1,
+                int numBoxes = 10)
             {
                 int rows = data.GetLength(0);
                 int cols = data.GetLength(1);
@@ -206,25 +262,27 @@ namespace JAM8.Console.Pages
                 double slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
                 return slope;
             }
-
         }
+
         private void 分形维数()
         {
             // 示例二维数组1（棋盘格模式）
-            double[,] data1 = {
-            { 1, 0, 1, 0 },
-            { 0, 1, 1, 1 },
-            { 1, 1, 1, 0 },
-            { 0, 0, 1, 1 }
-        };
+            double[,] data1 =
+            {
+                { 1, 0, 1, 0 },
+                { 0, 1, 1, 1 },
+                { 1, 1, 1, 0 },
+                { 0, 0, 1, 1 }
+            };
 
             // 示例二维数组2（条带模式）
-            double[,] data2 = {
-            { 1, 1, 0, 0 },
-            { 1, 0, 1, 0 },
-            { 1, 0, 1, 0 },
-            { 1, 1, 0, 0 }
-        };
+            double[,] data2 =
+            {
+                { 1, 1, 0, 0 },
+                { 1, 0, 1, 0 },
+                { 1, 0, 1, 0 },
+                { 1, 1, 0, 0 }
+            };
 
             double fractalDimension1 = FractalDimensionCalculator.CalculateFractalDimension(data1, 3);
             double fractalDimension2 = FractalDimensionCalculator.CalculateFractalDimension(data2, 3);
@@ -309,7 +367,8 @@ namespace JAM8.Console.Pages
                                 int neighborRow = row + i;
                                 int neighborCol = col + j;
 
-                                if (neighborRow >= 0 && neighborRow < _rowNum && neighborCol >= 0 && neighborCol < _columnNum)
+                                if (neighborRow >= 0 && neighborRow < _rowNum && neighborCol >= 0 &&
+                                    neighborCol < _columnNum)
                                 {
                                     if (_image[neighborRow, neighborCol] != _nodataValue)
                                     {
@@ -335,7 +394,8 @@ namespace JAM8.Console.Pages
                 {
                     for (int j = 0; j < _pixelCount; j++)
                     {
-                        numerator += _weightMatrix[i, j] * (_valueIndex[i] - _imageMean) * (_valueIndex[j] - _imageMean);
+                        numerator += _weightMatrix[i, j] * (_valueIndex[i] - _imageMean) *
+                                     (_valueIndex[j] - _imageMean);
                     }
                 }
 
@@ -348,6 +408,7 @@ namespace JAM8.Console.Pages
                 return _pixelCount * numerator / (_weightMatrixSum * denominator);
             }
         }
+
         private void 莫兰指数()
         {
             int numRows = 5;
@@ -371,6 +432,7 @@ namespace JAM8.Console.Pages
                 {
                     System.Console.Write($"{testArray[i, j]:0.00} ");
                 }
+
                 System.Console.WriteLine();
             }
 
@@ -436,7 +498,7 @@ namespace JAM8.Console.Pages
                 // 计算每个点的对数衰减权重
                 for (int i = 0; i < N; i++)
                 {
-                    weights[i] = Math.Log(i + 1);  // i + 1 因为排序是从1开始
+                    weights[i] = Math.Log(i + 1); // i + 1 因为排序是从1开始
                     sumWeights += weights[i];
                 }
 
@@ -448,6 +510,7 @@ namespace JAM8.Console.Pages
 
                 return weights;
             }
+
             // 打印前10个权重
             static void PrintTopWeights(double[] weights, int topN)
             {
@@ -480,7 +543,7 @@ namespace JAM8.Console.Pages
                 // 计算每个点的平方根衰减权重
                 for (int i = 0; i < N; i++)
                 {
-                    weights[i] = 1.0 / Math.Sqrt(i + 1);  // 使用平方根衰减
+                    weights[i] = 1.0 / Math.Sqrt(i + 1); // 使用平方根衰减
                     sumWeights += weights[i];
                 }
 
@@ -492,6 +555,7 @@ namespace JAM8.Console.Pages
 
                 return weights;
             }
+
             // 打印前10个权重
             static void PrintTopWeights(double[] weights, int topN)
             {
@@ -501,6 +565,7 @@ namespace JAM8.Console.Pages
                     System.Console.WriteLine($@"点{i + 1}: {weights[i]:F4}");
                 }
             }
+
             int N = 1000; // 这里可以改成100或10000，表示点的数量
 
             // 计算线性衰减权重

@@ -136,153 +136,39 @@ namespace JAM8.Utilities
         #region 查找众数
 
         /// <summary>
-        /// 泛型版本：计算数组元素的众数及其统计量
+        /// 计算众数及其频数，支持值类型和引用类型（含可空），基于去重统计。
         /// </summary>
-        /// <typeparam name="T">元素类型，需实现IEquatable和IComparable</typeparam>
-        /// <param name="array">输入数组</param>
-        /// <param name="keepNull">是否保留null（仅对可空类型有效）</param>
-        /// <returns>(众数，众数的频数)</returns>
-        public static (T? mode, int count) FindMode<T>(IList<T?> array, bool keepNull = true)
-            where T : struct, IEquatable<T>, IComparable<T>
+        /// <typeparam name="T">元素类型</typeparam>
+        /// <param name="list">输入列表</param>
+        /// <param name="keepNull">是否保留null（对引用类型和可空类型有效）</param>
+        /// <returns>(众数，频数)，无元素时返回(default, 0)</returns>
+        public static (T? mode, int count) FindMode<T>(IList<T> list, bool keepNull = true)
         {
-            var dict = new Dictionary<T?, int?>();
-            foreach (var item in array)
+            var dict = new Dictionary<string, (T? value, int count)>();
+            foreach (var item in list)
             {
-                if (!keepNull && item == null) continue;
-                if (dict.ContainsKey(item))
-                    dict[item]++;
-                else
-                    dict[item] = 1;
-            }
-
-            T? mode = default;
-            int maxCount = 0;
-            foreach (var kv in dict)
-            {
-                if (kv.Value > maxCount)
+                if (item == null)
                 {
-                    maxCount = kv.Value ?? 0;
-                    mode = kv.Key;
+                    if (!keepNull) continue;
+                    var key = "<null>";
+                    if (!dict.ContainsKey(key))
+                        dict[key] = (default, 0);
+                    dict[key] = (default, dict[key].count + 1);
+                }
+                else
+                {
+                    var key = item.ToString() ?? "";
+                    if (!dict.ContainsKey(key))
+                        dict[key] = (item, 0);
+                    dict[key] = (item, dict[key].count + 1);
                 }
             }
 
-            return (mode, maxCount);
-        }
+            if (dict.Count == 0) 
+                return (default, 0);
 
-        /// <summary>
-        /// 计算数组元素的众数及其统计量
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="array"></param>
-        /// <returns></returns>
-        public static (int?, int) FindMode(int?[] array, bool KeepNull)
-        {
-            //去重复计算(数值，频数)
-            var (distinct, counts) = MyDistinct.distinct<int>(array, KeepNull);
-            //查找值最大的索引
-            var (_, max_index) = FindMax(counts);
-            return (distinct[max_index], counts[max_index]);
-        }
-
-        /// <summary>
-        /// 计算数组元素的众数及其统计量
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="array"></param>
-        /// <returns></returns>
-        public static (int?, int) FindMode(List<int?> array, bool keep_null)
-        {
-            //去重复计算(数值，频数)
-            var (distinct, counts) = MyDistinct.distinct(array, keep_null);
-            //查找值最大的索引
-            var (_, max_index) = FindMax(counts);
-            return (distinct[max_index], counts[max_index]);
-        }
-
-        /// <summary>
-        /// 计算数组元素的众数及其统计量
-        /// </summary>
-        /// <param name="array"></param>
-        /// <returns>(众数，众数的频数)</returns>
-        public static (int, int) FindMode(int[] array)
-        {
-            //去重复计算(数值，频数)
-            var (distinct, counts) = MyDistinct.distinct(array);
-            //查找值最大的索引
-            var (_, max_index) = FindMax(counts);
-            return (distinct[max_index], counts[max_index]);
-        }
-
-        /// <summary>
-        /// 计算数组元素的众数及其统计量
-        /// </summary>
-        /// <param name="array"></param>
-        /// <returns>(众数，众数的频数)</returns>
-        public static (int, int) FindMode(List<int> array)
-        {
-            //去重复计算(数值，频数)
-            var (distinct, counts) = MyDistinct.distinct(array);
-            //查找值最大的索引
-            var (_, max_index) = FindMax(counts);
-            return (distinct[max_index], counts[max_index]);
-        }
-
-        /// <summary>
-        /// 计算数组元素的众数及其统计量
-        /// </summary>
-        /// <param name="array"></param>
-        /// <param name="KeepNull"></param>
-        /// <returns></returns>
-        public static (double?, int) FindMode(double?[] array, bool keep_null)
-        {
-            //去重复计算(数值，频数)
-            var (distinct, counts) = MyDistinct.distinct(array, keep_null);
-            //查找值最大的索引
-            var (_, max_index) = FindMax(counts);
-            return (distinct[max_index], counts[max_index]);
-        }
-
-        /// <summary>
-        /// 计算数组元素的众数及其统计量
-        /// </summary>
-        /// <param name="array"></param>
-        /// <param name="KeepNull"></param>
-        /// <returns></returns>
-        public static (double?, int) FindMode(List<double?> array, bool keep_null)
-        {
-            //去重复计算(数值，频数)
-            var (distinct, counts) = MyDistinct.distinct(array, keep_null);
-            //查找值最大的索引
-            var (_, max_index) = FindMax(counts);
-            return (distinct[max_index], counts[max_index]);
-        }
-
-        /// <summary>
-        /// 计算数组元素的众数及其统计量
-        /// </summary>
-        /// <param name="array"></param>
-        /// <returns></returns>
-        public static (double, int) FindMode(double[] array)
-        {
-            //去重复计算(数值，频数)
-            var (distinct, counts) = MyDistinct.distinct(array);
-            //查找值最大的索引
-            var (_, max_index) = FindMax(counts);
-            return (distinct[max_index], counts[max_index]);
-        }
-
-        /// <summary>
-        /// 计算数组元素的众数及其统计量
-        /// </summary>
-        /// <param name="array"></param>
-        /// <returns></returns>
-        public static (double, int) FindMode(List<double> array)
-        {
-            //去重复计算(数值，频数)
-            var (distinct, counts) = MyDistinct.distinct(array);
-            //查找值最大的索引
-            var (_, max_index) = FindMax(counts);
-            return (distinct[max_index], counts[max_index]);
+            var mode = dict.Values.OrderByDescending(x => x.count).First();
+            return (mode.value, mode.count);
         }
 
         #endregion
@@ -518,8 +404,8 @@ namespace JAM8.Utilities
                 double[,] output = new double[rows, cols];
 
                 for (int col = 0; col < cols; col++)
-                    for (int row = 0; row < rows; row++)
-                        output[row, col] = Convert.ToDouble(D2_array[row, col]);
+                for (int row = 0; row < rows; row++)
+                    output[row, col] = Convert.ToDouble(D2_array[row, col]);
 
                 return output;
             }
@@ -544,8 +430,8 @@ namespace JAM8.Utilities
                 float[,] output = new float[rows, cols];
 
                 for (int col = 0; col < cols; col++)
-                    for (int row = 0; row < rows; row++)
-                        output[row, col] = Convert.ToSingle(D2_array[row, col]);
+                for (int row = 0; row < rows; row++)
+                    output[row, col] = Convert.ToSingle(D2_array[row, col]);
 
                 return output;
             }
