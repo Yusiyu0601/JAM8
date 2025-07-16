@@ -152,8 +152,6 @@ namespace JAM8.Algorithms.Geometry
             return $"\n\tGridStructure {dim}_[{nx}_{ny}_{nz}]_[{xsiz}_{ysiz}_{zsiz}]_[{xmn}_{ymn}_{zmn}]\n";
         }
 
-        #region coord 与 spatialIndex 互相转换
-
         /// <summary>
         /// spatial_index 转换为 coord
         /// </summary>
@@ -222,21 +220,18 @@ namespace JAM8.Algorithms.Geometry
             return si;
         }
 
-        #endregion
-
-        #region coord 与 arrayIndex 互相转换
 
         /// <summary>
         /// arrayIndex 转换为 coord
         /// </summary>
-        /// <param name="si"></param>
+        /// <param name="array_index"></param>
         /// <returns></returns>
-        public Coord array_index_to_coord(int arrayIndex)
+        public Coord array_index_to_coord(int array_index)
         {
-            if (arrayIndex < 0 || arrayIndex >= N) //不在0~N-1范围内
+            if (array_index < 0 || array_index >= N) //不在0~N-1范围内
                 return null;
 
-            SpatialIndex si = get_spatial_index(arrayIndex);
+            SpatialIndex si = get_spatial_index(array_index);
 
             Coord c = null;
 
@@ -265,7 +260,7 @@ namespace JAM8.Algorithms.Geometry
         }
 
         /// <summary>
-        /// coord 转换为 arrayIndex
+        /// coord 转换为 array_index
         /// </summary>
         /// <param name="coord"></param>
         /// <returns></returns>
@@ -299,7 +294,78 @@ namespace JAM8.Algorithms.Geometry
             return get_array_index(si);
         }
 
-        #endregion
+        /// <summary>
+        /// 批量 spatial_index 转换为 coord
+        /// </summary>
+        public IList<Coord> spatial_indexes_to_coords(IList<SpatialIndex> sis)
+        {
+            var result = new List<Coord>();
+            if (sis == null)
+                return result;
+
+            foreach (var si in sis)
+            {
+                var coord = spatial_index_to_coord(si);
+                if (coord != null)
+                    result.Add(coord);
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// 批量 coord 转换为 spatialIndex
+        /// </summary>
+        public IList<SpatialIndex> coords_to_spatial_indexes(IList<Coord> coords)
+        {
+            var result = new List<SpatialIndex>();
+            if (coords == null)
+                return result;
+
+            foreach (var coord in coords)
+            {
+                var si = coord_to_spatial_index(coord);
+                if (si != null)
+                    result.Add(si);
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// 批量 arrayIndex 转换为 coord
+        /// </summary>
+        public IList<Coord> array_indexes_to_coords(IList<int> array_indexes)
+        {
+            var result = new List<Coord>();
+            if (array_indexes == null)
+                return result;
+
+            foreach (var ai in array_indexes)
+            {
+                var coord = array_index_to_coord(ai);
+                if (coord != null)
+                    result.Add(coord);
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// 批量 coord 转换为 array_index
+        /// </summary>
+        public IList<int> coords_to_array_indexes(IList<Coord> coords)
+        {
+            var result = new List<int>();
+            if (coords == null)
+                return result;
+
+            foreach (var coord in coords)
+            {
+                int ai = coord_to_array_index(coord);
+                if (ai >= 0)
+                    result.Add(ai);
+            }
+            return result;
+        }
+
 
         #endregion
 

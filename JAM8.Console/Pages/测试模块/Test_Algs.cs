@@ -1,4 +1,5 @@
-﻿using EasyConsole;
+﻿using System.Diagnostics;
+using EasyConsole;
 using JAM8.Algorithms;
 using JAM8.Algorithms.Forms;
 using JAM8.Algorithms.Geometry;
@@ -31,8 +32,8 @@ namespace JAM8.Console.Pages
         {
             var menu = new EasyConsole.Menu()
                     .Add("退出", CommonFunctions.Cancel)
-                    .Add("Snesim_Test1", Snesim_Test1)
-                    .Add("Snesim_Test2", Snesim_Test2)
+                    .Add("Snesim_Test1(指定网格级别)", Snesim_Test1)
+                    .Add("Snesim_Test2(多重网格)", Snesim_Test2)
                     .Add("统计", 统计)
                     .Add("从很大数组里等间距取值（例如等份100份）", 从很大数组里等间距取值)
                     .Add("GridProperty_replace_with_threshold", GridProperty_replace_with_threshold)
@@ -45,9 +46,26 @@ namespace JAM8.Console.Pages
                     .Add("Test_GridProperty_connectivity_function",
                         Test_GridProperty_connectivity_function)
                     .Add("GridProperty_去噪点", GridProperty_去噪点)
+                    .Add("Variogram_calc_experiment_variogram_grid", Variogram_calc_experiment_variogram_grid)
+                    .Add("Form_VariogramFit4PointSet", Form_VariogramFit4PointSet)
                 ;
 
             menu.Display();
+        }
+
+        private void Form_VariogramFit4PointSet()
+        {
+            Form_VariogramFit4PointSet form = new();
+            form.ShowDialog();
+        }
+
+        private void Variogram_calc_experiment_variogram_grid()
+        {
+            GridProperty gp = Grid.create_from_gslibwin().grid.select_gridProperty_win("选择GridProperty").grid_property;
+
+            gp.show_win();
+
+            // var (a, b, c) = Variogram.calc_variogram_from_grid_2d(gp, 0, 30, 1, 3);
         }
 
         private void GridProperty_去噪点()
@@ -179,21 +197,30 @@ namespace JAM8.Console.Pages
                 sim_grid.add_gridProperty("re"); //将cd赋值给grid
             }
 
-            Output.WriteLine(ConsoleColor.Yellow, "加载软数据（概率体模型）");
-            var soft_cd = Grid.create_from_gslibwin().grid.select_gridProperty_win("选择软条件数据").grid_property;
-            sim_grid.add_gridProperty("soft_cd", soft_cd); //将cd赋值给grid
+            // Output.WriteLine(ConsoleColor.Yellow, "加载软数据（概率体模型）");
+            // var soft_cd = Grid.create_from_gslibwin().grid.select_gridProperty_win("选择软条件数据").grid_property;
+            // sim_grid.add_gridProperty("soft_cd", soft_cd); //将cd赋值给grid
 
-            Mould mould = ti.grid_structure.dim == Dimension.D2
-                ? Mould.create_by_ellipse(10, 10, 1)
-                : Mould.create_by_ellipse(7, 7, 3, 1);
-            mould = Mould.create_by_mould(mould, 4);
+            // Mould mould = ti.grid_structure.dim == Dimension.D2
+            //     ? Mould.create_by_ellipse(10, 10, 1)
+            //     : Mould.create_by_ellipse(7, 7, 3, 1);
+            // mould = Mould.create_by_mould(mould, 4);
 
 
             sim_grid.showGrid_win();
 
             ENESIM enesim = ENESIM.create(sim_grid, ti);
 
-            var re = enesim.run(15, 10);
+            //统计计算时间
+            Stopwatch sw = new();
+            sw.Start();
+
+            var re = enesim.run(20, 15);
+
+            sw.Stop();
+            Output.WriteLine(ConsoleColor.Red, $"ENESIM运行时间: {sw.ElapsedMilliseconds}毫秒");
+
+            re.showGrid_win("ENESIM结果");
         }
 
         private void GridProperty_replace_with_threshold()
@@ -304,7 +331,7 @@ namespace JAM8.Console.Pages
             Mould mould = ti.grid_structure.dim == Dimension.D2
                 ? Mould.create_by_ellipse(7, 7, 1)
                 : Mould.create_by_ellipse(7, 7, 3, 1);
-            mould = Mould.create_by_mould(mould, 40);
+            mould = Mould.create_by_mould(mould, 10);
 
             //手动测试
             //int progress_for_inverse_retrieve = EasyConsole.Input.ReadInt("逆向查询占比", 0, 100);
@@ -358,7 +385,7 @@ namespace JAM8.Console.Pages
 
             for (int j = 0; j < 1; j++)
             {
-                var (result, time) = snesim.run(ti, cd, re_gs, 1001, mould, 1, 0);
+                var (result, time) = snesim.run(ti, cd, re_gs, 1001, mould, 3, 0);
                 sum_35percent += time;
                 Output.WriteLine(ConsoleColor.Red, $"时间:{time}");
                 result.showGrid_win();
@@ -397,15 +424,15 @@ namespace JAM8.Console.Pages
             Snesim snesim = Snesim.create();
 
             GridStructure re_gs = ti.grid_structure;
-
+            re_gs = GridStructure.create_simple(101, 101, 1);
             CData2 cd = CData2.read_from_gslib_win().cdata;
 
             // var corsened_cd = cd.coarsened(re_gs).coarsened_cd;
 
-            var (re, time) = snesim.run(1001, 3, 35, (10,10, 5),
+            var (re, time) = snesim.run(1001, 3, 25, (15, 15, 1),
                 ti, cd, re_gs, progress_for_inverse_retrieve);
 
-            re.showGrid_win();
+            // re.showGrid_win();
             //
             // var (not_match_number, not_match_array_index) =
             //     corsened_cd.check_match(re.first_gridProperty(), corsened_cd.property_names[0]);

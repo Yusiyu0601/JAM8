@@ -80,13 +80,13 @@
             panel1.Dock = DockStyle.Top;
             panel1.Location = new Point(0, 0);
             panel1.Name = "panel1";
-            panel1.Size = new Size(994, 39);
+            panel1.Size = new Size(994, 83);
             panel1.TabIndex = 5;
             // 
             // label6
             // 
             label6.AutoSize = true;
-            label6.Location = new Point(7, 7);
+            label6.Location = new Point(16, 46);
             label6.Name = "label6";
             label6.Size = new Size(46, 24);
             label6.TabIndex = 15;
@@ -96,9 +96,9 @@
             // 
             cb_gridProperty.DrawMode = DrawMode.OwnerDrawFixed;
             cb_gridProperty.FormattingEnabled = true;
-            cb_gridProperty.Location = new Point(65, 5);
+            cb_gridProperty.Location = new Point(74, 44);
             cb_gridProperty.Name = "cb_gridProperty";
-            cb_gridProperty.Size = new Size(107, 31);
+            cb_gridProperty.Size = new Size(211, 31);
             cb_gridProperty.TabIndex = 0;
             cb_gridProperty.DrawItem += cb_gridProperty_DrawItem;
             cb_gridProperty.SelectedIndexChanged += cb_gridProperty_SelectedIndexChanged;
@@ -107,7 +107,7 @@
             // cb_xy_yz_zx
             // 
             cb_xy_yz_zx.FormattingEnabled = true;
-            cb_xy_yz_zx.Location = new Point(530, 5);
+            cb_xy_yz_zx.Location = new Point(446, 27);
             cb_xy_yz_zx.Name = "cb_xy_yz_zx";
             cb_xy_yz_zx.Size = new Size(92, 32);
             cb_xy_yz_zx.TabIndex = 2;
@@ -115,17 +115,17 @@
             // 
             // trackBar1
             // 
-            trackBar1.Location = new Point(709, 5);
+            trackBar1.Location = new Point(689, 25);
             trackBar1.Name = "trackBar1";
-            trackBar1.Size = new Size(106, 69);
+            trackBar1.Size = new Size(292, 69);
             trackBar1.TabIndex = 4;
             trackBar1.Scroll += trackBar1_Scroll;
             // 
             // numericUpDown1
             // 
-            numericUpDown1.Location = new Point(640, 6);
+            numericUpDown1.Location = new Point(556, 28);
             numericUpDown1.Name = "numericUpDown1";
-            numericUpDown1.Size = new Size(64, 30);
+            numericUpDown1.Size = new Size(115, 30);
             numericUpDown1.TabIndex = 3;
             numericUpDown1.ValueChanged += numericUpDown1_ValueChanged;
             // 
@@ -134,7 +134,7 @@
             checkBox1.AutoSize = true;
             checkBox1.Checked = true;
             checkBox1.CheckState = CheckState.Checked;
-            checkBox1.Location = new Point(407, 7);
+            checkBox1.Location = new Point(312, 29);
             checkBox1.Name = "checkBox1";
             checkBox1.Size = new Size(119, 28);
             checkBox1.TabIndex = 7;
@@ -146,9 +146,9 @@
             // 
             cb_colorMap.DrawMode = DrawMode.OwnerDrawFixed;
             cb_colorMap.FormattingEnabled = true;
-            cb_colorMap.Location = new Point(273, 5);
+            cb_colorMap.Location = new Point(74, 5);
             cb_colorMap.Name = "cb_colorMap";
-            cb_colorMap.Size = new Size(107, 31);
+            cb_colorMap.Size = new Size(211, 31);
             cb_colorMap.TabIndex = 1;
             cb_colorMap.DrawItem += cb_colorMap_DrawItem;
             cb_colorMap.SelectedIndexChanged += cb_ColorMap_SelectedIndexChanged;
@@ -157,7 +157,7 @@
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new Point(205, 9);
+            label4.Location = new Point(16, 9);
             label4.Name = "label4";
             label4.Size = new Size(46, 24);
             label4.TabIndex = 3;
@@ -304,10 +304,10 @@
             // formsPlot1
             // 
             formsPlot1.Dock = DockStyle.Fill;
-            formsPlot1.Location = new Point(0, 39);
+            formsPlot1.Location = new Point(0, 83);
             formsPlot1.Margin = new Padding(6, 5, 6, 5);
             formsPlot1.Name = "formsPlot1";
-            formsPlot1.Size = new Size(994, 342);
+            formsPlot1.Size = new Size(994, 298);
             formsPlot1.TabIndex = 8;
             formsPlot1.MouseDown += formsPlot1_MouseDown;
             formsPlot1.MouseMove += formsPlot1_MouseMove;

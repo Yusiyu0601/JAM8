@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using EasyConsole;
 
@@ -36,10 +37,108 @@ namespace JAM8.Console.Pages
                     .Add("分形维数", 分形维数)
                     .Add("SpatialEntropy", SpatialEntropy)
                     .Add("string与数组效率对比", string与数组效率对比)
+                    .Add("Span性能对比测试", Span性能对比测试)
+                    .Add("Dictionary vs array", Dictionary_vs_array)
                 ;
 
             menu.Display();
         }
+
+        private void Dictionary_vs_array()
+        {
+            const int N = 20000000;
+            const int M = 3;
+
+            static void TestDictionary()
+            {
+                var dict = new Dictionary<int, int>();
+                for (int i = 0; i < M; i++)
+                    dict[i] = i * 10;
+
+                int sum = 0;
+                var sw = Stopwatch.StartNew();
+                for (int i = 0; i < N; i++)
+                {
+                    int key = i % M;
+                    sum += dict[key];
+                }
+                sw.Stop();
+                System.Console.WriteLine($"Dictionary:\t{sw.ElapsedMilliseconds} ms, sum={sum}");
+            }
+
+            static void TestArray()
+            {
+                var array = new int[M];
+                for (int i = 0; i < M; i++)
+                    array[i] = i * 10;
+
+                int sum = 0;
+                var sw = Stopwatch.StartNew();
+                for (int i = 0; i < N; i++)
+                {
+                    int key = i % M;
+                    sum += array[key];
+                }
+                sw.Stop();
+                System.Console.WriteLine($"Array Index:\t{sw.ElapsedMilliseconds} ms, sum={sum}");
+            }
+
+            TestDictionary();
+            TestArray();
+        }
+
+        private void Span性能对比测试()
+        {
+            int N = 200000; // 比较次数
+            int M = 1000;
+
+            int[] intArray = new int[M];
+            char[] charArray = new char[M];
+            Random rnd = new();
+
+            for (int i = 0; i < M; i++)
+            {
+                int val = rnd.Next(0, 2);
+                intArray[i] = val;
+                charArray[i] = (char)(val + '0'); // 转成 '0' 或 '1'
+            }
+
+            Span<int> intSpan = intArray;
+            Span<char> charSpan = charArray;
+
+            Stopwatch sw = new();
+
+            // int[]访问性能
+            int temp1 = 0;
+            sw.Start();
+            for (int n = 0; n < N; n++)
+            {
+                for (int m = 0; m < M; m++)
+                {
+                    if (intSpan[m] == intSpan[M - m - 1])
+                        temp1++;
+                }
+            }
+            sw.Stop();
+            System.Console.WriteLine($"Span<int> 访问耗时: {sw.ElapsedMilliseconds} ms, 结果: {temp1}");
+
+            sw.Reset();
+
+            // char[]访问性能
+            int temp2 = 0;
+            sw.Start();
+            for (int n = 0; n < N; n++)
+            {
+                for (int m = 0; m < M; m++)
+                {
+                    if (charSpan[m] == charSpan[M - m - 1])
+                        temp2++;
+                }
+            }
+            sw.Stop();
+            System.Console.WriteLine($"Span<char> 访问耗时: {sw.ElapsedMilliseconds} ms, 结果: {temp2}");
+        }
+
 
         private void string与数组效率对比()
         {

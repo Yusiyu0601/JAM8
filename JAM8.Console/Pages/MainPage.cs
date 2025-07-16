@@ -19,7 +19,7 @@ namespace JAM8.Console.Pages
     public class DemoProgram : EasyConsole.Program
     {
         public DemoProgram()
-            : base("地质建模工具箱2024 V2 (Console版)", breadcrumbHeader: true)
+            : base("地质建模工具箱2025 V1 (Console版)", breadcrumbHeader: true)
         {
             AddPage(new MainPage(this));
 
@@ -27,6 +27,7 @@ namespace JAM8.Console.Pages
             AddPage(new ToolBox_Grid(this));
             AddPage(new ToolBox_Variogram(this));
             AddPage(new ToolBox_Excel(this));
+            AddPage(new ToolBox_MachineLearning(this));
 
             AddPage(new Modeling(this));
             AddPage(new Modeling_Estimate(this));

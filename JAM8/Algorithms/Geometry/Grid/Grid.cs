@@ -371,7 +371,7 @@ namespace JAM8.Algorithms.Geometry
                 Thread mThread = new(delegate()
                 {
                     Form_Scottplot4Grid frm = new(this, title);
-                    frm.ShowDialog();//这里存在一个bug
+                    frm.ShowDialog(); //这里存在一个bug
                 });
                 mThread.SetApartmentState(ApartmentState.STA);
                 mThread.Start();
@@ -458,12 +458,20 @@ namespace JAM8.Algorithms.Geometry
             float xmn = float.Parse(paras[9]);
             float ymn = float.Parse(paras[10]);
             float zmn = float.Parse(paras[11]);
+            int split_code = paras[12] switch
+            {
+                "\t" => 0,
+                "space character" => 1,
+                ";" => 2,
+                "," => 3,
+                _ => 0
+            };
 
             //根据快速窗体的信息读取Grid数据
             GridStructure gs = GridStructure.create(nx, ny, nz, xsiz, ysiz, zsiz, xmn, ymn, zmn);
             Grid g = create(gs, gridName);
-            g.read_from_gslib(fileName, 1, nullValue, gridName);
-            return new(g, fileName);
+            g.read_from_gslib(fileName, split_code, nullValue, gridName);
+            return (g, fileName);
         }
 
         /// <summary>

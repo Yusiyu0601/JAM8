@@ -7,10 +7,6 @@ namespace JAM8.Algorithms.Geometry
     {
         public List<string> paras { get; internal set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="text">说明文字</param>
         public Form_ReadGridFromGSLIB(string title = null)
         {
             InitializeComponent();
@@ -53,7 +49,7 @@ namespace JAM8.Algorithms.Geometry
             while (sr.Peek() > -1 && flag <= 50)
             {
                 s += sr.ReadLine() + "\r\n";
-                if (flag == 0)//解析GSLIB第一行
+                if (flag == 0) //解析GSLIB第一行
                 {
                     if (s.Contains("="))
                     {
@@ -71,21 +67,24 @@ namespace JAM8.Algorithms.Geometry
                         txt_OriginCellZ.Text = gs.zmn.ToString();
                     }
                 }
+
                 flag++;
             }
-            textBox1.Text = s;//GSLIB文件前50行预览
+
+            textBox1.Text = s; //GSLIB文件前50行预览
         }
 
         private void btn_OK_Click(object sender, EventArgs e)
         {
             if (txt_FileName.Text == "file name")
             {
-                MessageBox.Show("警告：\n set file path please ! ", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("警告：\n set file path please ! ", "Warning", MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
                 return;
             }
 
-            paras = new()
-            {
+            paras =
+            [
                 txt_FileName.Text,
                 txt_GridName.Text,
                 txt_ValueOfNull.Text,
@@ -97,8 +96,9 @@ namespace JAM8.Algorithms.Geometry
                 txt_KSize.Text,
                 txt_OriginCellX.Text,
                 txt_OriginCellY.Text,
-                txt_OriginCellZ.Text
-            };
+                txt_OriginCellZ.Text,
+                comboBox1.Text
+            ];
             DialogResult = DialogResult.OK;
         }
 

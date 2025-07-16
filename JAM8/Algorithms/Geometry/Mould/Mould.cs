@@ -13,7 +13,9 @@ namespace JAM8.Algorithms.Geometry
         /// <summary>
         /// 私有构造函数
         /// </summary>
-        private Mould() { }
+        private Mould()
+        {
+        }
 
         /// <summary>
         /// 邻居点的数量
@@ -118,7 +120,7 @@ namespace JAM8.Algorithms.Geometry
         public static Mould create_by_rectangle(int radius_x, int radius_y, int multi_grid)
         {
             var core = SpatialIndex.create(0, 0);
-            List<SpatialIndex> neighbors = new((2 * radius_x + 1) * (2 * radius_y + 1));  // 初始化大小
+            List<SpatialIndex> neighbors = new((2 * radius_x + 1) * (2 * radius_y + 1)); // 初始化大小
 
             // 计算多重网格缩放因子，避免多次计算
             int gridFactor = (int)Math.Pow(2, multi_grid - 1);
@@ -159,7 +161,7 @@ namespace JAM8.Algorithms.Geometry
         public static Mould create_by_rectangle(int radius_x, int radius_y, int radius_z, int multi_grid)
         {
             var core = SpatialIndex.create(0, 0, 0);
-            List<SpatialIndex> neighbors = new((2 * radius_x + 1) * (2 * radius_y + 1) * (2 * radius_z + 1));  // 初始化容量
+            List<SpatialIndex> neighbors = new((2 * radius_x + 1) * (2 * radius_y + 1) * (2 * radius_z + 1)); // 初始化容量
 
             // 计算多重网格缩放因子，避免多次计算
             int gridFactor = (int)Math.Pow(2, multi_grid - 1);
@@ -203,14 +205,15 @@ namespace JAM8.Algorithms.Geometry
                 for (int ix = -radius_x; ix <= radius_x; ix++)
                 {
                     double b = Sqrt(Pow(ix / (double)radius_x, 2) + Pow(iy / (double)radius_y, 2));
-                    if (b <= 1)//在椭圆内
+                    if (b <= 1) //在椭圆内
                     {
                         int ix_mg = (int)(ix * Pow(2, multi_grid - 1));
                         int iy_mg = (int)(iy * Pow(2, multi_grid - 1));
-                        neighbors.Add(SpatialIndex.create(ix_mg, iy_mg));//根据多重网格，计算实际网格节点位置
+                        neighbors.Add(SpatialIndex.create(ix_mg, iy_mg)); //根据多重网格，计算实际网格节点位置
                     }
                 }
             }
+
             return create_by_location(core, neighbors);
         }
 
@@ -228,17 +231,19 @@ namespace JAM8.Algorithms.Geometry
                 {
                     for (int ix = -radius_x; ix <= radius_x; ix++)
                     {
-                        double b = Sqrt(Pow(ix / (double)radius_x, 2) + Pow(iy / (double)radius_y, 2) + Pow(iz / (double)radius_z, 2));
-                        if (b <= 1)//在椭圆内
+                        double b = Sqrt(Pow(ix / (double)radius_x, 2) + Pow(iy / (double)radius_y, 2) +
+                                        Pow(iz / (double)radius_z, 2));
+                        if (b <= 1) //在椭圆内
                         {
                             int ix_mg = (int)(ix * Pow(2, multi_grid - 1));
                             int iy_mg = (int)(iy * Pow(2, multi_grid - 1));
                             int iz_mg = (int)(iz * Pow(2, multi_grid - 1));
-                            neighbors.Add(SpatialIndex.create(ix_mg, iy_mg, iz_mg));//根据多重网格，计算实际网格节点的索引
+                            neighbors.Add(SpatialIndex.create(ix_mg, iy_mg, iz_mg)); //根据多重网格，计算实际网格节点的索引
                         }
                     }
                 }
             }
+
             return create_by_location(core, neighbors);
         }
 
@@ -254,7 +259,11 @@ namespace JAM8.Algorithms.Geometry
             GridStructure gs = gp.grid_structure;
             if (gs.dim != core_in_gridProperty.dim)
                 return null;
-            return create_by_location(core_in_gridProperty, gp.get_spatialIndex_ne_null());
+            var (index_not_equal_null, _) = gp.get_values_by_condition(null, CompareType.NotEqual);
+            var neighbors = index_not_equal_null
+                .Select(index => gs.get_spatial_index(index))
+                .ToList();
+            return create_by_location(core_in_gridProperty, neighbors);
         }
 
         /// <summary>
@@ -263,7 +272,6 @@ namespace JAM8.Algorithms.Geometry
         /// <param name="Title"></param>
         public void Show2d(string Title)
         {
-
         }
 
         public override string ToString()
@@ -287,6 +295,7 @@ namespace JAM8.Algorithms.Geometry
                     distance += Abs(left[n].Value - right[n].Value);
                 }
             }
+
             return distance;
         }
 

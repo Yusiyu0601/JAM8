@@ -542,7 +542,7 @@ namespace JAM8.Tests
                 if (si != null)
                 {
                     Coord c2 = gs.spatial_index_to_coord(si);
-                    Console.WriteLine($@"{c.view_text()}  	  {si.view_text()}   	  {c2.view_text()}");
+                    Console.WriteLine($@"{c.ToString()}  	  {si.view_text()}   	  {c2.ToString()}");
                 }
             }
 

@@ -35,7 +35,7 @@ namespace JAM8.SpecificApps.常用工具
         public static void func_MDS()
         {
             Form_MDS frm = new();
-            frm.Show();
+            frm.ShowDialog();
         }
 
     }

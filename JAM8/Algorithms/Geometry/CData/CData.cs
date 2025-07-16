@@ -41,7 +41,7 @@ namespace JAM8.Algorithms.Geometry
 
         public override string ToString()
         {
-            return $"{coord.view_text()} {this.Count}";
+            return $"{coord.ToString()} {this.Count}";
         }
 
         /// <summary>

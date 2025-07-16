@@ -12,9 +12,10 @@ namespace JAM8.Algorithms.Geometry
     {
         private DirectSampling() { }
 
-        //GridProperty model { get; set; }
-        private Grid model { get; set; }
+        //realizations
+        private Grid realizations { get; set; }
 
+        //training image
         private GridProperty ti { get; set; }
 
         /// <summary>
@@ -25,9 +26,10 @@ namespace JAM8.Algorithms.Geometry
         /// <summary>
         /// 创建ds对象
         /// </summary>
-        /// <param name="vm"></param>
+        /// <param name="ti"></param>
         /// <param name="cd"></param>
         /// <param name="gs"></param>
+        /// <param name="propertyName"></param>
         /// <returns></returns>
         public static DirectSampling create(GridStructure gs, GridProperty ti, CData cd = null, string propertyName = null)
         {
@@ -36,14 +38,14 @@ namespace JAM8.Algorithms.Geometry
             if (cd != null)
             {
                 var gp_cd = cd.assign_to_grid(gs).grid_assigned[propertyName];
-                ds.model = Grid.create(gs);
-                ds.model.add_gridProperty("cd", gp_cd);//将cd赋值给grid
-                ds.model.add_gridProperty("re", gp_cd.deep_clone());//将cd赋值给grid
+                ds.realizations = Grid.create(gs);
+                ds.realizations.add_gridProperty("cd", gp_cd);//将cd赋值给grid
+                ds.realizations.add_gridProperty("re", gp_cd.deep_clone());//将cd赋值给grid
             }
             else
             {
-                ds.model = Grid.create(gs);
-                ds.model.add_gridProperty("re");//将cd赋值给grid
+                ds.realizations = Grid.create(gs);
+                ds.realizations.add_gridProperty("re");//将cd赋值给grid
             }
 
             ds.ti = ti;
@@ -61,7 +63,7 @@ namespace JAM8.Algorithms.Geometry
             Stopwatch sw = new();
             sw.Start();
 
-            GridStructure gs_model = model.gridStructure;
+            GridStructure gs_model = realizations.gridStructure;
 
             Mould mo_scan_model = gs_model.dim == Dimension.D2 ?//扫描模型的模板
                 Mould.create_by_ellipse(search_radius, search_radius, 1) :
@@ -76,7 +78,7 @@ namespace JAM8.Algorithms.Geometry
             int progress = 0;
             Grid state = Grid.create(gs_model);
 
-            state.add_gridProperty($"{progress}", model["re"].deep_clone());
+            state.add_gridProperty($"{progress}", realizations["re"].deep_clone());
             MyConsoleHelper.write_string_to_console($"{progress}", DateTime.Now.ToString());
             foreach (var model_random_idx in model_random_idxes)//计算工区网格的所有节点
             {
@@ -88,10 +90,10 @@ namespace JAM8.Algorithms.Geometry
                 }
                 SpatialIndex si_model = gs_model.get_spatial_index(model_random_idx);//下一个待模拟点
 
-                if (model["re"].get_value(si_model) == null)//如果某个点没有数据，则需要插值
+                if (realizations["re"].get_value(si_model) == null)//如果某个点没有数据，则需要插值
                 {
                     //MyConsoleProgress.Print(progress, gs_model.N, "DS");
-                    var mi_model = MouldInstance.create_from_gridProperty(mo_scan_model, si_model, model["re"]);//根据模板mo获取si位置的模板实例mi
+                    var mi_model = MouldInstance.create_from_gridProperty(mo_scan_model, si_model, realizations["re"]);//根据模板mo获取si位置的模板实例mi
                     List<SpatialIndex> sis_not_null = [];//根据模板实例mi，提取有值的部分
                     List<float?> data = [];//不包含core
                     for (int i = 0; i < maximum_number; i++)//设置最大条件点数
@@ -106,7 +108,7 @@ namespace JAM8.Algorithms.Geometry
                     {
                         var ti_array_index = mt.Next(0, ti.grid_structure.N);
                         var select_value = ti.get_value(ti_array_index);
-                        model["re"].set_value(model_random_idx, select_value);
+                        realizations["re"].set_value(model_random_idx, select_value);
                         //Console.WriteLine(model_random_idx + " no_cd " + select_value);
                         continue;
                     }
@@ -175,14 +177,14 @@ namespace JAM8.Algorithms.Geometry
 
                     #endregion
 
-                    model["re"].set_value(model_random_idx, best_value);
+                    realizations["re"].set_value(model_random_idx, best_value);
                     //Console.WriteLine(model_random_idx + " hsim:" + min_dist + " " + best_value);
                 }
             }
             sw.Stop();
             Console.WriteLine("运行时间:" + sw.ElapsedMilliseconds / 1000.0 + "秒");
             state.showGrid_win();
-            return model;
+            return realizations;
         }
 
         public static double calc_hsim(float?[] vector1, float?[] vector2)

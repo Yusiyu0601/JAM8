@@ -112,7 +112,7 @@ namespace JAM8.Tests
             RotMat rm = new(0, 0, 0, 1, 1, 0.2);
 
             Coord c = Coord.create(1, 1, 1);
-            c.view_text();
+            c.ToString();
             var dist = Coord.get_distance_to_origin(c);
             Console.WriteLine(dist);
             var anis_dist = AnisotropicDistance.calc_anis_dist(rm, c);
@@ -147,7 +147,7 @@ namespace JAM8.Tests
             Console.WriteLine($@"{si2}与{si1}的各向异性距离为{AnisotropicDistance.calc_anis_distance_power2(rm, si2, si1)}");
 
             Coord c = Coord.create(1, 1);
-            c.view_text();
+            c.ToString();
             var dist = Coord.get_distance_to_origin(c);
             Console.WriteLine(dist);
             var anis_dist = AnisotropicDistance.calc_anis_dist(rm, c);
@@ -251,7 +251,7 @@ namespace JAM8.Tests
             CData cd = CData.read_from_gslibwin().cdata;
             var si = gs.get_spatial_index(20);
             Coord c = gs.spatial_index_to_coord(si);
-            Console.WriteLine(c.view_text());
+            Console.WriteLine(c.ToString());
             SpatialIndex si1 = gs.coord_to_spatial_index(c);
             Console.WriteLine(si1.view_text());
         }

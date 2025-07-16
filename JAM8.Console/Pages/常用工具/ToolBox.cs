@@ -10,7 +10,8 @@ namespace JAM8.Console.Pages
                   program,
                   new Option("ToolBox_Grid", () => program.NavigateTo<ToolBox_Grid>()),
                   new Option("ToolBox_Excel", () => program.NavigateTo<ToolBox_Excel>()),
-                  new Option("ToolBox_Variogram", () => program.NavigateTo<ToolBox_Variogram>())
+                  new Option("ToolBox_Variogram", () => program.NavigateTo<ToolBox_Variogram>()),
+                  new Option("ToolBox_MachineLearning", () => program.NavigateTo<ToolBox_MachineLearning>())
                   )
         {
         }

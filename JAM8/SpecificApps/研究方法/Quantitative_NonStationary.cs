@@ -128,10 +128,10 @@ namespace JAM8.SpecificApps.研究方法
 
                         List<double> lags_loc =
                         [
-                            .. Variogram.calc_experiment_variogram(region, 0, N_lag, 1).gamma,
-                            .. Variogram.calc_experiment_variogram(region, 45, N_lag, 1).gamma,
-                            .. Variogram.calc_experiment_variogram(region, 90, N_lag, 1).gamma,
-                            .. Variogram.calc_experiment_variogram(region, 135, N_lag, 1).gamma
+                            .. Variogram.calc_variogram_from_grid_2d(region, 0, N_lag, 1).gamma,
+                            .. Variogram.calc_variogram_from_grid_2d(region, 45, N_lag, 1).gamma,
+                            .. Variogram.calc_variogram_from_grid_2d(region, 90, N_lag, 1).gamma,
+                            .. Variogram.calc_variogram_from_grid_2d(region, 135, N_lag, 1).gamma
                         ];
                         lags_locs.Add(n, lags_loc);
                     }
@@ -555,10 +555,10 @@ namespace JAM8.SpecificApps.研究方法
 
                     List<double> lags_loc =
                     [
-                        .. Variogram.calc_experiment_variogram(region, 0, N_lag, 1).gamma,
-                        .. Variogram.calc_experiment_variogram(region, 45, N_lag, 1).gamma,
-                        .. Variogram.calc_experiment_variogram(region, 90, N_lag, 1).gamma,
-                        .. Variogram.calc_experiment_variogram(region, 135, N_lag, 1).gamma
+                        .. Variogram.calc_variogram_from_grid_2d(region, 0, N_lag, 1).gamma,
+                        .. Variogram.calc_variogram_from_grid_2d(region, 45, N_lag, 1).gamma,
+                        .. Variogram.calc_variogram_from_grid_2d(region, 90, N_lag, 1).gamma,
+                        .. Variogram.calc_variogram_from_grid_2d(region, 135, N_lag, 1).gamma
                     ];
                     lags_locs.Add(n, lags_loc);
                 }
@@ -741,10 +741,10 @@ namespace JAM8.SpecificApps.研究方法
                     continue;
 
                 List<double> lags_loc = new();
-                var ev1_Anchor = Variogram.calc_experiment_variogram(region, 0, N_lag, 1).gamma;
-                var ev2_Anchor = Variogram.calc_experiment_variogram(region, 45, N_lag, 1).gamma;
-                var ev3_Anchor = Variogram.calc_experiment_variogram(region, 90, N_lag, 1).gamma;
-                var ev4_Anchor = Variogram.calc_experiment_variogram(region, 135, N_lag, 1).gamma;
+                var ev1_Anchor = Variogram.calc_variogram_from_grid_2d(region, 0, N_lag, 1).gamma;
+                var ev2_Anchor = Variogram.calc_variogram_from_grid_2d(region, 45, N_lag, 1).gamma;
+                var ev3_Anchor = Variogram.calc_variogram_from_grid_2d(region, 90, N_lag, 1).gamma;
+                var ev4_Anchor = Variogram.calc_variogram_from_grid_2d(region, 135, N_lag, 1).gamma;
                 lags_loc.AddRange(ev1_Anchor);
                 lags_loc.AddRange(ev2_Anchor);
                 lags_loc.AddRange(ev3_Anchor);
@@ -996,10 +996,10 @@ namespace JAM8.SpecificApps.研究方法
                         continue;
                     }
 
-                    var ev1_Anchor = Variogram.calc_experiment_variogram(Region_Anchor, lagCount, 1, 0).gamma;
-                    var ev2_Anchor = Variogram.calc_experiment_variogram(Region_Anchor, lagCount, 1, 45).gamma;
-                    var ev3_Anchor = Variogram.calc_experiment_variogram(Region_Anchor, lagCount, 1, 90).gamma;
-                    var ev4_Anchor = Variogram.calc_experiment_variogram(Region_Anchor, lagCount, 1, 135).gamma;
+                    var ev1_Anchor = Variogram.calc_variogram_from_grid_2d(Region_Anchor, lagCount, 1, 0).gamma;
+                    var ev2_Anchor = Variogram.calc_variogram_from_grid_2d(Region_Anchor, lagCount, 1, 45).gamma;
+                    var ev3_Anchor = Variogram.calc_variogram_from_grid_2d(Region_Anchor, lagCount, 1, 90).gamma;
+                    var ev4_Anchor = Variogram.calc_variogram_from_grid_2d(Region_Anchor, lagCount, 1, 135).gamma;
                     lags_Anchor.Add(ev1_Anchor);
                     lags_Anchor.Add(ev2_Anchor);
                     lags_Anchor.Add(ev3_Anchor);
@@ -1023,15 +1023,15 @@ namespace JAM8.SpecificApps.研究方法
                         continue;
                     }
 
-                    var ev1_Anchor = Variogram.calc_3d_horizontal_experiment_variogram(Region_Anchor, lagCount, 1, 0)
+                    var ev1_Anchor = Variogram.calc_variogram_from_grid_3d_horizontal(Region_Anchor, lagCount, 1, 0)
                         .gamma;
-                    var ev2_Anchor = Variogram.calc_3d_horizontal_experiment_variogram(Region_Anchor, lagCount, 1, 45)
+                    var ev2_Anchor = Variogram.calc_variogram_from_grid_3d_horizontal(Region_Anchor, lagCount, 1, 45)
                         .gamma;
-                    var ev3_Anchor = Variogram.calc_3d_horizontal_experiment_variogram(Region_Anchor, lagCount, 1, 90)
+                    var ev3_Anchor = Variogram.calc_variogram_from_grid_3d_horizontal(Region_Anchor, lagCount, 1, 90)
                         .gamma;
-                    var ev4_Anchor = Variogram.calc_3d_horizontal_experiment_variogram(Region_Anchor, lagCount, 1, 135)
+                    var ev4_Anchor = Variogram.calc_variogram_from_grid_3d_horizontal(Region_Anchor, lagCount, 1, 135)
                         .gamma;
-                    var ev5_Anchor = Variogram.calc_3d_vertical_experiment_variogram(Region_Anchor, vradius, 1).gamma;
+                    var ev5_Anchor = Variogram.calc_variogram_from_grid_3d_vertical(Region_Anchor, vradius, 1).gamma;
 
                     lags_Anchor.Add(ev1_Anchor);
                     lags_Anchor.Add(ev2_Anchor);
@@ -1063,10 +1063,10 @@ namespace JAM8.SpecificApps.研究方法
                     {
                         var (Region_Other, _) = ti.get_region_by_center(Other_SpatialIndex, radius, radius);
                         int lagCount = radius;
-                        var ev1_Other = Variogram.calc_experiment_variogram(Region_Other, lagCount, 1, 0).gamma;
-                        var ev2_Other = Variogram.calc_experiment_variogram(Region_Other, lagCount, 1, 45).gamma;
-                        var ev3_Other = Variogram.calc_experiment_variogram(Region_Other, lagCount, 1, 90).gamma;
-                        var ev4_Other = Variogram.calc_experiment_variogram(Region_Other, lagCount, 1, 135).gamma;
+                        var ev1_Other = Variogram.calc_variogram_from_grid_2d(Region_Other, lagCount, 1, 0).gamma;
+                        var ev2_Other = Variogram.calc_variogram_from_grid_2d(Region_Other, lagCount, 1, 45).gamma;
+                        var ev3_Other = Variogram.calc_variogram_from_grid_2d(Region_Other, lagCount, 1, 90).gamma;
+                        var ev4_Other = Variogram.calc_variogram_from_grid_2d(Region_Other, lagCount, 1, 135).gamma;
 
                         double hsim1 = MyDistance.calc_hsim(ev1_Other, lags_Anchor[0]);
                         double hsim2 = MyDistance.calc_hsim(ev2_Other, lags_Anchor[1]);
@@ -1082,15 +1082,15 @@ namespace JAM8.SpecificApps.研究方法
                         var (Region_Other, _) = ti.get_region_by_center(Other_SpatialIndex, radius, radius, vradius);
                         int lagCount = radius;
 
-                        var ev1_Other = Variogram.calc_3d_horizontal_experiment_variogram(Region_Other, lagCount, 1, 0)
+                        var ev1_Other = Variogram.calc_variogram_from_grid_3d_horizontal(Region_Other, lagCount, 1, 0)
                             .gamma;
-                        var ev2_Other = Variogram.calc_3d_horizontal_experiment_variogram(Region_Other, lagCount, 1, 45)
+                        var ev2_Other = Variogram.calc_variogram_from_grid_3d_horizontal(Region_Other, lagCount, 1, 45)
                             .gamma;
-                        var ev3_Other = Variogram.calc_3d_horizontal_experiment_variogram(Region_Other, lagCount, 1, 90)
+                        var ev3_Other = Variogram.calc_variogram_from_grid_3d_horizontal(Region_Other, lagCount, 1, 90)
                             .gamma;
                         var ev4_Other = Variogram
-                            .calc_3d_horizontal_experiment_variogram(Region_Other, lagCount, 1, 135).gamma;
-                        var ev5_Other = Variogram.calc_3d_vertical_experiment_variogram(Region_Other, vradius, 1).gamma;
+                            .calc_variogram_from_grid_3d_horizontal(Region_Other, lagCount, 1, 135).gamma;
+                        var ev5_Other = Variogram.calc_variogram_from_grid_3d_vertical(Region_Other, vradius, 1).gamma;
 
                         double hsim1 = MyDistance.calc_hsim(ev1_Other, lags_Anchor[0]);
                         double hsim2 = MyDistance.calc_hsim(ev2_Other, lags_Anchor[1]);
@@ -1364,10 +1364,10 @@ namespace JAM8.SpecificApps.研究方法
 
                     List<double> lags_loc =
                     [
-                        .. Variogram.calc_experiment_variogram(region, 0, n_lag, 1).gamma,
-                        .. Variogram.calc_experiment_variogram(region, 45, n_lag, 1).gamma,
-                        .. Variogram.calc_experiment_variogram(region, 90, n_lag, 1).gamma,
-                        .. Variogram.calc_experiment_variogram(region, 135, n_lag, 1).gamma,
+                        .. Variogram.calc_variogram_from_grid_2d(region, 0, n_lag, 1).gamma,
+                        .. Variogram.calc_variogram_from_grid_2d(region, 45, n_lag, 1).gamma,
+                        .. Variogram.calc_variogram_from_grid_2d(region, 90, n_lag, 1).gamma,
+                        .. Variogram.calc_variogram_from_grid_2d(region, 135, n_lag, 1).gamma,
                     ];
                     lags_different_locs.Add(n, lags_loc);
                 }

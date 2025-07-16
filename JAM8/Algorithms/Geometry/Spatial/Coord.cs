@@ -5,25 +5,21 @@ using ScottPlot.Palettes;
 namespace JAM8.Algorithms.Geometry
 {
     /// <summary>
-    /// Coord类
+    /// Coord class
     /// </summary>
     public class Coord
     {
-        private Coord() { }
-
-        #region 属性
-
         public Dimension dim { get; internal set; }
         public float x { get; internal set; }
         public float y { get; internal set; }
         public float z { get; internal set; }
 
-        #endregion
-
-        #region create
+        private Coord()
+        {
+        }
 
         /// <summary>
-        /// 创建2d Coord
+        /// Create a 2D Coord
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
@@ -38,8 +34,9 @@ namespace JAM8.Algorithms.Geometry
             };
             return c;
         }
+
         /// <summary>
-        /// 创建3d Coord
+        /// Create a 3D Coord
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
@@ -56,8 +53,9 @@ namespace JAM8.Algorithms.Geometry
             };
             return c;
         }
+
         /// <summary>
-        /// 复制 Coord
+        /// Clone a Coord
         /// </summary>
         /// <param name="coord"></param>
         /// <returns></returns>
@@ -73,59 +71,19 @@ namespace JAM8.Algorithms.Geometry
             return c;
         }
 
-        #endregion
-
         /// <summary>
-        /// 打印
+        /// Returns a string representation of the coordinate in the format "Coord {dim}_[{x}_{y}_{z}]".
         /// </summary>
-        /// <returns></returns>
-        public string view_text()
+        /// <remarks>The returned string includes the dimension and the x, y, and z values of the coordinate. This method
+        /// is useful for debugging or logging purposes to display the coordinate in a readable format.</remarks>
+        /// <returns>A string that represents the coordinate, including its dimension and x, y, and z values.</returns>
+        public override string ToString()
         {
             return $"Coord {dim}_[{x}_{y}_{z}]";
         }
 
-        public override string ToString()
-        {
-            return view_text();
-        }
-
-        #region 判断相等
-
-        //判断==
-        public static bool operator ==(Coord left, Coord right)
-        {
-            if (left.dim != right.dim) return false;//维度不同
-            if (left.x != right.x) return false;
-            if (left.y != right.y) return false;
-            if (left.z != right.z) return false;
-            return true;
-        }
-        //判断!=
-        public static bool operator !=(Coord left, Coord right)
-        {
-            return !(left == right);
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (obj is not Coord)
-            {
-                return false;
-            }
-            return x == ((Coord)obj).x && y == ((Coord)obj).y && z == ((Coord)obj).z;
-        }
-
-        public override int GetHashCode()
-        {
-            return x.GetHashCode() ^ y.GetHashCode() ^ z.GetHashCode();
-        }
-
-        #endregion
-
-        #region offset偏移计算
-
         /// <summary>
-        /// 偏移(2D & 3D)
+        /// Offset by another Coord (2D or 3D)
         /// </summary>
         /// <param name="delta"></param>
         /// <returns></returns>
@@ -139,8 +97,9 @@ namespace JAM8.Algorithms.Geometry
                 return offset(delta.x, delta.y, delta.z);
             return null;
         }
+
         /// <summary>
-        /// 偏移(2D)
+        /// Offset in 2D
         /// </summary>
         /// <param name="delta_x"></param>
         /// <param name="delta_y"></param>
@@ -149,8 +108,9 @@ namespace JAM8.Algorithms.Geometry
         {
             return create(x + delta_x, y + delta_y);
         }
+
         /// <summary>
-        /// 偏移(3D)
+        /// Offset in 3D
         /// </summary>
         /// <param name="delta_x"></param>
         /// <param name="delta_y"></param>
@@ -161,10 +121,8 @@ namespace JAM8.Algorithms.Geometry
             return create(x + delta_x, y + delta_y, z + delta_z);
         }
 
-        #endregion
-
         /// <summary>
-        /// 计算2个Coord的欧几里得距离
+        /// Compute Euclidean distance between two Coord instances
         /// </summary>
         /// <param name="c1"></param>
         /// <param name="c2"></param>
@@ -173,14 +131,16 @@ namespace JAM8.Algorithms.Geometry
         {
             if (c1.dim != c2.dim)
                 return -1;
-            if (c1.dim == c2.dim && c1.dim == Dimension.D2)
+            if (c1.dim == Dimension.D2)
                 return Math.Sqrt((c1.x - c2.x) * (c1.x - c2.x) + (c1.y - c2.y) * (c1.y - c2.y));
-            if (c1.dim == c2.dim && c1.dim == Dimension.D3)
-                return Math.Sqrt((c1.x - c2.x) * (c1.x - c2.x) + (c1.y - c2.y) * (c1.y - c2.y) + (c1.z - c2.z) * (c1.z - c2.z));
+            if (c1.dim == Dimension.D3)
+                return Math.Sqrt((c1.x - c2.x) * (c1.x - c2.x) + (c1.y - c2.y) * (c1.y - c2.y) +
+                                 (c1.z - c2.z) * (c1.z - c2.z));
             return -1;
         }
+
         /// <summary>
-        /// 计算Coord与原点的欧几里得距离
+        /// Compute Euclidean distance from Coord to origin
         /// </summary>
         /// <param name="c"></param>
         /// <returns></returns>
@@ -194,10 +154,10 @@ namespace JAM8.Algorithms.Geometry
         }
 
         /// <summary>
-        /// 根据距离排序
+        /// Sort an array of Coords by distance to this Coord
         /// </summary>
-        /// <param name="coord"></param>
-        /// <param name="distance"></param>
+        /// <param name="coords"></param>
+        /// <returns></returns>
         public List<(Coord coord, double distance)> order_by_distance(Coord[] coords)
         {
             List<(Coord coord, double distance)> result = new();
@@ -205,17 +165,64 @@ namespace JAM8.Algorithms.Geometry
             {
                 result.Add((coords[i], get_distance(this, coords[i])));
             }
+
             result = result.OrderBy(a => a.distance).ToList();
             return result;
         }
 
         /// <summary>
-        /// 深度复制
+        /// Deep clone the Coord
         /// </summary>
         /// <returns></returns>
         public Coord deep_clone()
         {
             return create(this);
         }
+
+        #region Equality
+
+        // Equality ==
+        public static bool operator ==(Coord left, Coord right)
+        {
+            if (ReferenceEquals(left, right)) return true; // 同一个引用，或者都是null
+            if (left is null || right is null) return false; // 一个是null，一个不是null
+
+            if (left.dim != right.dim) return false;
+            if (left.x != right.x) return false;
+            if (left.y != right.y) return false;
+            if (left.z != right.z) return false;
+            return true;
+        }
+
+        // Inequality !=
+        public static bool operator !=(Coord left, Coord right)
+        {
+            return !(left == right);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is null) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != typeof(Coord)) return false;
+
+            var other = (Coord)obj;
+            return this == other;
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hash = 17;
+                hash = hash * 31 + x.GetHashCode();
+                hash = hash * 31 + y.GetHashCode();
+                hash = hash * 31 + z.GetHashCode();
+                hash = hash * 31 + dim.GetHashCode();
+                return hash;
+            }
+        }
+
+        #endregion
     }
 }

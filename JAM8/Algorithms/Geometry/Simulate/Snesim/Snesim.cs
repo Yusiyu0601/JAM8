@@ -7,6 +7,8 @@ namespace JAM8.Algorithms.Geometry
 {
     public class Snesim
     {
+        int global_progress = 0;//全局进度(多重网格使用)
+
         //int cd_max;//Maximum number of conditional data 条件数据最大数量
         //float servo_system;//correction factor 校正系数
 
@@ -153,6 +155,12 @@ namespace JAM8.Algorithms.Geometry
             double progress_preview = -1;
             while (path.is_visit_over() == false)
             {
+                global_progress++;//全局进度(多重网格使用)
+                if (global_progress == (int)(gs_re.N * 0.2))
+                {
+                    result.showGrid_win("20%");
+                }
+
                 if (path.progress % 1 == 0 && path.progress != progress_preview)
                 {
                     progress_preview = path.progress;
@@ -196,8 +204,8 @@ namespace JAM8.Algorithms.Geometry
                 if (progress <= progress_for_retrieve_inverse)
                     core_values = tree.retrieve_inverse(dataEvent, 1);
                 else
-                    // core_values = tree.retrieve(dataEvent, 1);
-                    core_values = tree.retrieve_recursive(dataEvent, 1);
+                    core_values = tree.retrieve(dataEvent, 1);
+                // core_values = tree.retrieve_recursive(dataEvent, 1);
 
                 //There is the number of retrieved duplicates, and the conditional probability
                 //is calculated

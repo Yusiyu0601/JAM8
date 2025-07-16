@@ -9,11 +9,7 @@ namespace JAM8.Algorithms.Geometry
     /// </summary>
     public class GridProperty
     {
-        private GridProperty()
-        {
-        }
-
-        #region 属性
+        #region properties
 
         /// <summary>
         /// 数据缓存
@@ -155,6 +151,10 @@ namespace JAM8.Algorithms.Geometry
         }
 
         #endregion
+
+        private GridProperty()
+        {
+        }
 
         #region create
 
@@ -310,8 +310,6 @@ namespace JAM8.Algorithms.Geometry
 
         #endregion
 
-        #region 取值与赋值
-
         #region get_value
 
         /// <summary>
@@ -365,11 +363,30 @@ namespace JAM8.Algorithms.Geometry
         }
 
         /// <summary>
-        /// 获取满足判断条件的values
+        /// 获取满足特定条件的网格值及其索引。
+        /// 用于从 GridProperty 中筛选出满足比较条件（等于、不等于、大于等）
+        /// 的网格单元的索引和值，常用于掩膜、条件提取、统计等操作。
         /// </summary>
-        /// <param name="compare_type">比较类型(等于、不等于、大于、大于等于、小于、小于等于)</param>
-        /// <param name="compare_value">参与比较的数值</param>
-        /// <returns></returns>
+        /// <param name="compare_value">
+        /// 参与比较的数值（可以为 null）。
+        /// 若 compare_type 为 Equals 或 NotEqual 且 compare_value 为 null，
+        /// 则可用于判断值是否为缺失值（null）。
+        /// </param>
+        /// <param name="compare_type">
+        /// 比较类型（CompareType 枚举）：
+        /// - Equals：等于 compare_value
+        /// - NotEqual：不等于 compare_value
+        /// - GreaterThan：大于 compare_value
+        /// - GreaterEqualsThan：大于等于 compare_value
+        /// - LessThan：小于 compare_value
+        /// - LessEqualsThan：小于等于 compare_value
+        /// - NoCompared：不做比较，全部返回
+        /// </param>
+        /// <returns>
+        /// 返回两个列表：
+        /// - 第一个为满足条件的网格索引列表（List&lt;int&gt;）
+        /// - 第二个为对应的属性值列表（List&lt;float?&gt;）
+        /// </returns>
         public (List<int>, List<float?>) get_values_by_condition(float? compare_value, CompareType compare_type)
         {
             List<int> idx = [];
@@ -408,9 +425,9 @@ namespace JAM8.Algorithms.Geometry
         /// 获取满足区间范围条件的values
         /// </summary>
         /// <param name="minValue">区间下限（包含）</param>
-        /// <param name="maxValue">区间上限（包含）</param>
+        /// <param name="max_value">区间上限（包含）</param>
         /// <returns>符合条件的索引和对应值</returns>
-        public (List<int>, List<float?>) get_values_by_range(float? minValue, float? maxValue)
+        public (List<int>, List<float?>) get_values_by_range(float? min_value, float? max_value)
         {
             List<int> idx = [];
             List<float?> values = [];
@@ -421,7 +438,7 @@ namespace JAM8.Algorithms.Geometry
                 float? currentValue = get_value(n);
 
                 // 判断值是否在区间范围内
-                if (currentValue >= minValue && currentValue <= maxValue)
+                if (currentValue >= min_value && currentValue <= max_value)
                 {
                     idx.Add(n);
                     values.Add(currentValue);
@@ -597,9 +614,7 @@ namespace JAM8.Algorithms.Geometry
 
         #endregion
 
-        #endregion
-
-        #region 局部提取
+        #region get_region_by_range
 
         /// <summary>
         /// 根据索引的界限提取区域部分网格，[ix_min,ix_max]和[iy_min,iy_max]是闭区间
@@ -729,7 +744,7 @@ namespace JAM8.Algorithms.Geometry
 
         #endregion
 
-        #region 缩放计算
+        #region resize
 
         /// <summary>
         /// 缩放计算
@@ -782,9 +797,34 @@ namespace JAM8.Algorithms.Geometry
             return resized_gp;
         }
 
+        /// <summary>
+        /// 根据缩放倍数重采样 GridProperty（最近邻法）
+        /// </summary>
+        /// <param name="scale_x">X方向缩放倍数（<1 缩小，>1 放大）</param>
+        /// <param name="scale_y">Y方向缩放倍数</param>
+        /// <param name="scale_z">Z方向缩放倍数（2D 情况下无效）</param>
+        /// <returns>缩放后的 GridProperty</returns>
+        public GridProperty resize(double scale_x = 1.0, double scale_y = 1.0, double scale_z = 1.0)
+        {
+            if (scale_x <= 0 || scale_y <= 0 || scale_z <= 0)
+                throw new ArgumentException("缩放倍数必须为正数");
+
+            var old_gs = this.grid_structure;
+
+            int nx_new = Math.Max(1, (int)(old_gs.nx * scale_x));
+            int ny_new = Math.Max(1, (int)(old_gs.ny * scale_y));
+            int nz_new = old_gs.dim == Dimension.D3
+                ? Math.Max(1, (int)(old_gs.nz * scale_z))
+                : 1;
+
+            var resized_gs = GridStructure.create_with_old_size_origin(nx_new, ny_new, nz_new, old_gs);
+
+            return this.resize(resized_gs); // 调用你原来的 resize 方法
+        }
+
         #endregion
 
-        #region 三维属性的切片操作
+        #region get slice from 3d
 
         /// <summary>
         /// 从三维里获取切片
@@ -906,7 +946,7 @@ namespace JAM8.Algorithms.Geometry
 
         #endregion
 
-        #region 二维操作
+        #region operations for 2d
 
         /// <summary>
         /// 绘制二维模型
@@ -963,40 +1003,9 @@ namespace JAM8.Algorithms.Geometry
         #endregion
 
         /// <summary>
-        /// 返回等于null的网格单元spatialIndex
+        /// 显示网格属性的窗口
         /// </summary>
-        /// <returns></returns>
-        public List<SpatialIndex> get_spatialIndex_eq_null()
-        {
-            List<SpatialIndex> result = [];
-            for (int n = 0; n < grid_structure.N; n++)
-            {
-                if (get_value(n) == null)
-                    result.Add(grid_structure.get_spatial_index(n));
-            }
-
-            return result;
-        }
-
-        /// <summary>
-        /// 返回不等于null的网格单元spatialIndex
-        /// </summary>
-        /// <returns></returns>
-        public List<SpatialIndex> get_spatialIndex_ne_null()
-        {
-            List<SpatialIndex> result = [];
-            for (int n = 0; n < grid_structure.N; n++)
-            {
-                if (get_value(n) != null)
-                    result.Add(grid_structure.get_spatial_index(n));
-            }
-
-            return result;
-        }
-
-        /// <summary>
-        /// 显示
-        /// </summary>
+        /// <param name="title"></param>
         public void show_win(string title = null)
         {
             Grid g = Grid.create(grid_structure);

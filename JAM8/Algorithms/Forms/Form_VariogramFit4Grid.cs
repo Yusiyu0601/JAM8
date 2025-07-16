@@ -227,11 +227,11 @@ namespace JAM8.Algorithms.Forms
             var gp = g[listBox1.SelectedItem.ToString()];
             if (gp.grid_structure.dim == Dimension.D2)
             {
-                (h, gamma, N_pair) = Variogram.calc_experiment_variogram(gp, azimuth, N_lag, 2);
+                (h, gamma, N_pair) = Variogram.calc_variogram_from_grid_2d(gp, azimuth, N_lag, 2);
             }
             else if (gp.grid_structure.dim == Dimension.D3)
             {
-                (h, gamma, N_pair) = Variogram.calc_3d_horizontal_experiment_variogram(gp, azimuth, N_lag, 2);
+                (h, gamma, N_pair) = Variogram.calc_variogram_from_grid_3d_horizontal(gp, azimuth, N_lag, 2);
             }
             init_controls(h, gamma, N_pair);
         }
@@ -245,11 +245,11 @@ namespace JAM8.Algorithms.Forms
             var gp = g[listBox1.SelectedItem.ToString()];
             if (gp.grid_structure.dim == Dimension.D2)
             {
-                (h, gamma, N_pair) = Variogram.calc_experiment_variogram(gp, azimuth, N_lag, 2);
+                (h, gamma, N_pair) = Variogram.calc_variogram_from_grid_2d(gp, azimuth, N_lag, 2);
             }
             else if (gp.grid_structure.dim == Dimension.D3)
             {
-                (h, gamma, N_pair) = Variogram.calc_3d_horizontal_experiment_variogram(gp, azimuth, N_lag, 2);
+                (h, gamma, N_pair) = Variogram.calc_variogram_from_grid_3d_horizontal(gp, azimuth, N_lag, 2);
             }
             init_controls(h, gamma, N_pair);
         }
@@ -421,7 +421,7 @@ namespace JAM8.Algorithms.Forms
         {
             var gp = g[listBox1.SelectedItem.ToString()];
             int N_lag = gp.grid_structure.nz;
-            var (h, gamma, N_pair) = Variogram.calc_3d_vertical_experiment_variogram(gp, N_lag, 1);
+            var (h, gamma, N_pair) = Variogram.calc_variogram_from_grid_3d_vertical(gp, N_lag, 1);
             Form_VariogramFit frm = new(h, gamma, N_pair);
             frm.Show();
         }

@@ -60,6 +60,8 @@ namespace JAM8.Algorithms.Geometry
             btn_OK = new Button();
             textBox1 = new TextBox();
             button2 = new Button();
+            label11 = new Label();
+            comboBox1 = new ComboBox();
             SuspendLayout();
             // 
             // label13
@@ -113,7 +115,7 @@ namespace JAM8.Algorithms.Geometry
             // 
             // txt_OriginCellZ
             // 
-            txt_OriginCellZ.Location = new Point(124, 473);
+            txt_OriginCellZ.Location = new Point(124, 528);
             txt_OriginCellZ.Margin = new Padding(6, 5, 6, 5);
             txt_OriginCellZ.Name = "txt_OriginCellZ";
             txt_OriginCellZ.Size = new Size(340, 30);
@@ -122,7 +124,7 @@ namespace JAM8.Algorithms.Geometry
             // 
             // txt_OriginCellY
             // 
-            txt_OriginCellY.Location = new Point(124, 439);
+            txt_OriginCellY.Location = new Point(124, 494);
             txt_OriginCellY.Margin = new Padding(6, 5, 6, 5);
             txt_OriginCellY.Name = "txt_OriginCellY";
             txt_OriginCellY.Size = new Size(340, 30);
@@ -131,7 +133,7 @@ namespace JAM8.Algorithms.Geometry
             // 
             // txt_OriginCellX
             // 
-            txt_OriginCellX.Location = new Point(124, 404);
+            txt_OriginCellX.Location = new Point(124, 459);
             txt_OriginCellX.Margin = new Padding(6, 5, 6, 5);
             txt_OriginCellX.Name = "txt_OriginCellX";
             txt_OriginCellX.Size = new Size(340, 30);
@@ -140,7 +142,7 @@ namespace JAM8.Algorithms.Geometry
             // 
             // txt_KCount
             // 
-            txt_KCount.Location = new Point(124, 221);
+            txt_KCount.Location = new Point(124, 276);
             txt_KCount.Margin = new Padding(6, 5, 6, 5);
             txt_KCount.Name = "txt_KCount";
             txt_KCount.Size = new Size(340, 30);
@@ -149,7 +151,7 @@ namespace JAM8.Algorithms.Geometry
             // 
             // txt_JCount
             // 
-            txt_JCount.Location = new Point(124, 185);
+            txt_JCount.Location = new Point(124, 240);
             txt_JCount.Margin = new Padding(6, 5, 6, 5);
             txt_JCount.Name = "txt_JCount";
             txt_JCount.Size = new Size(340, 30);
@@ -158,7 +160,7 @@ namespace JAM8.Algorithms.Geometry
             // 
             // txt_ICount
             // 
-            txt_ICount.Location = new Point(124, 151);
+            txt_ICount.Location = new Point(124, 206);
             txt_ICount.Margin = new Padding(6, 5, 6, 5);
             txt_ICount.Name = "txt_ICount";
             txt_ICount.Size = new Size(340, 30);
@@ -167,7 +169,7 @@ namespace JAM8.Algorithms.Geometry
             // 
             // txt_KSize
             // 
-            txt_KSize.Location = new Point(124, 344);
+            txt_KSize.Location = new Point(124, 399);
             txt_KSize.Margin = new Padding(6, 5, 6, 5);
             txt_KSize.Name = "txt_KSize";
             txt_KSize.Size = new Size(340, 30);
@@ -176,7 +178,7 @@ namespace JAM8.Algorithms.Geometry
             // 
             // txt_JSize
             // 
-            txt_JSize.Location = new Point(124, 308);
+            txt_JSize.Location = new Point(124, 363);
             txt_JSize.Margin = new Padding(6, 5, 6, 5);
             txt_JSize.Name = "txt_JSize";
             txt_JSize.Size = new Size(340, 30);
@@ -185,7 +187,7 @@ namespace JAM8.Algorithms.Geometry
             // 
             // txt_ISize
             // 
-            txt_ISize.Location = new Point(124, 274);
+            txt_ISize.Location = new Point(124, 329);
             txt_ISize.Margin = new Padding(6, 5, 6, 5);
             txt_ISize.Name = "txt_ISize";
             txt_ISize.Size = new Size(340, 30);
@@ -203,7 +205,7 @@ namespace JAM8.Algorithms.Geometry
             // 
             // btn_Cancel
             // 
-            btn_Cancel.Location = new Point(548, 531);
+            btn_Cancel.Location = new Point(548, 568);
             btn_Cancel.Margin = new Padding(6, 5, 6, 5);
             btn_Cancel.Name = "btn_Cancel";
             btn_Cancel.Size = new Size(164, 35);
@@ -215,7 +217,7 @@ namespace JAM8.Algorithms.Geometry
             // label10
             // 
             label10.AutoSize = true;
-            label10.Location = new Point(38, 477);
+            label10.Location = new Point(38, 532);
             label10.Margin = new Padding(6, 0, 6, 0);
             label10.Name = "label10";
             label10.Size = new Size(47, 24);
@@ -225,7 +227,7 @@ namespace JAM8.Algorithms.Geometry
             // label9
             // 
             label9.AutoSize = true;
-            label9.Location = new Point(37, 441);
+            label9.Location = new Point(37, 496);
             label9.Margin = new Padding(6, 0, 6, 0);
             label9.Name = "label9";
             label9.Size = new Size(48, 24);
@@ -235,7 +237,7 @@ namespace JAM8.Algorithms.Geometry
             // label8
             // 
             label8.AutoSize = true;
-            label8.Location = new Point(38, 407);
+            label8.Location = new Point(38, 462);
             label8.Margin = new Padding(6, 0, 6, 0);
             label8.Name = "label8";
             label8.Size = new Size(47, 24);
@@ -245,7 +247,7 @@ namespace JAM8.Algorithms.Geometry
             // label7
             // 
             label7.AutoSize = true;
-            label7.Location = new Point(44, 347);
+            label7.Location = new Point(44, 402);
             label7.Margin = new Padding(6, 0, 6, 0);
             label7.Name = "label7";
             label7.Size = new Size(41, 24);
@@ -255,7 +257,7 @@ namespace JAM8.Algorithms.Geometry
             // label6
             // 
             label6.AutoSize = true;
-            label6.Location = new Point(43, 311);
+            label6.Location = new Point(43, 366);
             label6.Margin = new Padding(6, 0, 6, 0);
             label6.Name = "label6";
             label6.Size = new Size(42, 24);
@@ -265,7 +267,7 @@ namespace JAM8.Algorithms.Geometry
             // label5
             // 
             label5.AutoSize = true;
-            label5.Location = new Point(44, 276);
+            label5.Location = new Point(44, 331);
             label5.Margin = new Padding(6, 0, 6, 0);
             label5.Name = "label5";
             label5.Size = new Size(41, 24);
@@ -275,7 +277,7 @@ namespace JAM8.Algorithms.Geometry
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new Point(55, 224);
+            label4.Location = new Point(55, 279);
             label4.Margin = new Padding(6, 0, 6, 0);
             label4.Name = "label4";
             label4.Size = new Size(30, 24);
@@ -285,7 +287,7 @@ namespace JAM8.Algorithms.Geometry
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(54, 189);
+            label3.Location = new Point(54, 244);
             label3.Margin = new Padding(6, 0, 6, 0);
             label3.Name = "label3";
             label3.Size = new Size(31, 24);
@@ -295,7 +297,7 @@ namespace JAM8.Algorithms.Geometry
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(55, 153);
+            label2.Location = new Point(55, 208);
             label2.Margin = new Padding(6, 0, 6, 0);
             label2.Name = "label2";
             label2.Size = new Size(30, 24);
@@ -314,7 +316,7 @@ namespace JAM8.Algorithms.Geometry
             // 
             // btn_OK
             // 
-            btn_OK.Location = new Point(252, 531);
+            btn_OK.Location = new Point(252, 568);
             btn_OK.Margin = new Padding(6, 5, 6, 5);
             btn_OK.Name = "btn_OK";
             btn_OK.Size = new Size(164, 35);
@@ -330,13 +332,13 @@ namespace JAM8.Algorithms.Geometry
             textBox1.Name = "textBox1";
             textBox1.ReadOnly = true;
             textBox1.ScrollBars = ScrollBars.Vertical;
-            textBox1.Size = new Size(502, 449);
+            textBox1.Size = new Size(502, 506);
             textBox1.TabIndex = 140;
             // 
             // button2
             // 
             button2.ForeColor = Color.Blue;
-            button2.Location = new Point(811, 529);
+            button2.Location = new Point(811, 566);
             button2.Margin = new Padding(6, 5, 6, 5);
             button2.Name = "button2";
             button2.Size = new Size(166, 37);
@@ -345,12 +347,34 @@ namespace JAM8.Algorithms.Geometry
             button2.UseVisualStyleBackColor = true;
             button2.Click += button2_Click;
             // 
+            // label11
+            // 
+            label11.AutoSize = true;
+            label11.Location = new Point(22, 155);
+            label11.Margin = new Padding(6, 0, 6, 0);
+            label11.Name = "label11";
+            label11.Size = new Size(89, 24);
+            label11.TabIndex = 142;
+            label11.Text = "splitType";
+            // 
+            // comboBox1
+            // 
+            comboBox1.FormattingEnabled = true;
+            comboBox1.Items.AddRange(new object[] { "space character", "\\t", ",", ";" });
+            comboBox1.Location = new Point(123, 152);
+            comboBox1.Name = "comboBox1";
+            comboBox1.Size = new Size(341, 32);
+            comboBox1.TabIndex = 143;
+            comboBox1.Text = "space character";
+            // 
             // Form_ReadGridFromGSLIB
             // 
             AcceptButton = btn_OK;
             AutoScaleDimensions = new SizeF(11F, 24F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(986, 571);
+            ClientSize = new Size(986, 610);
+            Controls.Add(comboBox1);
+            Controls.Add(label11);
             Controls.Add(button2);
             Controls.Add(textBox1);
             Controls.Add(label13);
@@ -421,5 +445,7 @@ namespace JAM8.Algorithms.Geometry
         private Button btn_OK;
         private TextBox textBox1;
         private Button button2;
+        private Label label11;
+        private ComboBox comboBox1;
     }
 }

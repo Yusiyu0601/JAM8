@@ -156,20 +156,20 @@ namespace JAM8.SpecificApps.研究方法
             int N_lag = gp_ti.grid_structure.nx / 3;
 
             List<double> lags_ti = new();
-            lags_ti.AddRange(Variogram.calc_experiment_variogram(gp_ti, 0, N_lag, 1).gamma);
-            lags_ti.AddRange(Variogram.calc_experiment_variogram(gp_ti, 45, N_lag, 1).gamma);
-            lags_ti.AddRange(Variogram.calc_experiment_variogram(gp_ti, 90, N_lag, 1).gamma);
-            lags_ti.AddRange(Variogram.calc_experiment_variogram(gp_ti, 135, N_lag, 1).gamma);
+            lags_ti.AddRange(Variogram.calc_variogram_from_grid_2d(gp_ti, 0, N_lag, 1).gamma);
+            lags_ti.AddRange(Variogram.calc_variogram_from_grid_2d(gp_ti, 45, N_lag, 1).gamma);
+            lags_ti.AddRange(Variogram.calc_variogram_from_grid_2d(gp_ti, 90, N_lag, 1).gamma);
+            lags_ti.AddRange(Variogram.calc_variogram_from_grid_2d(gp_ti, 135, N_lag, 1).gamma);
 
             List<double> differences = new();
             for (int i = 0; i < g_re.propertyNames.Count; i++)
             {
                 var gp_re = g_re[i];
                 List<double> lags_re = new();
-                lags_re.AddRange(Variogram.calc_experiment_variogram(gp_re, 0, N_lag, 1).gamma);
-                lags_re.AddRange(Variogram.calc_experiment_variogram(gp_re, 45, N_lag, 1).gamma);
-                lags_re.AddRange(Variogram.calc_experiment_variogram(gp_re, 90, N_lag, 1).gamma);
-                lags_re.AddRange(Variogram.calc_experiment_variogram(gp_re, 135, N_lag, 1).gamma);
+                lags_re.AddRange(Variogram.calc_variogram_from_grid_2d(gp_re, 0, N_lag, 1).gamma);
+                lags_re.AddRange(Variogram.calc_variogram_from_grid_2d(gp_re, 45, N_lag, 1).gamma);
+                lags_re.AddRange(Variogram.calc_variogram_from_grid_2d(gp_re, 90, N_lag, 1).gamma);
+                lags_re.AddRange(Variogram.calc_variogram_from_grid_2d(gp_re, 135, N_lag, 1).gamma);
 
                 differences.Add(MyDistance.calc_hsim(lags_ti.ToArray(), lags_re.ToArray()));
             }
@@ -189,25 +189,25 @@ namespace JAM8.SpecificApps.研究方法
 
             List<double> lags_ti = new();
 
-            var (h_0, gamma_0, N_0) = Variogram.calc_experiment_variogram(gp_ti, 0, N_lag, 1);
+            var (h_0, gamma_0, N_0) = Variogram.calc_variogram_from_grid_2d(gp_ti, 0, N_lag, 1);
             var (fit_0, _) = Variogram.variogramFit(VariogramType.Spherical, h_0, gamma_0, N_0);
             lags_ti.Add(fit_0.range);
             //lags_ti.Add(fit_0.sill);
             //lags_ti.Add(fit_0.nugget);
 
-            var (h_45, gamma_45, N_45) = Variogram.calc_experiment_variogram(gp_ti, 45, N_lag, 1);
+            var (h_45, gamma_45, N_45) = Variogram.calc_variogram_from_grid_2d(gp_ti, 45, N_lag, 1);
             var (fit_45, _) = Variogram.variogramFit(VariogramType.Spherical, h_45, gamma_45, N_45);
             lags_ti.Add(fit_45.range);
             //lags_ti.Add(fit_45.sill);
             //lags_ti.Add(fit_45.nugget);
 
-            var (h_90, gamma_90, N_90) = Variogram.calc_experiment_variogram(gp_ti, 90, N_lag, 1);
+            var (h_90, gamma_90, N_90) = Variogram.calc_variogram_from_grid_2d(gp_ti, 90, N_lag, 1);
             var (fit_90, _) = Variogram.variogramFit(VariogramType.Spherical, h_90, gamma_90, N_90);
             lags_ti.Add(fit_90.range);
             //lags_ti.Add(fit_90.sill);
             //lags_ti.Add(fit_90.nugget);
 
-            var (h_135, gamma_135, N_135) = Variogram.calc_experiment_variogram(gp_ti, 135, N_lag, 1);
+            var (h_135, gamma_135, N_135) = Variogram.calc_variogram_from_grid_2d(gp_ti, 135, N_lag, 1);
             var (fit_135, _) = Variogram.variogramFit(VariogramType.Spherical, h_135, gamma_135, N_135);
             lags_ti.Add(fit_135.range);
             //lags_ti.Add(fit_135.sill);
@@ -228,25 +228,25 @@ namespace JAM8.SpecificApps.研究方法
                     var gp_re = g_re[i];
                     List<double> lags_re = new();
 
-                    (h_0, gamma_0, N_0) = Variogram.calc_experiment_variogram(gp_re, 0, N_lag, 1);
+                    (h_0, gamma_0, N_0) = Variogram.calc_variogram_from_grid_2d(gp_re, 0, N_lag, 1);
                     (fit_0, _) = Variogram.variogramFit(VariogramType.Spherical, h_0, gamma_0, N_0);
                     lags_re.Add(fit_0.range);
                     //lags_re.Add(fit_0.sill);
                     //lags_re.Add(fit_0.nugget);
 
-                    (h_45, gamma_45, N_45) = Variogram.calc_experiment_variogram(gp_re, 45, N_lag, 1);
+                    (h_45, gamma_45, N_45) = Variogram.calc_variogram_from_grid_2d(gp_re, 45, N_lag, 1);
                     (fit_45, _) = Variogram.variogramFit(VariogramType.Spherical, h_45, gamma_45, N_45);
                     lags_re.Add(fit_45.range);
                     //lags_re.Add(fit_45.sill);
                     //lags_re.Add(fit_45.nugget);
 
-                    (h_90, gamma_90, N_90) = Variogram.calc_experiment_variogram(gp_re, 90, N_lag, 1);
+                    (h_90, gamma_90, N_90) = Variogram.calc_variogram_from_grid_2d(gp_re, 90, N_lag, 1);
                     (fit_90, _) = Variogram.variogramFit(VariogramType.Spherical, h_90, gamma_90, N_90);
                     lags_re.Add(fit_90.range);
                     //lags_re.Add(fit_90.sill);
                     //lags_re.Add(fit_90.nugget);
 
-                    (h_135, gamma_135, N_135) = Variogram.calc_experiment_variogram(gp_re, 135, N_lag, 1);
+                    (h_135, gamma_135, N_135) = Variogram.calc_variogram_from_grid_2d(gp_re, 135, N_lag, 1);
                     (fit_135, _) = Variogram.variogramFit(VariogramType.Spherical, h_135, gamma_135, N_135);
                     lags_re.Add(fit_135.range);
                     //lags_re.Add(fit_135.sill);
