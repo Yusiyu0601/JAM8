@@ -5,7 +5,9 @@
     /// </summary>
     public class SpatialIndex
     {
-        private SpatialIndex() { }
+        private SpatialIndex()
+        {
+        }
 
         /// <summary>
         /// 维度
@@ -16,10 +18,12 @@
         /// index of x，初始化为0
         /// </summary>
         public int ix { get; internal set; } = 0;
+
         /// <summary>
         /// index of y，初始化为0
         /// </summary>
         public int iy { get; internal set; } = 0;
+
         /// <summary>
         /// index of z，初始化为0
         /// </summary>
@@ -57,6 +61,7 @@
             };
             return si;
         }
+
         /// <summary>
         /// 创建SpatialIndex
         /// </summary>
@@ -75,6 +80,7 @@
             };
             return si;
         }
+
         /// <summary>
         /// 创建SpatialIndex，相当于复制si
         /// </summary>
@@ -84,6 +90,7 @@
         {
             return si.clone();
         }
+
         /// <summary>
         /// 创建SpatialIndex
         /// </summary>
@@ -105,6 +112,7 @@
             else
                 return null;
         }
+
         /// <summary>
         /// 创建原点的空间索引
         /// </summary>
@@ -132,14 +140,15 @@
 
             if (left.dim == Dimension.D2)
                 return (float)Math.Sqrt(Math.Pow(left.ix - right.ix, 2)
-                    + Math.Pow(left.iy - right.iy, 2));
+                                        + Math.Pow(left.iy - right.iy, 2));
 
             if (left.dim == Dimension.D3)
                 return (float)Math.Sqrt(Math.Pow(left.ix - right.ix, 2)
-                    + Math.Pow(left.iy - right.iy, 2)
-                    + Math.Pow(left.iz - right.iz, 2));
+                                        + Math.Pow(left.iy - right.iy, 2)
+                                        + Math.Pow(left.iz - right.iz, 2));
             return -1;
         }
+
         /// <summary>
         /// 计算距离平方
         /// </summary>
@@ -153,15 +162,16 @@
 
             if (left.dim == Dimension.D2)
                 return (float)(Math.Pow(left.ix - right.ix, 2)
-                    + Math.Pow(left.iy - right.iy, 2));
+                               + Math.Pow(left.iy - right.iy, 2));
 
             if (left.dim == Dimension.D3)
                 return (float)(Math.Pow(left.ix - right.ix, 2)
-                    + Math.Pow(left.iy - right.iy, 2)
-                    + Math.Pow(left.iz - right.iz, 2));
+                               + Math.Pow(left.iy - right.iy, 2)
+                               + Math.Pow(left.iz - right.iz, 2));
 
             return -1;
         }
+
         /// <summary>
         /// 计算与原点的距离
         /// </summary>
@@ -178,6 +188,7 @@
 
             return -1;
         }
+
         /// <summary>
         /// 计算距离平方
         /// </summary>
@@ -195,7 +206,6 @@
             return -1;
         }
 
-        #region offset偏移计算
 
         /// <summary>
         /// 偏移(2D & 3D)
@@ -212,6 +222,7 @@
                 return offset(delta.ix, delta.iy, delta.iz);
             return null;
         }
+
         /// <summary>
         /// 偏移(2D)
         /// </summary>
@@ -222,6 +233,7 @@
         {
             return create(ix + delta_x, iy + delta_y);
         }
+
         /// <summary>
         /// 偏移(3D)
         /// </summary>
@@ -234,7 +246,47 @@
             return create(ix + delta_x, iy + delta_y, iz + delta_z);
         }
 
-        #endregion
+        /// <summary>
+        /// 两个空间索引相减，返回表示从 b 到 a 的偏移向量（a - b）
+        /// </summary>
+        /// <param name="a">被减索引</param>
+        /// <param name="b">减去的索引</param>
+        /// <returns>差向量（SpatialIndex），表示 a 相对 b 的偏移</returns>
+        /// <exception cref="InvalidOperationException">若维度不一致则抛出异常</exception>
+        public static SpatialIndex operator -(SpatialIndex a, SpatialIndex b)
+        {
+            if (a.dim != b.dim)
+                throw new InvalidOperationException("Cannot subtract SpatialIndex of different dimensions.");
+
+            return a.dim == Dimension.D2
+                ? create(a.ix - b.ix, a.iy - b.iy)
+                : create(a.ix - b.ix, a.iy - b.iy, a.iz - b.iz);
+        }
+
+        /// <summary>
+        /// 两个空间索引相加，表示坐标平移（a + b）
+        /// </summary>
+        /// <param name="a">起始索引</param>
+        /// <param name="b">偏移索引</param>
+        /// <returns>偏移后的新索引</returns>
+        /// <exception cref="InvalidOperationException">若维度不一致则抛出异常</exception>
+        public static SpatialIndex operator +(SpatialIndex a, SpatialIndex b)
+        {
+            if (a.dim != b.dim)
+                throw new InvalidOperationException("Cannot add SpatialIndex of different dimensions.");
+
+            return a.dim == Dimension.D2
+                ? create(a.ix + b.ix, a.iy + b.iy)
+                : create(a.ix + b.ix, a.iy + b.iy, a.iz + b.iz);
+        }
+
+        /// <summary>
+        /// 将索引转换为三元组 (x, y, z) 表示
+        /// </summary>
+        public (float x, float y, float z) to_tuple()
+        {
+            return (ix, iy, iz);
+        }
 
         /// <summary>
         /// 打印

@@ -6,7 +6,7 @@ namespace JAM8.SpecificApps.建模方法
 {
     public partial class Form_Kriging : Form
     {
-        private Grid g_re;//
+        private Grid g_re; //
         private CData cd;
         private string file_name_cd;
 
@@ -20,12 +20,13 @@ namespace JAM8.SpecificApps.建模方法
         //加载条件数据
         private void button5_Click(object sender, EventArgs e)
         {
-            (cd, file_name_cd) = CData.read_from_gslibwin();//cd
+            (cd, file_name_cd) = CData.read_from_gslib_win(); //cd
             comboBox2.Items.Clear();
-            foreach (var item in cd.propertyNames)
+            foreach (var item in cd.property_names)
             {
                 comboBox2.Items.Add(item);
             }
+
             comboBox2.SelectedIndex = 0;
             textBox10.Text = file_name_cd;
         }
@@ -62,12 +63,11 @@ namespace JAM8.SpecificApps.建模方法
             var t_Dip = double.Parse(tb_Dip.Text);
             var t_Rake = double.Parse(tb_Rake.Text);
 
-            GridProperty gp_cd = cd.assign_to_grid(gs).grid_assigned[t_属性选取];
+            GridProperty gp_cd = cd.coarsened(gs).coarsened_grid[t_属性选取];
             g_re.add_gridProperty("井数据", gp_cd);
             Variogram vm = Variogram.create(vt, t_块金, t_基台, (float)t_range_max);
-            OK ok = OK.create(gs, vm, cd, t_属性选取);
             var rot_mat = new double[] { t_Azimuth, t_Dip, t_Rake, t_range_max, t_range_med, t_range_min };
-            var (g_ok, time) = ok.Run(10, rot_mat, t_cd最小数量);
+            var (g_ok, time) = OK.Run(gs, vm, cd, t_属性选取, 10, rot_mat, t_cd最小数量);
             MyConsoleHelper.write_string_to_console($"计算用时：{time / 1000}秒");
             g_re.Add("estimate_ok", g_ok[1]);
             g_re.Add("var_ok", g_ok[2]);
@@ -80,7 +80,7 @@ namespace JAM8.SpecificApps.建模方法
             GridStructure gs = GridStructure.create_win();
             if (gs != null)
             {
-                GridProperty gp_cd = cd.assign_to_grid(gs).grid_assigned[comboBox2.Text];
+                GridProperty gp_cd = cd.coarsened(gs).coarsened_grid[comboBox2.Text];
                 gp_cd.show_win();
             }
         }

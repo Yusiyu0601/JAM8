@@ -48,9 +48,25 @@ namespace JAM8.Console.Pages
                     .Add("GridProperty_去噪点", GridProperty_去噪点)
                     .Add("Variogram_calc_experiment_variogram_grid", Variogram_calc_experiment_variogram_grid)
                     .Add("Form_VariogramFit4PointSet", Form_VariogramFit4PointSet)
+                    .Add("test_CDataNearestFinder_kdtree", test_CDataNearestFinder_kdtree)
                 ;
 
             menu.Display();
+        }
+
+        private void test_CDataNearestFinder_kdtree()
+        {
+            CData cdata2 = CData.read_from_gslib_win().cdata;
+            var finder = CDataNearestFinder_kdtree.create(cdata2);
+            var results = finder.find(Coord.create(50, 30, 10), 5);
+            foreach (var (idx, coord, attrs, dist) in results)
+            {
+                System.Console.WriteLine($"Index: {idx}, Coord: {coord}, Distance: {dist:F2}");
+                foreach (var kv in attrs)
+                {
+                    System.Console.WriteLine($"  {kv.Key} = {kv.Value}");
+                }
+            }
         }
 
         private void Form_VariogramFit4PointSet()
@@ -155,13 +171,21 @@ namespace JAM8.Console.Pages
 
         private void CData2测试()
         {
-            CData2 cd2 = CData2.read_from_gslib_win().cdata;
-            var (coarsend, g) = cd2.coarsened(GridStructure.create_simple(30, 30, 1));
+            CData cd2 = CData.read_from_gslib_win().cdata;
+            var (coarsend, g) = cd2.coarsened(GridStructure.create_simple(300, 300, 1));
             g.showGrid_win();
 
-            var value = cd2[10, 1];
+            var value = cd2.get_value(10, 1);
+
+            var cdi = cd2.get_cdata_item(19);
 
             var cd2_clone = cd2.deep_clone();
+
+            var boundary = cd2_clone.get_boundary();
+
+            cd2_clone.print();
+
+            System.Console.WriteLine(cd2_clone);
         }
 
         private void ENESIM测试()
@@ -186,10 +210,10 @@ namespace JAM8.Console.Pages
             Grid sim_grid = Grid.create(re_gs); //包含概率体数据、硬数据（赋值在模拟网格中）
 
             Output.WriteLine(ConsoleColor.Yellow, "打开cd");
-            CData cd = CData.read_from_gslibwin("打开cd").cdata;
+            CData cd = CData.read_from_gslib_win("打开cd").cdata;
             if (cd != null)
             {
-                var gp_cd = cd.assign_to_grid(re_gs).grid_assigned.select_gridProperty_win().grid_property;
+                var gp_cd = cd.coarsened(re_gs).coarsened_grid.select_gridProperty_win().grid_property;
                 sim_grid.add_gridProperty("re", gp_cd); //将cd赋值给grid
             }
             else
@@ -311,90 +335,61 @@ namespace JAM8.Console.Pages
             new_df.show_win("NodeCountAverage", true);
         }
 
+        //指定网格级别
         private void Snesim_Test1()
         {
-            Output.WriteLine(ConsoleColor.Yellow, "加载训练图像");
-            Grid g = null;
+            //read training image from GSLIB file
+            Output.WriteLine(ConsoleColor.Yellow, "read training image from GSLIB file");
             Form_GridCatalog frm = new();
-            if (frm.ShowDialog() != DialogResult.OK)
-            {
-                g = Grid.create_from_gslibwin().grid;
-            }
-            else
-            {
-                g = frm.selected_grids.FirstOrDefault();
-            }
-
-            if (g == null)
+            var g_TI = (frm.ShowDialog() != DialogResult.OK
+                ? Grid.create_from_gslibwin().grid
+                : frm.selected_grids.FirstOrDefault());
+            if (g_TI == null)
                 return;
-            var ti = g.first_gridProperty();
-            Mould mould = ti.grid_structure.dim == Dimension.D2
-                ? Mould.create_by_ellipse(7, 7, 1)
-                : Mould.create_by_ellipse(7, 7, 3, 1);
-            mould = Mould.create_by_mould(mould, 10);
 
-            //手动测试
-            //int progress_for_inverse_retrieve = EasyConsole.Input.ReadInt("逆向查询占比", 0, 100);
-            //Snesim snesim = Snesim.create();
-            //GridStructure re_gs = ti.gridStructure;
-            ////re_gs = GridStructure.create_simple(100, 100, 1);
-            //var (re, time) = snesim.run(ti, null, re_gs, 1001, mould, 1, progress_for_inverse_retrieve);
-            ////re?.showGrid_win();
-            //Output.WriteLine(ConsoleColor.Red, $"{time}毫秒");
 
-            //批量测试 反向查询占比 vs 加速比
-            //MyDataFrame df = MyDataFrame.create(["占比", "时间(秒)", "加速比"]);
-            //double first = 0;
-            //for (int i = 0; i <= 100; i += 5)
-            //{
-            //    if (i != 35 && i != 0)
-            //        continue;
-            //    int progress_for_inverse_retrieve = i;
+            //create mould
+            Mould mould = g_TI.gridStructure.dim == Dimension.D2
+                ? Mould.create_by_ellipse(10, 10, 1)
+                : Mould.create_by_ellipse(10, 10, 10, 1);
+            //set max number of nodes in mould for snesim
+            int max_number = Input.ReadInt("max number of nodes in mould for snesim: ", 10, 100);
+            mould = Mould.create_by_mould(mould, max_number);
 
-            //    Snesim snesim = Snesim.create();
-            //    GridStructure re_gs = ti.gridStructure;
-            //    GridStructure re_gs_2d = GridStructure.create_simple(300, 300, 1);
-            //    GridStructure re_gs_3d = GridStructure.create_simple(80, 80, 30);
-            //    re_gs = ti.gridStructure.dim == Dimension.D2 ? re_gs_2d : re_gs_3d;
-            //    var (re, time) = snesim.run(ti, null, re_gs, 1001, mould, 1, progress_for_inverse_retrieve);
-            //    if (i == 0)
-            //        first = time;
-            //    //re?.showGrid_win();
-            //    //加速比
-            //    double 加速比 = first / time;
-            //    Output.WriteLine(ConsoleColor.Red, $"[{i}] {time / 1000.0}秒  加速比:{加速比}");
 
-            //    df.add_record([i, time / 1000.0, 加速比]);
-            //}
-            //df.show_win("逆向查询占比与时间", true);
+            //create grid structure for simulation
+            GridStructure re_gs = GridStructure.create_win(null, "create grid structure for simulation");
 
-            //批量测试cpu vs 加速比
-            double first = 0;
-            double sum_35percent = 0;
+            //set random seed
+            int random_seed = Input.ReadInt("set random seed: ", 0, 1000000);
+
+            //set multigrid level
+            int multigrid_level = Input.ReadInt("set multigrid level: ", 1, 5);
 
             Snesim snesim = Snesim.create();
-            GridStructure re_gs = ti.grid_structure;
-            GridStructure re_gs_2d = GridStructure.create_simple(101, 101, 1);
-            GridStructure re_gs_3d = GridStructure.create_simple(80, 80, 30);
-            re_gs = ti.grid_structure.dim == Dimension.D2 ? re_gs_2d : re_gs_3d;
+            CData cd = CData.read_from_gslib_win().cdata;
 
-            //(var _, first) = snesim.run(ti, null, re_gs, 1001, mould, 1, 0);
-            Output.WriteLine(ConsoleColor.Red, $"时间:{first}");
-
-            CData2 cd = CData2.read_from_gslib_win().cdata;
-
-            for (int j = 0; j < 1; j++)
+            while (true)
             {
-                var (result, time) = snesim.run(ti, cd, re_gs, 1001, mould, 3, 0);
-                sum_35percent += time;
-                Output.WriteLine(ConsoleColor.Red, $"时间:{time}");
-                result.showGrid_win();
-            }
+                //set retrieve inverse proportion
+                int progress_for_retrieve_inverse = Input.ReadInt("set retrieve inverse proportion (0-100): ", -1, 100);
 
-            //加速比
-            double 加速比 = first / (sum_35percent / 10.0);
-            Output.WriteLine(ConsoleColor.Red, $"使用时间:{(sum_35percent / 10.0)}");
-            Output.WriteLine(ConsoleColor.Red, $"加速比:{加速比}");
+                if (progress_for_retrieve_inverse < 0)
+                    break;
+
+                Stopwatch sw = new();
+                sw.Start();
+                for (int j = 0; j < 10; j++)
+                {
+                    var (result, time) = snesim.run(g_TI.first_gridProperty(), cd, re_gs, random_seed, mould,
+                        multigrid_level,
+                        progress_for_retrieve_inverse);
+                    Output.WriteLine(ConsoleColor.Red, $"时间:{time}");
+                }
+
+                sw.Stop();
+                Output.WriteLine(ConsoleColor.Red, $"总时间:{sw.ElapsedMilliseconds}毫秒");
+            }
         }
 
 
@@ -425,7 +420,7 @@ namespace JAM8.Console.Pages
 
             GridStructure re_gs = ti.grid_structure;
             re_gs = GridStructure.create_simple(101, 101, 1);
-            CData2 cd = CData2.read_from_gslib_win().cdata;
+            CData cd = CData.read_from_gslib_win().cdata;
 
             // var corsened_cd = cd.coarsened(re_gs).coarsened_cd;
 

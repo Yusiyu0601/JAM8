@@ -1,4 +1,5 @@
 ﻿using JAM8.Algorithms.Geometry;
+using JAM8.Algorithms.Numerics;
 using JAM8.Utilities;
 
 namespace JAM8.SpecificApps.建模方法
@@ -24,7 +25,7 @@ namespace JAM8.SpecificApps.建模方法
 
         private void button2_Click(object sender, EventArgs e)
         {
-            (g_ti, file_name_ti) = Grid.create_from_gslibwin();//ti
+            (g_ti, file_name_ti) = Grid.create_from_gslibwin(); //ti
             if (g_ti == null)
                 return;
 
@@ -51,14 +52,14 @@ namespace JAM8.SpecificApps.建模方法
 
         private void button5_Click(object sender, EventArgs e)
         {
-            (cd, file_name_cd) = CData.read_from_gslibwin();//cd
+            (cd, file_name_cd) = CData.read_from_gslib_win(); //cd
 
             textBox10.Text = file_name_cd;
 
             #region 加载属性列表
 
             listBox2.Items.Clear();
-            foreach (var PropertyName in cd.propertyNames)
+            foreach (var PropertyName in cd.property_names)
             {
                 listBox2.Items.Add(PropertyName);
             }
@@ -83,8 +84,8 @@ namespace JAM8.SpecificApps.建模方法
                 float ymn = boundary.min_y;
                 float? zmn = cd.dim == Dimension.D2 ? 0.5f : boundary.min_z;
                 GridStructure gs = GridStructure.create(nx, ny, nz, xsiz, ysiz, zsiz.Value, xmn, ymn, zmn.Value);
-                var g_cd = cd.assign_to_grid(gs);
-                scottplot4GridProperty2.update_gridProperty(g_cd.grid_assigned[listBox2.SelectedItem.ToString()]);
+                var g_cd = cd.coarsened(gs);
+                scottplot4GridProperty2.update_gridProperty(g_cd.coarsened_grid[listBox2.SelectedItem.ToString()]);
             }
         }
 
@@ -100,10 +101,10 @@ namespace JAM8.SpecificApps.建模方法
             int nx = int.Parse(textBox1.Text);
             int ny = int.Parse(textBox2.Text);
             int nz = int.Parse(textBox3.Text);
-            var gs = GridStructure.create_with_old_size_origin(nx, ny, nz, g_ti.gridStructure);//re
+            var gs = GridStructure.create_with_old_size_origin(nx, ny, nz, g_ti.gridStructure); //re
             DirectSampling ds = null;
             if (cd != null)
-                ds = DirectSampling.create(gs, g_ti[listBox1.SelectedItem.ToString()], cd, cd.propertyNames[0]);
+                ds = DirectSampling.create(gs, g_ti[listBox1.SelectedItem.ToString()], cd, cd.property_names[0]);
             else
                 ds = DirectSampling.create(gs, g_ti[listBox1.SelectedItem.ToString()]);
 
@@ -176,18 +177,19 @@ namespace JAM8.SpecificApps.建模方法
             if (fbd.ShowDialog() != DialogResult.OK)
                 return;
 
-            var gs = GridStructure.create_win(g_ti.gridStructure);//re
+            var gs = GridStructure.create_win(g_ti.gridStructure); //re
             Grid g_res = Grid.create(gs);
             foreach (var cd_gp_name in g_cd.propertyNames)
             {
-                CData cd = CData.create_from_gridProperty(g_cd, cd_gp_name, null, false);
+                CData cd = CData.create_from_gridProperty(g_cd[cd_gp_name], cd_gp_name, CompareType.NotEqual, null);
                 DirectSampling ds = null;
                 if (cd != null)
-                    ds = DirectSampling.create(gs, gp_ti, cd, cd.propertyNames[0]);
+                    ds = DirectSampling.create(gs, gp_ti, cd, cd.property_names[0]);
                 else
                     ds = DirectSampling.create(gs, gp_ti);
 
-                var g_re = ds.run(search_radius: 20, maximum_number: 15, maximum_fraction: 0.5, distance_threshold: 0.01, random_seed: 12131);
+                var g_re = ds.run(search_radius: 20, maximum_number: 15, maximum_fraction: 0.5,
+                    distance_threshold: 0.01, random_seed: 12131);
                 foreach (var (gp_name, gp) in g_re)
                 {
                     g_res.add_gridProperty($"{cd_gp_name}_{gp_name}", gp);
@@ -197,6 +199,7 @@ namespace JAM8.SpecificApps.建模方法
                 string grid_name = $"{cd_gp_name}";
                 g_re.save_to_gslib(file_name, grid_name, -99);
             }
+
             g_res.showGrid_win("模拟结果[不同cd，相同ti]");
         }
     }

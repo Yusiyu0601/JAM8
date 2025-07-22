@@ -242,8 +242,8 @@ namespace JAM8.Console.Pages
             Random rnd = new();
             GridStructure gs = GridStructure.create_win();
             Variogram vm = Variogram.create(VariogramType.Spherical, 0, 1, 20);
-            CData cd = CData.read_from_gslibwin().cdata;
-            GRFS grfs = GRFS.create(gs, vm, cd, cd.select_cd_propertyName_win());
+            CData cd = CData.read_from_gslib_win().cdata;
+            GRFS grfs = GRFS.create(gs, vm, cd, cd.select_by_property_name_win());
             var rot_mat = new double[] { 0, 0, 0, 20, 20, 2 };
             var (result, time) = grfs.run(30, rot_mat, 20, rnd.Next());
             result.showGrid_win();
@@ -255,8 +255,8 @@ namespace JAM8.Console.Pages
             Random rnd = new();
             GridStructure gs = GridStructure.create_win();
             Variogram vm = Variogram.create(VariogramType.Spherical, 0, 1, 20);
-            CData cd = CData.read_from_gslibwin().cdata;
-            GRFS grfs = GRFS.create(gs, vm, cd, cd.select_cd_propertyName_win());
+            CData cd = CData.read_from_gslib_win().cdata;
+            GRFS grfs = GRFS.create(gs, vm, cd, cd.select_by_property_name_win());
             var rot_mat = new double[] { 0, 0, 0, 20, 20, 2 };
             var (result, time) = grfs.run2(30, rot_mat, 20, rnd.Next());
             result.showGrid_win();

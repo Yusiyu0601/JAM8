@@ -177,12 +177,12 @@ namespace JAM8.Algorithms.Numerics
                 b[i, 0] = vector[i];
             }
             DenseVector mathnet_vector = MyVector.to_MathNet(vector);
-            //float[,] result = Accord.Math.Matrix.Solve(matrix.buffer, b);
+            float[,] result = Accord.Math.Matrix.Solve(matrix.buffer, b);
             float[] v = new float[vector.N];
-            //for (int i = 0; i < vector.N; i++)
-            //{
-            //    v[i] = result[i, 0];
-            //}
+            for (int i = 0; i < vector.N; i++)
+            {
+                v[i] = result[i, 0];
+            }
             return MyVector.create(v);
         }
 

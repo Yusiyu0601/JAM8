@@ -68,13 +68,13 @@ namespace snesim_with_reverse_query_search_tree
 
                 //5. Load Conditional Data
                 string is_use_cd = EasyConsole.Input.ReadString("use conditional data(2d) or not? (input Y or N) => ");
-                CData2 cd = null;
-                CData2 coarsened_cd = null;
+                CData cd = null;
+                CData coarsened_cd = null;
                 Grid coarsened_grid = null;
                 if (is_use_cd == "Y")
                 {
                     string cd_fileName = "";
-                    (cd, cd_fileName) = CData2.read_from_gslib_win();
+                    (cd, cd_fileName) = CData.read_from_gslib_win();
                     Output.WriteLine($"\n\tconditional data fileName  {cd_fileName}\n");
                     //coarsened conditional data and show coarsened grid
                     (coarsened_cd, coarsened_grid) = cd.coarsened(re_gs);
@@ -111,13 +111,13 @@ namespace snesim_with_reverse_query_search_tree
 
                 //5. Load Conditional Data
                 string is_use_cd = EasyConsole.Input.ReadString("use conditional data(3d) or not? (input Y or N) => ");
-                CData2 cd = null;
-                CData2 coarsened_cd = null;
+                CData cd = null;
+                CData coarsened_cd = null;
                 Grid coarsened_grid = null;
                 if (is_use_cd == "Y")
                 {
                     string cd_fileName = "";
-                    (cd, cd_fileName) = CData2.read_from_gslib_win();
+                    (cd, cd_fileName) = CData.read_from_gslib_win();
                     Output.WriteLine($"\n\tconditional data fileName  {cd_fileName}\n");
                     //coarsened conditional data and show coarsened grid
                     (coarsened_cd, coarsened_grid) = cd.coarsened(re_gs);

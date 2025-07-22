@@ -7,11 +7,29 @@ namespace JAM8.Algorithms.Geometry
     {
         private string _dim = "";
         public List<string> paras { get; internal set; }
+
         public Form_GridStructure(GridStructure gs = null, string title = null)
         {
             InitializeComponent();
+            //根据系统语言设置按钮文字
+            bool IsChineseSystem = CultureInfo.CurrentCulture.Name.StartsWith("zh");
+            if (IsChineseSystem)
+            {
+                this.Text = "GridStructure设置";
+                label10.Text = "维度";
+                button1.Text = "确定";
+                button2.Text = "取消";
+            }
+            else
+            {
+                this.Text = "GridStructure Setting";
+                label10.Text = "Dim";
+                button1.Text = "OK";
+                button2.Text = "Cancel";
+            }
+
             if (title != null)
-                Text = title;
+                this.Text = title;
 
             comboBox2.SelectedIndex = 0;
             if (gs != null)
@@ -30,23 +48,6 @@ namespace JAM8.Algorithms.Geometry
                     comboBox2.SelectedIndex = 0;
                 else
                     comboBox2.SelectedIndex = 1;
-            }
-
-            //根据系统语言设置按钮文字
-            bool IsChineseSystem = CultureInfo.CurrentCulture.Name.StartsWith("zh");
-            if (IsChineseSystem)
-            {
-                this.Text = "GridStructure设置";
-                label10.Text = "维度";
-                button1.Text = "确定";
-                button2.Text = "取消";
-            }
-            else
-            {
-                this.Text = "GridStructure Setting";
-                label10.Text = "Dim";
-                button1.Text = "OK";
-                button2.Text = "Cancel";
             }
         }
 
@@ -99,6 +100,7 @@ namespace JAM8.Algorithms.Geometry
                 label7.Visible = false;
                 _dim = "D2";
             }
+
             if (comboBox2.SelectedIndex == 1)
             {
                 tb_KCount.Visible = true;

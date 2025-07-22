@@ -6,11 +6,10 @@ namespace JAM8.SpecificApps.建模方法.Forms
 {
     public partial class Form_MPS : Form
     {
-        private Grid g_ti;//训练图像
-        private Grid g_re;//模拟网格
+        private Grid g_ti; //训练图像
+        private Grid g_re; //模拟网格
 
-        private CData cd;//cdata
-        private CData2 cd2;
+        private CData cd;
 
         private string file_name_ti;
         private string file_name_cd;
@@ -23,7 +22,7 @@ namespace JAM8.SpecificApps.建模方法.Forms
         //导入TI
         private void button2_Click(object sender, EventArgs e)
         {
-            (g_ti, file_name_ti) = Grid.create_from_gslibwin();//ti
+            (g_ti, file_name_ti) = Grid.create_from_gslibwin(); //ti
             if (g_ti == null)
                 return;
 
@@ -35,6 +34,7 @@ namespace JAM8.SpecificApps.建模方法.Forms
             mps_ny.Text = g_ti.gridStructure.ny.ToString();
             mps_nz.Text = g_ti.gridStructure.nz.ToString();
         }
+
         //导入TI
         private void button7_Click(object sender, EventArgs e)
         {
@@ -57,8 +57,7 @@ namespace JAM8.SpecificApps.建模方法.Forms
         //导入cdata
         private void button1_Click(object sender, EventArgs e)
         {
-            //(cd, var filename) = CData.read_from_gslibwin("导入条件数据");
-            (cd2, var filename) = CData2.read_from_gslib_win("导入条件数据");
+            (cd, var filename) = CData.read_from_gslib_win("导入条件数据");
             textBox2.Text = filename;
         }
 
@@ -75,9 +74,8 @@ namespace JAM8.SpecificApps.建模方法.Forms
             float ymn = float.Parse(tb_cd_ymn.Text);
             float zmn = float.Parse(tb_cd_zmn.Text);
             GridStructure gs = GridStructure.create(nx, ny, nz, xsiz, ysiz, zsiz, xmn, ymn, zmn);
-            var ccd = CoarsenedCData.create(gs, cd).ccd;
-            var grid = ccd.to_grid();
-            this.scottplot4Grid3.update_grid(grid);
+
+            this.scottplot4Grid3.update_grid(cd.coarsened(gs).coarsened_grid);
         }
 
         //SIMPAT
@@ -120,7 +118,7 @@ namespace JAM8.SpecificApps.建模方法.Forms
             int template_rz = int.Parse(tb_template_rz.Text);
 
             var (model, _) = snesim.run(random_seed, multigrid, max_number, (template_rx, template_ry, template_rz),
-                g_ti.first_gridProperty(), cd2, gs_re);
+                g_ti.first_gridProperty(), cd, gs_re);
 
             scottplot4Grid1.update_grid(model);
         }
@@ -141,14 +139,12 @@ namespace JAM8.SpecificApps.建模方法.Forms
 
             DirectSampling ds = null;
             if (cd != null)
-                ds = DirectSampling.create(gs_re, g_ti.first_gridProperty(), cd, cd.propertyNames[0]);
+                ds = DirectSampling.create(gs_re, g_ti.first_gridProperty(), cd, cd.property_names[0]);
             else
                 ds = DirectSampling.create(gs_re, g_ti.first_gridProperty());
 
             g_re = ds.run(search_radius, max_number, max_fraction, distance_threshold, random_seed);
             scottplot4Grid1.update_grid(g_re);
         }
-
-
     }
 }

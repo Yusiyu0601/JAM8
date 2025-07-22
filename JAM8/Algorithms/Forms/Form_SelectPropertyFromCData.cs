@@ -9,10 +9,7 @@ namespace JAM8.Algorithms.Forms
 
         public string selected_property_name
         {
-            get
-            {
-                return listBox1.Text;
-            }
+            get { return listBox1.Text; }
         }
 
         public Form_SelectPropertyFromCData(CData cd, string title = null)
@@ -27,10 +24,11 @@ namespace JAM8.Algorithms.Forms
             #region 加载属性列表
 
             listBox1.Items.Clear();
-            foreach (var PropertyName in cd.propertyNames)
+            foreach (var PropertyName in cd.property_names)
             {
                 listBox1.Items.Add(PropertyName);
             }
+
             listBox1.SelectedIndex = 0;
 
             #endregion
@@ -56,8 +54,8 @@ namespace JAM8.Algorithms.Forms
                 float ymn = boundary.min_y;
                 float? zmn = cd.dim == Dimension.D2 ? 0.5f : boundary.min_z;
                 GridStructure gs = GridStructure.create(nx, ny, nz, xsiz, ysiz, zsiz.Value, xmn, ymn, zmn.Value);
-                var g_cd = cd.assign_to_grid(gs);
-                scottplot4GridProperty1.update_gridProperty(g_cd.grid_assigned[listBox1.SelectedItem.ToString()]);
+                var (g_cd, grid_coarsened) = cd.coarsened(gs);
+                scottplot4GridProperty1.update_gridProperty(grid_coarsened[listBox1.SelectedItem.ToString()]);
             }
         }
 

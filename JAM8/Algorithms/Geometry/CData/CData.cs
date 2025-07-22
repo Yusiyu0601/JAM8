@@ -1,241 +1,363 @@
-﻿using System.Data;
-using JAM8.Algorithms.Forms;
+﻿using JAM8.Algorithms.Forms;
+using JAM8.Algorithms.Numerics;
 using JAM8.Utilities;
 
 namespace JAM8.Algorithms.Geometry
 {
     /// <summary>
-    /// 条件数据项，(属性名称=>属性值)
+    /// Conditional data class, using DataFrame as the data buffer for conditional data
     /// </summary>
-    public class CDataItem : Dictionary<string, float?>
+    public class CData
     {
-        private CDataItem() { }
-
-        /// <summary>
-        /// 维度
-        /// </summary>
-        public Dimension dim { get { return coord.dim; } }
-
-        /// <summary>
-        /// 坐标
-        /// </summary>
-        public Coord coord { get; internal set; }
-
-        /// <summary>
-        /// 创建新cd_item
-        /// </summary>
-        /// <param name="c"></param>
-        /// <param name="values"></param>
-        /// <returns></returns>
-        public static CDataItem create(Coord coord, Dictionary<string, float?> values)
+        private CData()
         {
-            CDataItem cdi = new()
-            {
-                coord = coord
-            };
-            foreach (var (key, value) in values)
-                cdi.Add(key, value);
-
-            return cdi;
         }
 
-        public override string ToString()
-        {
-            return $"{coord.ToString()} {this.Count}";
-        }
+        public Dimension dim { get; internal set; }
+
+        // Property names of the conditional data, excluding coordinates
+        public string[] property_names { get; internal set; }
+
+        // Number of conditional data items
+        public int N_cdata_items => buffer.N_Record;
+
+        //Data buffer for conditional data
+        private MyDataFrame buffer;
+
+        //The number of the x coordinate in the data buffer, starting at 0
+        private int x_series_index { get; init; }
+
+        //The number of the y coordinate in the data buffer, starting at 0
+        private int y_series_index { get; init; }
+
+        //The number of the z coordinate in the data buffer, starting at 0
+        private int z_series_index { get; init; }
 
         /// <summary>
-        /// 深度复制
+        /// Null value used to mark missing/invalid data. If null, null checking is disabled.
+        /// This value is immutable once the object is constructed.
         /// </summary>
-        /// <returns></returns>
-        public CDataItem deep_clone()
-        {
-            CDataItem cdi = new()
-            {
-                coord = coord.deep_clone()
-            };
-            foreach (var (key, value) in this)
-                cdi.Add(key, value);
+        private float? null_value { get; init; }
 
-            return cdi;
-        }
-    }
-
-    /// <summary>
-    /// condition data
-    /// </summary>
-    public class CData : List<CDataItem>
-    {
-        private CData() { }
+        //The target grid structure, if not empty, indicates that the conditional data
+        //has been coarsened to the target grid structure
+        public GridStructure target_gs { get; internal set; }
 
         /// <summary>
-        /// 数量
+        /// Get the numerical value of the conditional data based on the sequence number and 
+        /// attribute name of the conditional data
         /// </summary>
-        public int N
+        /// <param name="idx">The serial number of the conditional data, starting from 0</param>
+        /// <param name="property_name">Attribute name</param>
+        /// <returns>Nullable float value</returns>
+        public float? get_value(int idx, string property_name)
         {
-            get
-            {
-                return Count;
-            }
+            float? value = Convert.ToSingle(buffer[idx, property_name]);
+            if (null_value.HasValue && null_value == value)
+                value = null;
+            return value;
         }
 
         /// <summary>
-        /// 维度
+        /// Get the numerical value of the conditional data based on the sequence number and 
+        /// property index of the conditional data
         /// </summary>
-        public Dimension dim
+        /// <param name="idx">The serial number of the conditional data, starting from 0</param>
+        /// <param name="property_idx">The index of the property, starting from 0</param>
+        /// <returns>Nullable float value</returns>
+        public float? get_value(int idx, int property_idx)
         {
-            get
-            {
-                return this[0].dim;
-            }
+            return get_value(idx, property_names[property_idx]);
         }
 
         /// <summary>
-        /// 获取某属性[非空值]的统计量，包括最大值、最小值、平均数
+        /// Get a full record (including coordinates and all properties) by row index.
         /// </summary>
-        /// <param name="propertyName"></param>
-        /// <returns></returns>
-        public (float max, float min, float mean, int count) get_statistics(string propertyName)
+        /// <param name="idx">The record index</param>
+        /// <returns>Dictionary of all field names to their values (nullable float)</returns>
+        public (string[] field_names, float?[] values) get_cdata_item(int idx)
         {
-            List<float> tmp_list = new();
-            for (int n = 0; n < N; n++)
-            {
-                float? value = this[n][propertyName];
-                if (value != null)
-                    tmp_list.Add(value.Value);
-            }
-            return (tmp_list.Max(), tmp_list.Min(), tmp_list.Average(), tmp_list.Count);
-        }
+            List<string> names = new();
+            List<float?> values = new();
 
-        /// <summary>
-        /// 获取数据点集合的外边界
-        /// </summary>
-        /// <returns></returns>
-        public (float min_x, float max_x, float min_y, float max_y, float? min_z, float? max_z) get_boundary()
-        {
-            float min_x = 0, max_x = 0, min_y = 0, max_y = 0;
-            float? min_z = null, max_z = null;
+            // Add coordinates
+            names.Add(buffer.series_names[x_series_index]);
+            values.Add(Convert.ToSingle(buffer[idx, x_series_index]));
 
-            min_x = this.Min(a => a.coord.x);
-            max_x = this.Max(a => a.coord.x);
-            min_y = this.Min(a => a.coord.y);
-            max_y = this.Max(a => a.coord.y);
+            names.Add(buffer.series_names[y_series_index]);
+            values.Add(Convert.ToSingle(buffer[idx, y_series_index]));
+
             if (dim == Dimension.D3)
             {
-                min_z = this.Min(a => a.coord.z);
-                max_z = this.Max(a => a.coord.z);
+                names.Add(buffer.series_names[z_series_index]);
+                values.Add(Convert.ToSingle(buffer[idx, z_series_index]));
             }
-            return (min_x, max_x, min_y, max_y, min_z, max_z);
+
+            // Add properties
+            foreach (var name in property_names)
+            {
+                names.Add(name);
+                values.Add(get_value(idx, name));
+            }
+
+            return (names.ToArray(), values.ToArray());
         }
 
         /// <summary>
-        /// 属性名称
+        /// Gets the spatial coordinate of the specified record.
         /// </summary>
-        public List<string> propertyNames { get; internal set; }
-
-        /// <summary>
-        /// 打印
-        /// </summary>
-        /// <returns></returns>
-        public string view_text(int N_first_lines = 15)
+        /// <param name="idx">The record index.</param>
+        /// <returns>A Coord object representing the (x, y[, z]) location.</returns>
+        public Coord get_coord(int idx)
         {
-            var df = to_dataFrame();
-            return df.view_text(N_first_lines);
+            float x = Convert.ToSingle(buffer[idx, x_series_index]);
+            float y = Convert.ToSingle(buffer[idx, y_series_index]);
+
+            if (dim == Dimension.D3)
+            {
+                float z = Convert.ToSingle(buffer[idx, z_series_index]);
+                return Coord.create(x, y, z);
+            }
+            else
+            {
+                return Coord.create(x, y);
+            }
         }
 
-        #region 粗化方法
-
         /// <summary>
-        /// 将CData赋值于指定GridStructure(注意：可能出现多个cdi位于同一个网格节点中)，
-        /// 所有CDataItem的Coord调整到指定GridStructure框架中，越界的cdi，直接删除。
+        /// coarsening the conditional data to the target grid structure, and adjust the 
+        /// conditional data to the grid cells of the target grid structure
+        /// 将条件数据粗化到目标网格结构，实现条件数据调整至目标网格结构的网格单元上
         /// </summary>
         /// <param name="gs"></param>
         /// <returns></returns>
-        public (Grid grid_assigned, CData cd_assigned) assign_to_grid(GridStructure gs, string grid_name = "cdata")
+        public (CData coarsened_cd, Grid coarsened_grid) coarsened(GridStructure gs)
         {
-            Grid grid_assigned = Grid.create(gs, grid_name);//根据输入gs创建grid
-            CData cd_assigned = new()//创建新的cd
+            CData cd_coarsened = new()
             {
-                propertyNames = []
+                dim = dim,
+                x_series_index = x_series_index,
+                y_series_index = y_series_index,
+                z_series_index = z_series_index,
+                null_value = null_value,
+                target_gs = gs,
+                property_names = property_names.Clone() as string[], //复制属性名称
+                buffer = MyDataFrame.create(buffer.series_names) //复制原始数据缓冲区的结构
             };
-            for (int i = 0; i < propertyNames.Count; i++)
-                cd_assigned.propertyNames.Add(propertyNames[i]);
 
-            foreach (var propertyName in propertyNames)
+            for (int idx_record = 0; idx_record < buffer.N_Record; idx_record++)
             {
-                GridProperty gp = GridProperty.create(gs);
-                for (int i = 0; i < N; i++)//将条件数据赋值于网格
+                SpatialIndex si = null; //粗化后条件数据的空间索引
+                Coord coord = null; //条件数据的坐标
+                if (dim == Dimension.D2)
                 {
-                    SpatialIndex si = gs.coord_to_spatial_index(this[i].coord);//坐标—>索引
-                    if (si != null)
-                        gp.set_value(si, this[i][propertyName]);
-                }
-                grid_assigned.add_gridProperty(propertyName, gp);
-            }
-            foreach (var cdi in this)
-            {
-                var si = gs.coord_to_spatial_index(cdi.coord);
-                if (si != null)//保留在grid范围内的cdi
-                {
-                    var cdi_adjust = cdi.deep_clone();
-                    cdi_adjust.coord = gs.spatial_index_to_coord(si);
-                    cd_assigned.Add(cdi_adjust);
-                }
-            }
-
-            return (grid_assigned, cd_assigned);
-        }
-
-        /// <summary>
-        /// 将CData赋值于指定GridStructure(注意：可能出现多个cdi位于同一个网格节点中)，
-        /// 所有CDataItem的Coord调整到指定GridStructure框架中，越界的cdi，直接删除。
-        /// </summary>
-        /// <param name="gs"></param>
-        /// <param name="grid_name"></param>
-        /// <returns></returns>
-        public (Grid grid_assigned, CData cd_assigned) coarsened_to_grid(GridStructure target_gs, string grid_name = "cdata")
-        {
-            Grid grid_assigned = Grid.create(target_gs, propertyNames, grid_name);//根据目标gs创建grid
-
-            CData cd_assigned = new() { propertyNames = [] };   //创建粗化后的cdata对象
-            for (int i = 0; i < propertyNames.Count; i++)
-                cd_assigned.propertyNames.Add(propertyNames[i]);
-
-            List<int> arrayIndex_cdi = [];//创建粗化后条件数据在网格中的arrayIndex
-
-            //遍历所有cdi,计算是否落在目标网格范围内
-            foreach (var cdi in this)
-            {
-                SpatialIndex si = target_gs.coord_to_spatial_index(cdi.coord);
-                if (si != null)//保留落在grid范围内的cdi
-                {
-                    var cdi_adjust = cdi.deep_clone();
-
-                    cdi_adjust.coord = target_gs.spatial_index_to_coord(si);
-
-                    cd_assigned.Add(cdi_adjust);
-
-                    foreach (var propertyName in propertyNames)
+                    float x = Convert.ToSingle(buffer[idx_record, x_series_index]);
+                    float y = Convert.ToSingle(buffer[idx_record, y_series_index]);
+                    coord = Coord.create(x, y);
+                    si = gs.coord_to_spatial_index(coord);
+                    if (si != null) //保留落在grid范围内的cdi
                     {
-                        grid_assigned[propertyName].set_value(si, cdi[propertyName]);
+                        MyRecord record = buffer.get_record(idx_record); //从原始表里提取记录，然后修改
+                        record[buffer.series_names[x_series_index]] = si.ix;
+                        record[buffer.series_names[y_series_index]] = si.iy;
+                        cd_coarsened.buffer.add_record(record);
+                    }
+                }
+
+                if (dim == Dimension.D3)
+                {
+                    float x = Convert.ToSingle(buffer[idx_record, x_series_index]);
+                    float y = Convert.ToSingle(buffer[idx_record, y_series_index]);
+                    float z = Convert.ToSingle(buffer[idx_record, z_series_index]);
+                    coord = Coord.create(x, y, z);
+                    si = gs.coord_to_spatial_index(coord);
+                    if (si != null) //保留落在grid范围内的cdi
+                    {
+                        MyRecord record = buffer.get_record(idx_record); //从原始表里提取记录，然后修改
+                        record[buffer.series_names[x_series_index]] = si.ix;
+                        record[buffer.series_names[y_series_index]] = si.iy;
+                        record[buffer.series_names[z_series_index]] = si.iz;
+                        cd_coarsened.buffer.add_record(record);
                     }
                 }
             }
 
-            return (grid_assigned, cd_assigned);
+            Grid g = Grid.create(gs, "coarsened");
+            foreach (var property_name in cd_coarsened.property_names)
+            {
+                g.add_gridProperty(property_name);
+            }
+
+            //循环将coarsened里的数据赋值给g
+            for (int idx_record = 0; idx_record < cd_coarsened.buffer.N_Record; idx_record++)
+            {
+                SpatialIndex si = null;
+                if (dim == Dimension.D2)
+                {
+                    int ix = Convert.ToInt32(cd_coarsened.buffer[idx_record, x_series_index]);
+                    int iy = Convert.ToInt32(cd_coarsened.buffer[idx_record, y_series_index]);
+                    si = SpatialIndex.create(ix, iy);
+                }
+
+                if (dim == Dimension.D3)
+                {
+                    int ix = Convert.ToInt32(cd_coarsened.buffer[idx_record, x_series_index]);
+                    int iy = Convert.ToInt32(cd_coarsened.buffer[idx_record, y_series_index]);
+                    int iz = Convert.ToInt32(cd_coarsened.buffer[idx_record, z_series_index]);
+                    si = SpatialIndex.create(ix, iy, iz);
+                }
+
+                if (si != null)
+                {
+                    for (int j = 0; j < cd_coarsened.property_names.Length; j++)
+                    {
+                        g[cd_coarsened.property_names[j]].set_value(si, cd_coarsened.get_value(idx_record, j));
+                    }
+                }
+            }
+
+            return (cd_coarsened, g);
         }
 
-        #endregion
+        /// <summary>
+        /// Gets the spatial boundary of the conditional data (min/max values of x, y, and z coordinates).
+        /// For 2D data, the z boundary values will be null.
+        /// </summary>
+        /// <returns>(min_x, max_x, min_y, max_y, min_z, max_z)</returns>
+        public (float min_x, float max_x, float min_y, float max_y, float? min_z, float? max_z) get_boundary()
+        {
+            float min_x = float.MaxValue, max_x = float.MinValue;
+            float min_y = float.MaxValue, max_y = float.MinValue;
+            float? min_z = null, max_z = null;
 
-        #region 读写与转换
+            for (int i = 0; i < N_cdata_items; i++)
+            {
+                float x = Convert.ToSingle(buffer[i, x_series_index]);
+                float y = Convert.ToSingle(buffer[i, y_series_index]);
+
+                if (x < min_x) min_x = x;
+                if (x > max_x) max_x = x;
+
+                if (y < min_y) min_y = y;
+                if (y > max_y) max_y = y;
+
+                if (dim == Dimension.D3)
+                {
+                    float z = Convert.ToSingle(buffer[i, z_series_index]);
+                    if (min_z == null || z < min_z) min_z = z;
+                    if (max_z == null || z > max_z) max_z = z;
+                }
+            }
+
+            return (min_x, max_x, min_y, max_y, min_z, max_z);
+        }
+
+        /// <summary>
+        /// Deep copy
+        /// </summary>
+        /// <returns></returns>
+        public CData deep_clone()
+        {
+            CData cd = new()
+            {
+                dim = dim,
+                null_value = null_value,
+
+                x_series_index = x_series_index,
+                y_series_index = y_series_index,
+                z_series_index = z_series_index,
+
+                target_gs = target_gs, //这个不需要深度复制，因为是占用空间较大，而且只是引用
+
+                buffer = buffer.deep_clone(),
+                property_names = [.. property_names]
+            };
+
+            return cd;
+        }
+
+        /// <summary>
+        /// Read CData from gslib.
+        /// </summary>
+        /// <param name="file_name"></param>
+        /// <param name="x_series_index"></param>
+        /// <param name="y_series_index"></param>
+        /// <param name="z_series_index"></param>
+        /// <param name="null_value"></param>
+        /// <returns></returns>
+        public static CData read_from_gslib(string file_name, int x_series_index, int y_series_index,
+            int z_series_index, float? null_value)
+        {
+            CData cdata = new()
+            {
+                buffer = GSLIB.gslib_to_df(file_name),
+                x_series_index = x_series_index,
+                y_series_index = y_series_index,
+                z_series_index = z_series_index,
+                null_value = null_value,
+                dim = z_series_index == -1 ? Dimension.D2 : Dimension.D3
+            };
+
+            //将cdata.buffer里所有除了x_series_index y_series_index z_series_index以外的属性名称提取出来
+            List<string> property_names = [];
+            for (int i = 0; i < cdata.buffer.series_names.Length; i++)
+            {
+                if (cdata.dim == Dimension.D2 && i != x_series_index && i != y_series_index)
+                {
+                    property_names.Add(cdata.buffer.series_names[i]);
+                }
+
+                if (cdata.dim == Dimension.D3 && i != x_series_index && i != y_series_index && i != z_series_index)
+                {
+                    property_names.Add(cdata.buffer.series_names[i]);
+                }
+            }
+
+            cdata.property_names = [.. property_names];
+
+            return cdata;
+        }
+
+        /// <summary>
+        /// Read CData from gslib (winform mode).
+        /// </summary>
+        /// <returns></returns>
+        public static (CData cdata, string file_name) read_from_gslib_win(string title = null)
+        {
+            Form_ReadConditionData frm = new(title);
+            if (frm.ShowDialog() != DialogResult.OK)
+                return (null, null);
+            var paras = frm.paras;
+
+            var file_name = paras[0];
+            var dim = (Dimension)Enum.Parse(typeof(Dimension), paras[1]);
+            int x_series_index = int.Parse(paras[2]);
+            int y_series_index = int.Parse(paras[3]);
+            int z_series_index = int.Parse(paras[4]);
+            bool null_value_enabled = bool.Parse(paras[5]);
+            float? null_value = float.Parse(paras[6]);
+
+            if (null_value_enabled == false) //如果不启用null值，则设置为null
+                null_value = null;
+
+            if (dim == Dimension.D2)
+                return (read_from_gslib(file_name, x_series_index, y_series_index, -1, null_value),
+                    file_name);
+            if (dim == Dimension.D3)
+                return (read_from_gslib(file_name, x_series_index, y_series_index, z_series_index, null_value),
+                    file_name);
+            //如果dim不是D2或D3，则返回null
+            return (null, file_name);
+        }
 
         /// <summary>
         /// 保存至gslib
         /// </summary>
         /// <param name="fileName"></param>
+        /// <param name="null_value"></param>
         public void save_to_gslib(string fileName, float null_value)
         {
-            GSLIB.df_to_gslib(fileName, null_value, to_dataFrame());
+            GSLIB.df_to_gslib(fileName, null_value, buffer);
         }
 
         /// <summary>
@@ -248,68 +370,65 @@ namespace JAM8.Algorithms.Geometry
                 return;
             var paras = frm.paras;
             var fileName = paras[0];
-            var null_value = float.Parse(paras[1]);//null值
+            var null_value = float.Parse(paras[1]); //null值
             save_to_gslib(fileName, null_value);
         }
 
         /// <summary>
-        /// 转换为MyDataFrame
+        /// Use the nodes in gridProperty that satisfy the condition as the condition data
         /// </summary>
+        /// <param name="gp"></param>
+        /// <param name="grid_property_name"></param>
+        /// <param name="compare_type"></param>
+        /// <param name="compared_value"></param>
         /// <returns></returns>
-        public MyDataFrame to_dataFrame()
-        {
-            List<string> series_names = new();
-            if (dim == Dimension.D2)
-                series_names.AddRange(new List<string>() { "X", "Y" });
-            if (dim == Dimension.D3)
-                series_names.AddRange(new List<string>() { "X", "Y", "Z" });
-            series_names.AddRange(propertyNames);
-            var df = MyDataFrame.create(series_names.ToArray());
-            foreach (var cdi in this)
-            {
-                var record = df.new_record();
-                record["X"] = cdi.coord.x;
-                record["Y"] = cdi.coord.y;
-                if (dim == Dimension.D3)
-                    record["Z"] = cdi.coord.z;
-                foreach (var (key, value) in cdi)
-                    record[key] = value;
-                df.add_record(record);
-            }
-            return df;
-        }
-
-        #endregion
-
-        /// <summary>
-        /// 计算与Coord的距离，返回结果距离由小到大
-        /// </summary>
-        /// <param name="c"></param>
-        /// <returns></returns>
-        public List<(double distance, CDataItem cdi)> order_by_distance(Coord c)
-        {
-            List<(double distance, CDataItem)> ordered = new();
-            foreach (var item in this)
-                ordered.Add((Coord.get_distance(item.coord, c), item));
-            var result = ordered.OrderBy(a => a.distance).ToList();
-            return result;
-        }
-
-        /// <summary>
-        /// 深度复制
-        /// </summary>
-        /// <returns></returns>
-        public CData deep_clone()
+        public static CData create_from_gridProperty(GridProperty gp, string grid_property_name,
+            CompareType compare_type, float? compared_value)
         {
             CData cd = new()
             {
-                propertyNames = new()
+                property_names = [grid_property_name],
+                target_gs = gp.grid_structure,
+                dim = gp.grid_structure.dim,
+                x_series_index = 0,
+                y_series_index = 1,
+                z_series_index = gp.grid_structure.dim == Dimension.D3 ? 2 : -1,
+                buffer = MyDataFrame.create(
+                    gp.grid_structure.dim == Dimension.D2
+                        ? new[] { "x", "y", grid_property_name }
+                        : new[] { "x", "y", "z", grid_property_name }
+                )
             };
 
-            for (int i = 0; i < propertyNames.Count; i++)
-                cd.propertyNames.Add(propertyNames[i]);
-            for (int i = 0; i < N; i++)
-                cd.Add(this[i].deep_clone());
+            //遍历所有节点，判断是否满足条件
+            for (int n = 0; n < gp.grid_structure.N; n++)
+            {
+                Coord c = gp.grid_structure.array_index_to_coord(n);
+                float? currentValue = gp.get_value(n);
+
+                //根据compare_type，判断是否保留等于compared_value的节点，用switch语法
+                // 判断当前条件是否满足
+                bool shouldReplace = compare_type switch
+                {
+                    CompareType.NoCompared => true,
+                    CompareType.Equals => currentValue == compared_value,
+                    CompareType.NotEqual => currentValue != compared_value,
+                    CompareType.GreaterThan => currentValue > compared_value,
+                    CompareType.GreaterEqualsThan => currentValue >= compared_value,
+                    CompareType.LessThan => currentValue < compared_value,
+                    CompareType.LessEqualsThan => currentValue <= compared_value,
+                    _ => false
+                };
+
+                // 如果当前条件满足，使用该条件的Value
+                if (shouldReplace)
+                {
+                    if (cd.dim == Dimension.D2)
+                        cd.buffer.add_record([c.x, c.y, currentValue]);
+                    if (cd.dim == Dimension.D3)
+                        cd.buffer.add_record([c.x, c.y, c.z, currentValue]);
+                }
+            }
 
             return cd;
         }
@@ -317,7 +436,7 @@ namespace JAM8.Algorithms.Geometry
         /// <summary>
         /// 窗体模式选择cd_propertyName
         /// </summary>
-        public string select_cd_propertyName_win(string title = null)
+        public string select_by_property_name_win(string title = null)
         {
             Form_SelectPropertyFromCData frm = new(this, title);
             if (frm.ShowDialog() != DialogResult.OK)
@@ -325,187 +444,79 @@ namespace JAM8.Algorithms.Geometry
             return frm.selected_property_name;
         }
 
-        #region 静态方法
-
         /// <summary>
-        /// 从gslib里读取CData
+        /// Returns the first few lines of the data buffer as a preview.
         /// </summary>
-        /// <param name="fileName"></param>
-        /// <param name="dim"></param>
-        /// <param name="sep"></param>
-        /// <param name="col_x"></param>
-        /// <param name="col_y"></param>
-        /// <param name="col_z"></param>
-        /// <param name="enable_nullValue"></param>
-        /// <param name="nullValue"></param>
-        /// <returns></returns>
-        public static CData read_from_gslib(string fileName, Dimension dim, int col_x, int col_y, int col_z,
-            bool enable_nullValue, float nullValue)
+        /// <param name="N_first_lines">The number of lines to retrieve from the start of the buffer. Defaults to 15 if not specified.</param>
+        /// <returns>A string containing the first <paramref name="N_first_lines"/> lines of the text buffer.</returns>
+        public string view_text(int N_first_lines = 15)
         {
-            MyDataFrame df = GSLIB.gslib_to_df(fileName);
-            CData cd = new()
-            {
-                propertyNames = new()
-            };
-            //提取属性名列表
-            for (int iCol = 0; iCol < df.N_Series; iCol++)
-            {
-                if (dim == Dimension.D2 && iCol != col_x - 1 && iCol != col_y - 1)
-                    cd.propertyNames.Add(df.series_names[iCol]);
-                if (dim == Dimension.D3 && iCol != col_x - 1 && iCol != col_y - 1 && iCol != col_z - 1)
-                    cd.propertyNames.Add(df.series_names[iCol]);
-            }
-            //根据属性名列表提取行数据
-            for (int iRow = 0; iRow < df.N_Record; iRow++)
-            {
-                float x, y, z;
-                Coord c;
-                Dictionary<string, float?> values;
-                if (dim == Dimension.D2)
-                {
-                    x = Convert.ToSingle(df[iRow, col_x - 1]);
-                    y = Convert.ToSingle(df[iRow, col_y - 1]);
-                    c = Coord.create(x, y);
-                }
-                else
-                {
-                    x = Convert.ToSingle(df[iRow, col_x - 1]);
-                    y = Convert.ToSingle(df[iRow, col_y - 1]);
-                    z = Convert.ToSingle(df[iRow, col_z - 1]);
-                    c = Coord.create(x, y, z);
-                }
-                values = new();
-                foreach (var propertyName in cd.propertyNames)
-                {
-                    float? value = Convert.ToSingle(df[iRow, propertyName]);
-                    if (enable_nullValue && nullValue == value)
-                        value = null;
-                    values.Add(propertyName, value);
-                }
-                cd.Add(CDataItem.create(c, values));
-            }
-
-            return cd;
+            return buffer.view_text(N_first_lines);
         }
 
         /// <summary>
-        /// 从gslib里读取CData（窗体模式）
+        /// Prints the contents of the data buffer.
         /// </summary>
-        /// <returns></returns>
-        public static (CData cdata, string file_name) read_from_gslibwin(string title = null)
+        /// <remarks>Delegates to the underlying buffer's print method.</remarks>
+        public void print(int N_first_lines = 15)
         {
-            Form_ReadConditionData frm = new(title);
-            if (frm.ShowDialog() != DialogResult.OK)
-                return (null, null);
-            var paras = frm.paras;
+            MyConsoleHelper.write_string_to_console($"CData\n{view_text()}");
+        }
 
-            var fileName = paras[0];
-            var dim = (Dimension)Enum.Parse(typeof(Dimension), paras[1]);
-            int col_x = int.Parse(paras[2]);
-            int col_y = int.Parse(paras[3]);
-            int col_z = int.Parse(paras[4]);
-            bool enable_nullValue = bool.Parse(paras[5]);
-            float nullValue = float.Parse(paras[6]);
-
-            return (read_from_gslib(fileName, dim, col_x, col_y, col_z, enable_nullValue, nullValue), fileName);
+        public override string ToString()
+        {
+            string dim_str = dim == Dimension.D2 ? "2D" : "3D";
+            string props = property_names == null || property_names.Length == 0
+                ? "none"
+                : string.Join(", ", property_names);
+            return $"CData2 [{dim_str}] — {buffer.N_Record} records, {buffer.N_Series} fields | Properties: [{props}]";
         }
 
         /// <summary>
-        /// 将gridProperty中满足条件的节点，提取出来作为cdi
-        /// </summary>
-        /// <param name="g"></param>
-        /// <param name="property_name"></param>
-        /// <param name="value"></param>
-        /// <param name="equal_or_exclude">为true，则保留等于value的节点;为false，则排除等于value的节点</param>
-        /// <returns></returns>
-        public static CData create_from_gridProperty(Grid g, string property_name, float? value, bool equal_or_exclude)
-        {
-            CData cd = new()
-            {
-                propertyNames = []
-            };
-            cd.propertyNames.Add(property_name);
-            for (int n = 0; n < g.gridStructure.N; n++)
-            {
-                Coord c = g.gridStructure.array_index_to_coord(n);
-                float? value1 = g[property_name].get_value(n);
-                if (equal_or_exclude)//为true，则保留等于value的节点
-                {
-                    if (value1 == value)
-                    {
-                        Dictionary<string, float?> values = new()
-                        {
-                            { property_name, value1 }
-                        };
-                        CDataItem cdi = CDataItem.create(c, values);
-                        cd.Add(cdi);
-                    }
-                }
-                else//为false，则排除等于value的节点
-                {
-                    if (value1 != value)
-                    {
-                        Dictionary<string, float?> values = new()
-                        {
-                            { property_name, value1 }
-                        };
-                        CDataItem cdi = CDataItem.create(c, values);
-                        cd.Add(cdi);
-                    }
-                }
-
-            }
-            return cd;
-        }
-
-        /// <summary>
-        /// 将gridProperty中满足条件的节点，提取出来作为cdi,属性名称默认为"cd"
+        /// 检查条件数据是否与网格属性匹配
         /// </summary>
         /// <param name="gp"></param>
-        /// <param name="value"></param>
-        /// <param name="equal_or_exclude">为true，则保留等于value的节点;为false，则排除等于value的节点</param>
+        /// <param name="cd_property_name"></param>
         /// <returns></returns>
-        public static CData create_from_gridProperty(GridProperty gp, float? value, bool equal_or_exclude)
+        public (int not_match_number, int[] not_match_array_index) check_match(GridProperty gp, string cd_property_name)
         {
-            string property_name = "cd";
-            CData cd = new()
+            if (target_gs == null)
             {
-                propertyNames = []
-            };
-            cd.propertyNames.Add(property_name);
-            for (int n = 0; n < gp.grid_structure.N; n++)
-            {
-                Coord c = gp.grid_structure.array_index_to_coord(n);
-                float? value1 = gp.get_value(n);
-                if (equal_or_exclude)//为true，则保留等于value的节点
-                {
-                    if (value1 == value)
-                    {
-                        Dictionary<string, float?> values = new()
-                        {
-                            { property_name, value1 }
-                        };
-                        CDataItem cdi = CDataItem.create(c, values);
-                        cd.Add(cdi);
-                    }
-                }
-                else//为false，则排除等于value的节点
-                {
-                    if (value1 != value)
-                    {
-                        Dictionary<string, float?> values = new()
-                        {
-                            { property_name, value1 }
-                        };
-                        CDataItem cdi = CDataItem.create(c, values);
-                        cd.Add(cdi);
-                    }
-                }
-
+                return (-1, null);
             }
-            return cd;
-        }
 
-        #endregion
+            if (target_gs != gp.grid_structure)
+                return (-1, null);
+
+            int not_match_number = 0;
+            List<int> not_match_array_index = [];
+            for (int i_Record = 0; i_Record < buffer.N_Record; i_Record++)
+            {
+                float? value = null;
+                if (dim == Dimension.D2)
+                {
+                    int ix = Convert.ToInt32(buffer[i_Record, x_series_index]);
+                    int iy = Convert.ToInt32(buffer[i_Record, y_series_index]);
+                    value = gp.get_value(ix, iy);
+                }
+
+                if (dim == Dimension.D3)
+                {
+                    int ix = Convert.ToInt32(buffer[i_Record, x_series_index]);
+                    int iy = Convert.ToInt32(buffer[i_Record, y_series_index]);
+                    int iz = Convert.ToInt32(buffer[i_Record, z_series_index]);
+                    value = gp.get_value(ix, iy, iz);
+                }
+
+                float? cd_value = Convert.ToSingle(buffer[i_Record, cd_property_name]);
+                if (cd_value != value)
+                {
+                    not_match_number++;
+                    not_match_array_index.Add(i_Record);
+                }
+            }
+
+            return (not_match_number, not_match_array_index.ToArray());
+        }
     }
 }

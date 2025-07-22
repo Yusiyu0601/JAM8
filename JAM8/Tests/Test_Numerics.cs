@@ -33,8 +33,10 @@ namespace JAM8.Tests
                 {
                     y[i] = A1 * Math.Exp(B1 * (x[i] - x0));
                 }
+
                 return y;
             }
+
             //derivatives:求导数
             //df/A1 = e^(B1*x-x0)
             //df/B1 = A1*e^(B1*x-x0)*(x-x0)
@@ -51,6 +53,7 @@ namespace JAM8.Tests
                     prime[i, 1] = A1 * Math.Exp(B1 * (x[i] - x0)) * (x[i] - x0);
                     prime[i, 2] = A1 * Math.Exp(B1 * (x[i] - x0)) * (-B1);
                 }
+
                 return prime;
             }
 
@@ -58,22 +61,28 @@ namespace JAM8.Tests
             double[] xData = new double[] { 1, 2, 5, 6 };
             double[] yData = new double[] { 3, 6, 8, 10 };
             var result1 = Fit.Exponential(xData, yData);
-            double goodnessOfFit1 = GoodnessOfFit.RSquared(xData.Select(x => result1.A * Math.Exp(result1.R * x)), yData);
+            double goodnessOfFit1 =
+                GoodnessOfFit.RSquared(xData.Select(x => result1.A * Math.Exp(result1.R * x)), yData);
             Console.WriteLine("goodnessOfFit1:" + goodnessOfFit1);
 
 
-
-
-            var obj = ObjectiveFunction.NonlinearModel(MyModel, MyPrime, new DenseVector(xData), new DenseVector(yData));
+            var obj = ObjectiveFunction.NonlinearModel(MyModel, MyPrime, new DenseVector(xData),
+                new DenseVector(yData));
             var solver = new LevenbergMarquardtMinimizer();
             var result2 = solver.FindMinimum(obj, MyStart);
-            double goodnessOfFit2 = GoodnessOfFit.RSquared(xData.Select(x => result2.MinimizingPoint[0] * Math.Exp((result2.MinimizingPoint[1] * (x - result2.MinimizingPoint[2])))), yData);
+            double goodnessOfFit2 =
+                GoodnessOfFit.RSquared(
+                    xData.Select(x =>
+                        result2.MinimizingPoint[0] *
+                        Math.Exp((result2.MinimizingPoint[1] * (x - result2.MinimizingPoint[2])))), yData);
             Console.WriteLine("goodnessOfFit2:" + goodnessOfFit2);
         }
 
         public static void NelderMeadSimplex_球状模型拟合()
         {
-            double[] h = new[]{1.5,
+            double[] h = new[]
+            {
+                1.5,
                 4.5,
                 7.5,
                 10.5,
@@ -85,7 +94,8 @@ namespace JAM8.Tests
                 28.5,
                 31.5
             };
-            double[] gamma = new[]{
+            double[] gamma = new[]
+            {
                 0.037861122,
                 0.08184661,
                 0.115992736,
@@ -98,6 +108,7 @@ namespace JAM8.Tests
                 0.208934695,
                 0.207543387
             };
+
             //input:nugget sill range
             double func(Vector_double input)
             {
@@ -120,13 +131,15 @@ namespace JAM8.Tests
 
                 return loss;
             }
+
             var obj = ObjectiveFunction.Value(func);
             var solver = new NelderMeadSimplex(convergenceTolerance: 0.000000001, maximumIterations: 1000);
             var initialGuess = new DenseVector(new double[] { gamma.Min(), gamma.Max(), h.Max() });
 
             var result = solver.FindMinimum(obj, initialGuess);
             Console.WriteLine("Value:\t" + result.FunctionInfoAtMinimum.Value);
-            Console.WriteLine("Point:\t" + result.MinimizingPoint[0] + " , " + result.MinimizingPoint[1] + "," + result.MinimizingPoint[2]);
+            Console.WriteLine("Point:\t" + result.MinimizingPoint[0] + " , " + result.MinimizingPoint[1] + "," +
+                              result.MinimizingPoint[2]);
             Console.WriteLine("Iterations:\t" + result.Iterations);
         }
 
@@ -136,6 +149,7 @@ namespace JAM8.Tests
             {
                 return Math.Pow(1 - input[0], 2) + 100 * Math.Pow((input[1] - input[0] * input[0]), 2);
             }
+
             var obj = ObjectiveFunction.Value(func);
             var solver = new NelderMeadSimplex(convergenceTolerance: 0.0000000001, maximumIterations: 1000);
             var initialGuess = new DenseVector(new double[] { 0.2, 1.2 });
@@ -159,8 +173,6 @@ namespace JAM8.Tests
             MyArrayHelper.Print(MyFFT.ifftshift(values));
             MyArrayHelper.Print(MyFFT.fftshift(values));
             MyArrayHelper.Print(MyFFT.ifftshift(MyFFT.fftshift(values)));
-
-
         }
 
         public static void QuickChart_Test()
@@ -197,6 +209,7 @@ namespace JAM8.Tests
                     array[i, j] = new Complex(b.GetPixel(i, j).R, 0);
                 }
             }
+
             //变换
             array = MyFFT.fft2(array);
             Form_QuickChart.ArrayPlot2(MyFFT.abs(array));
@@ -239,7 +252,7 @@ namespace JAM8.Tests
             for (int j = 0; j < y.Length; j++)
             {
                 y[j] = 7 * Math.Sin(2 * Math.PI * 200 * x[j])
-                    + 5 * Math.Sin(2 * Math.PI * 400 * x[j]) + 3 * Math.Sin(2 * Math.PI * 600 * x[j]);
+                       + 5 * Math.Sin(2 * Math.PI * 400 * x[j]) + 3 * Math.Sin(2 * Math.PI * 600 * x[j]);
             }
 
             frm.DrawLine(x_tick, y, null);
@@ -248,6 +261,7 @@ namespace JAM8.Tests
             {
                 input[i] = new Complex((float)y[i], 0);
             }
+
             Fourier.Forward(input, FourierOptions.Matlab);
             double[] mod = new double[input.Length];
             double[] angle = new double[input.Length];
@@ -278,6 +292,7 @@ namespace JAM8.Tests
             {
                 input[i] = new Complex((float)y[i], 0);
             }
+
             input = MyFFT.fft(input);
             var fftshift = MyFFT.fftshift(input);
             double[] mod = new double[fftshift.Length];
@@ -300,9 +315,9 @@ namespace JAM8.Tests
             Gaussian gau = new(0, 1);
             for (int i = 0; i < 10000; i++)
             {
-
                 values.Add(gau.Sample());
             }
+
             Quantile q = Quantile.create(values);
             Form_QuickChart chart1 = new("分位数图");
             chart1.Show();
@@ -317,6 +332,7 @@ namespace JAM8.Tests
             {
                 path.freeze(gs.get_spatial_index(i));
             }
+
             while (false == path.is_visit_over())
             {
                 var si = path.visit_next();
@@ -347,8 +363,10 @@ namespace JAM8.Tests
                 {
                     vector.Add(rnd.Next(1, 4));
                 }
+
                 pnts.Add(vector.ToArray());
             }
+
             SmallWorld<float[], float>.Parameters paras = new()
             {
                 M = 10,
@@ -375,6 +393,7 @@ namespace JAM8.Tests
                 {
                     vector1.Add(rnd.Next(0, 4));
                 }
+
                 var founds = graph.KNNSearch(vector1.ToArray(), 20);
                 float min = float.MaxValue;
                 foreach (var pnt in pnts)
@@ -383,6 +402,7 @@ namespace JAM8.Tests
                     if (dist < min)
                         min = dist;
                 }
+
                 //MyConsoleProgress.Print(flag++, 200000, "", $"{founds.Min(a => a.Distance)}");
                 //MyConsoleProgress.Print(flag++, 200000, "", $"{min}");
                 mcp.PrintWithRemainTime(flag++, 200000, "", $"{founds.Min(a => a.Distance)}  {min}");
@@ -390,8 +410,8 @@ namespace JAM8.Tests
             });
             sw.Stop();
             Console.WriteLine($@"{sw.ElapsedMilliseconds}ms");
-
         }
+
         /// <summary>
         /// L2距离
         /// </summary>
@@ -405,11 +425,13 @@ namespace JAM8.Tests
             {
                 throw new ArgumentException("Vectors have non-matching dimensions");
             }
+
             float dist = 0.0f;
             for (int i = 0; i < u.Length; i++)
             {
                 dist += (u[i] - v[i]) * (u[i] - v[i]);
             }
+
             return (float)Math.Sqrt(dist);
         }
 
@@ -428,6 +450,7 @@ namespace JAM8.Tests
                     }
                 }
             }
+
             Console.WriteLine(pointCloud.Count.ToString());
             //for (int i = 0; i < pointCloud.Length; i++)
             //{
@@ -488,9 +511,9 @@ namespace JAM8.Tests
                 //    Console.WriteLine(pointCloud[resultIndices[i]].ToString() + "    " + Vector3.Distance(pnt, pointCloud[resultIndices[i]]));
                 //}
             }
+
             sw.Stop();
             Console.WriteLine(sw.ElapsedMilliseconds);
-
         }
 
         public static void Mould_Test()
@@ -519,14 +542,13 @@ namespace JAM8.Tests
 
         public static void OK_Test()
         {
-            var (cd, _) = CData.read_from_gslibwin();
+            var (cd, _) = CData.read_from_gslib_win();
             GridStructure gs = GridStructure.create_win();
             Variogram vm = Variogram.create(VariogramType.Spherical, 0, 1, 40);
-            OK ok = OK.create(gs, vm, cd, cd.propertyNames[0]);
             Stopwatch sw = new();
             sw.Start();
             var rot_mat = new double[] { 0, 0, 0, 20, 20, 2 };
-            ok.Run(30, rot_mat, 5).result[1].show_win();
+            OK.Run(gs, vm, cd, cd.property_names[0], 30, rot_mat, 5).result[1].show_win();
             sw.Stop();
             Console.WriteLine($@"Time:{sw.ElapsedMilliseconds}");
         }
@@ -545,7 +567,6 @@ namespace JAM8.Tests
                     Console.WriteLine($@"{c.ToString()}  	  {si.view_text()}   	  {c2.ToString()}");
                 }
             }
-
         }
 
         public static void ExcelHelper_Test1()

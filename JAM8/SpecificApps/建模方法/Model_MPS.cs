@@ -28,7 +28,7 @@ namespace JAM8.SpecificApps.建模方法
                 return;
             var g = frm.selected_grids.First();
             //var g = Grid.create_from_gslibwin().grid;
-            var (cd, _) = CData2.read_from_gslib_win();
+            var (cd, _) = CData.read_from_gslib_win();
             GridStructure gs_model = g.gridStructure;
 
             var snesim = Snesim.create();
@@ -117,7 +117,7 @@ namespace JAM8.SpecificApps.建模方法
             //采用snesim模拟剩下网格点数据
 
             var g_cd = gp.convert_to_grid();
-            var cd = CData2.create_from_gridProperty(g_cd[0], g_cd.propertyNames[0], CompareType.NotEqual, null);
+            var cd = CData.create_from_gridProperty(g_cd[0], g_cd.propertyNames[0], CompareType.NotEqual, null);
 
             var mould_snesim = gs.dim == Dimension.D2 ? Mould.create_by_ellipse(10, 10, 1) : Mould.create_by_ellipse(15, 15, 2, 1);
             mould = Mould.create_by_mould(mould_snesim, 50);

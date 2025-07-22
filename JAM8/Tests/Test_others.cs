@@ -28,10 +28,10 @@ namespace JAM8.Tests
 
         public static void Test_Grid转换为cd()
         {
-            Grid g = Grid.create_from_gslibwin().grid;
-            GridProperty gp = g.select_gridProperty_win().grid_property;
-            CData cd = CData.create_from_gridProperty(gp, null, false);
-            cd.save_to_gslibwin();
+            // Grid g = Grid.create_from_gslibwin().grid;
+            // GridProperty gp = g.select_gridProperty_win().grid_property;
+            // CData cd = CData.create_from_gridProperty(gp, null, false);
+            // cd.save_to_gslibwin();
 
         }
 

@@ -42,7 +42,7 @@ namespace JAM8.Algorithms.Geometry
         /// </param>
         /// <returns></returns>
         public (Grid, double time) run(int random_seed, int multigrid_count, int max_number,
-            (int rx, int ry, int rz) template, GridProperty TI, CData2 cd, GridStructure gs_re,
+            (int rx, int ry, int rz) template, GridProperty TI, CData cd, GridStructure gs_re,
             int progress_for_retrieve_inverse = 0)
         {
             Stopwatch sw = new(); //检测模拟时间
@@ -71,7 +71,7 @@ namespace JAM8.Algorithms.Geometry
 
                 g.add_gridProperty($"{multi_grid}", re_mg[0]);
 
-                current_cd = CData2.create_from_gridProperty(re_mg[0], "re", CompareType.NotEqual, null);
+                current_cd = CData.create_from_gridProperty(re_mg[0], "re", CompareType.NotEqual, null);
 
                 MyConsoleHelper.write_string_to_console("时间", time_.ToString());
 
@@ -106,7 +106,7 @@ namespace JAM8.Algorithms.Geometry
         /// in the previous simulation progress, default is 0
         /// </param>
         /// <returns></returns>
-        public (Grid re, double time) run(GridProperty TI, CData2 cd, GridStructure gs_re,
+        public (Grid re, double time) run(GridProperty TI, CData cd, GridStructure gs_re,
             int random_seed, Mould mould, int multigrid_level = 1,
             int progress_for_retrieve_inverse = 0)
         {
@@ -158,7 +158,7 @@ namespace JAM8.Algorithms.Geometry
                 global_progress++;//全局进度(多重网格使用)
                 if (global_progress == (int)(gs_re.N * 0.2))
                 {
-                    result.showGrid_win("20%");
+                    // result.showGrid_win("20%");
                 }
 
                 if (path.progress % 1 == 0 && path.progress != progress_preview)

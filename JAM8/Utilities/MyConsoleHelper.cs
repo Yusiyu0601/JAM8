@@ -1,5 +1,8 @@
 ﻿namespace JAM8.Utilities
 {
+    /// <summary>
+    /// Console 辅助类，提供从控制台读取不同类型输入的方法。
+    /// </summary>
     public class MyConsoleHelper
     {
         /// <summary>

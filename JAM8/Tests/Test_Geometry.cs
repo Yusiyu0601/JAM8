@@ -30,9 +30,9 @@ namespace JAM8.Tests
                     var si = path.visit_next();
                     g.first_gridProperty().set_value(si, (float?)path.progress);
                 }
+
                 g.showGrid_win(g.grid_name);
             }
-
         }
 
         public static void Test_GridCatalog()
@@ -70,6 +70,7 @@ namespace JAM8.Tests
                     break;
                 gc.add_item(g, file_name, -99);
             }
+
             var catalog = gc.get_items();
             foreach (var item in catalog)
             {
@@ -77,33 +78,23 @@ namespace JAM8.Tests
             }
         }
 
-        public static void Test_CoarsenedCData()
-        {
-            CData cd = CData.read_from_gslibwin().cdata;
-            GridStructure gs = GridStructure.create_win();
-            var (ccd, N_out_of_range) = CoarsenedCData.create(gs, cd);
-            MyConsoleHelper.write_string_to_console("N_out_of_range", N_out_of_range.ToString());
-            var g = ccd.to_grid();
-            g.showGrid_win();
-            var ccd1 = CoarsenedCData.create(ccd.to_grid());
-        }
-
         //测试用表存储所有点对的各向异性距离
         public static void AnisotropicDistance3d_Test2()
         {
             Dictionary<string, float> dict = new();
-            RotMat rm = new(0, 0, 0, 1, 1, 0.2);
+            RotMat rotMat = new(0, 0, 0, 1, 1, 0.2);
 
             Grid g = Grid.create(GridStructure.create_win());
             g.add_gridProperty("circle");
-            SpatialIndex core = SpatialIndex.create(g.gridStructure.nx / 2, g.gridStructure.ny / 2, g.gridStructure.nz / 2);
+            SpatialIndex core =
+                SpatialIndex.create(g.gridStructure.nx / 2, g.gridStructure.ny / 2, g.gridStructure.nz / 2);
             for (int n = 0; n < g.gridStructure.N; n++)
             {
                 SpatialIndex si = g.gridStructure.get_spatial_index(n);
-                var dsi = SpatialIndex.create(si.ix - core.ix, si.iy - core.iy, si.iz - core.iz);
-                var anis_dist = AnisotropicDistance.calc_anis_distance_power2(rm, dsi);
-                dict.Add(dsi.view_text(), anis_dist);
+                var anis_dist = AnisotropicDistance.get_distance_power2(rotMat, si.to_tuple(), core.to_tuple());
+                dict.Add((si - core).view_text(), anis_dist);
             }
+
             MessageBox.Show($"{dict.Count}");
         }
 
@@ -115,7 +106,7 @@ namespace JAM8.Tests
             c.ToString();
             var dist = Coord.get_distance_to_origin(c);
             Console.WriteLine(dist);
-            var anis_dist = AnisotropicDistance.calc_anis_dist(rm, c);
+            var anis_dist = AnisotropicDistance.get_distance_power2(rm, c);
             Console.WriteLine(anis_dist);
 
             Grid g = Grid.create(GridStructure.create_win());
@@ -124,14 +115,14 @@ namespace JAM8.Tests
             {
                 SpatialIndex si = g.gridStructure.get_spatial_index(n);
                 c = Coord.create(si.ix, si.iy, si.iz);
-                anis_dist = AnisotropicDistance.calc_anis_dist(rm, Coord.create(50, 50, 50), c);
+                anis_dist = AnisotropicDistance.get_distance_power2(rm, Coord.create(50, 50, 50) - c);
                 if (anis_dist < 50)
                     g.last_gridProperty().set_value(n, 1);
                 else
                     g.last_gridProperty().set_value(n, 2);
             }
-            g.showGrid_win();
 
+            g.showGrid_win();
         }
 
         public static void AnisotropicDistance_Test()
@@ -143,14 +134,16 @@ namespace JAM8.Tests
             SpatialIndex si2 = SpatialIndex.create(12, 30);
             Console.WriteLine($@"{si1}与{si2}的各向同性距离为{SpatialIndex.calc_dist(si1, si2)}");
             Console.WriteLine($@"{si2}与{si1}的各向同性距离为{SpatialIndex.calc_dist(si2, si2)}");
-            Console.WriteLine($@"{si1}与{si2}的各向异性距离为{AnisotropicDistance.calc_anis_distance_power2(rm, si1, si2)}");
-            Console.WriteLine($@"{si2}与{si1}的各向异性距离为{AnisotropicDistance.calc_anis_distance_power2(rm, si2, si1)}");
+            Console.WriteLine(
+                $@"{si1}与{si2}的各向异性距离为{AnisotropicDistance.get_distance_power2(rm, si1.to_tuple(), si2.to_tuple())}");
+            Console.WriteLine(
+                $@"{si2}与{si1}的各向异性距离为{AnisotropicDistance.get_distance_power2(rm, si2.to_tuple(), si1.to_tuple())}");
 
             Coord c = Coord.create(1, 1);
             c.ToString();
             var dist = Coord.get_distance_to_origin(c);
             Console.WriteLine(dist);
-            var anis_dist = AnisotropicDistance.calc_anis_dist(rm, c);
+            var anis_dist = AnisotropicDistance.get_distance_power2(rm, c);
             Console.WriteLine(anis_dist);
 
             Grid g = Grid.create(GridStructure.create_win());
@@ -159,14 +152,14 @@ namespace JAM8.Tests
             {
                 SpatialIndex si = g.gridStructure.get_spatial_index(n);
                 c = Coord.create(si.ix, si.iy);
-                anis_dist = AnisotropicDistance.calc_anis_dist(rm, Coord.create(50, 50), c);
+                anis_dist = AnisotropicDistance.get_distance_power2(rm, Coord.create(50, 50).to_tuple(), c.to_tuple());
                 if (anis_dist < 25)
                     g.last_gridProperty().set_value(n, 1);
                 else
                     g.last_gridProperty().set_value(n, 2);
             }
-            g.showGrid_win();
 
+            g.showGrid_win();
         }
 
         public static void Scottplot4Grid_Test()
@@ -211,7 +204,6 @@ namespace JAM8.Tests
             Form_GridStructure frm = new(gs);
             if (frm.ShowDialog() != DialogResult.OK)
                 return;
-
         }
 
         public static void kdtree测试3()
@@ -220,7 +212,7 @@ namespace JAM8.Tests
             GridProperty gp = GridProperty.create(gs);
             gp.set_values_gaussian(0, 1, new Random(1));
             gp.show_win();
-            CData cd = CData.create_from_gridProperty(gp, null, false);
+            CData cd = CData.create_from_gridProperty(gp, "gp", CompareType.NotEqual, null);
 
             Stopwatch sw = new();
             sw.Start();
@@ -240,6 +232,7 @@ namespace JAM8.Tests
                 //tree.find(si, 50);
                 MyConsoleProgress.Print(i, 10000000, "");
             }
+
             Console.WriteLine(@"end");
             sw.Stop();
             Console.WriteLine(sw.ElapsedMilliseconds);
@@ -247,13 +240,13 @@ namespace JAM8.Tests
 
         public static void spatialIndex_to_coord()
         {
-            GridStructure gs = GridStructure.create_win();
-            CData cd = CData.read_from_gslibwin().cdata;
-            var si = gs.get_spatial_index(20);
-            Coord c = gs.spatial_index_to_coord(si);
-            Console.WriteLine(c.ToString());
-            SpatialIndex si1 = gs.coord_to_spatial_index(c);
-            Console.WriteLine(si1.view_text());
+            // GridStructure gs = GridStructure.create_win();
+            // CData cd = CData.read_from_gslibwin().cdata;
+            // var si = gs.get_spatial_index(20);
+            // Coord c = gs.spatial_index_to_coord(si);
+            // Console.WriteLine(c.ToString());
+            // SpatialIndex si1 = gs.coord_to_spatial_index(c);
+            // Console.WriteLine(si1.view_text());
         }
 
         public static void calc_weights_ok_条带效应校正()
@@ -275,9 +268,9 @@ namespace JAM8.Tests
                 Coord.create(15, 10)
             };
 
-            float[] weights = new float[cd_locs.Length];//由近及远的权重
-            var ordered_locs = pred_loc.order_by_distance(cd_locs);//根据与pre_loc的距离由近及远排序
-            for (int i = 1; i <= ordered_locs.Count; i++)//由近及远计算权重
+            float[] weights = new float[cd_locs.Length]; //由近及远的权重
+            var ordered_locs = pred_loc.order_by_distance(cd_locs); //根据与pre_loc的距离由近及远排序
+            for (int i = 1; i <= ordered_locs.Count; i++) //由近及远计算权重
             {
                 var cd_locs_tmp = ordered_locs.Take(new Range(0, i)).Select(a => a.coord).ToArray();
                 var weights_temp = OK.calc_weights_ok(pred_loc, cd_locs_tmp, vm);
@@ -321,7 +314,6 @@ namespace JAM8.Tests
             var mould = Mould.create_by_ellipse(10, 10, 1);
             GridProperty gp = Grid.create_from_gslibwin().grid.first_gridProperty();
             var mould_instance = MouldInstance.create_from_gridProperty(mould, SpatialIndex.create(50, 50), gp);
-
         }
 
         public static void calc_weights_ok()
@@ -365,10 +357,10 @@ namespace JAM8.Tests
 
         public static void CData_Test()
         {
-            var (cd, _) = CData.read_from_gslibwin();
-            //cd.save_to_gslib("D:\\cd.dat");
-            //cd.save_to_gslibwin();
-            cd.to_dataFrame().show_console();
+            // var (cd, _) = CData.read_from_gslibwin();
+            // //cd.save_to_gslib("D:\\cd.dat");
+            // //cd.save_to_gslibwin();
+            // cd.to_dataFrame().print();
         }
 
         public static void STree_Test()
@@ -395,14 +387,16 @@ namespace JAM8.Tests
             {
                 var point = SpatialIndex.create(rnd.Next(ix - 10, ix + 10), rnd.Next(iy - 10, iy + 10));
                 if (point.ix >= 1 && point.ix <= g.gridStructure.nx
-                    && point.iy >= 1 && point.iy <= g.gridStructure.ny)
+                                  && point.iy >= 1 && point.iy <= g.gridStructure.ny)
                 {
                     points.Add(point);
                     counter++;
                 }
+
                 if (counter == N)
                     break;
             }
+
             Mould mould = Mould.create_by_location(core_loc, points);
             //mould = Mould.create_by_ellipse(15, 15, 1);
 
@@ -427,6 +421,7 @@ namespace JAM8.Tests
                     g[2].set_value(n, dist);
                 }
             }
+
             g.showGrid_win();
         }
 
@@ -442,13 +437,15 @@ namespace JAM8.Tests
 
 
             Mould mould = Mould.create_by_rectangle(7, 7, 1);
-            var data_event = MouldInstance.create_from_gridProperty(mould, SpatialIndex.create(30, 30), g.first_gridProperty());
+            var data_event =
+                MouldInstance.create_from_gridProperty(mould, SpatialIndex.create(30, 30), g.first_gridProperty());
 
             List<MouldInstance> patterns_cb = new();
             for (int n = 0; n < gs.N; n++)
             {
                 MyConsoleProgress.Print(n, gs.N, "提取样式");
-                var pattern = MouldInstance.create_from_gridProperty(mould, gs.get_spatial_index(n), g.first_gridProperty());
+                var pattern =
+                    MouldInstance.create_from_gridProperty(mould, gs.get_spatial_index(n), g.first_gridProperty());
                 if (pattern.neighbor_nulls_ids.Count == 0)
                     patterns_cb.Add(pattern);
             }
@@ -459,9 +456,9 @@ namespace JAM8.Tests
             {
                 var distance = Mould.get_distance(data_event, patterns_cb[i]);
             }
+
             sw.Stop();
             MyConsoleHelper.write_string_to_console("计算时间", sw.ElapsedMilliseconds.ToString());
-
         }
 
         public static void create_mould_by_location()
@@ -476,8 +473,6 @@ namespace JAM8.Tests
             };
 
             Mould mould = Mould.create_by_location(si, locations);
-
-
         }
     }
 }

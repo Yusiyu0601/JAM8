@@ -24,7 +24,6 @@
                 .Add("AnisotropicDistance3d_Test2", Tests.Test_Geometry.AnisotropicDistance3d_Test2)
                 .Add("Test_SimulationPath", Tests.Test_Geometry.Test_SimulationPath)
                 .Add("Test_GridCatalog", Tests.Test_Geometry.Test_GridCatalog)
-                .Add("Test_CoarsenedCData", Tests.Test_Geometry.Test_CoarsenedCData)
                 .Add("calc_dataEvent_hsim", Tests.Test_Geometry.calc_dataEvent_hsim)
                 .Add("calc_time_dataEvent_ti", Tests.Test_Geometry.calc_time_dataEvent_ti)
                 .Add("测试Mould创建", Tests.Test_Geometry.create_mould_by_location)

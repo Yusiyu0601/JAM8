@@ -122,6 +122,48 @@ namespace JAM8.Algorithms.Geometry
         }
 
         /// <summary>
+        /// 两个坐标相减，表示从 b 指向 a 的向量差（delta = a - b）
+        /// </summary>
+        /// <param name="a">被减坐标</param>
+        /// <param name="b">减去的坐标</param>
+        /// <returns>差向量（Coord 类型），表示方向和长度</returns>
+        /// <exception cref="InvalidOperationException">若维度不一致则抛出异常</exception>
+        public static Coord operator -(Coord a, Coord b)
+        {
+            if (a.dim != b.dim)
+                throw new InvalidOperationException("Cannot subtract Coords of different dimensions.");
+
+            return a.dim == Dimension.D2
+                ? create(a.x - b.x, a.y - b.y)
+                : create(a.x - b.x, a.y - b.y, a.z - b.z);
+        }
+
+        /// <summary>
+        /// 两个坐标相加，表示向量平移（新坐标 = a + b）
+        /// </summary>
+        /// <param name="a">起始坐标</param>
+        /// <param name="b">位移向量（或偏移量）</param>
+        /// <returns>平移后的新坐标</returns>
+        /// <exception cref="InvalidOperationException">若维度不一致则抛出异常</exception>
+        public static Coord operator +(Coord a, Coord b)
+        {
+            if (a.dim != b.dim)
+                throw new InvalidOperationException("Cannot add Coords of different dimensions.");
+
+            return a.dim == Dimension.D2
+                ? create(a.x + b.x, a.y + b.y)
+                : create(a.x + b.x, a.y + b.y, a.z + b.z);
+        }
+
+        /// <summary>
+        /// 将坐标转换为三元组 (x, y, z) 表示，统一用于距离计算等接口
+        /// </summary>
+        public (float x, float y, float z) to_tuple()
+        {
+            return (x, y, z);
+        }
+
+        /// <summary>
         /// Compute Euclidean distance between two Coord instances
         /// </summary>
         /// <param name="c1"></param>

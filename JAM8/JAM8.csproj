@@ -29,7 +29,7 @@
     <None Remove="x64\**" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="Algorithms\Geometry\CData\CDataNearestFinder_kdtree4.cs" />
+    <Compile Remove="Algorithms\Geometry\CData\CDataNearestFinder_kdtree4_anisotropy.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="资源文件\A(ti)_A(cd)_re.out" />

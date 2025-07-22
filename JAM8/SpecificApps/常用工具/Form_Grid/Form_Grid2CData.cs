@@ -46,8 +46,8 @@ namespace JAM8.SpecificApps.常用工具
                 string gp_name = listBox1.SelectedItem.ToString();
                 float value = float.Parse(textBox1.Text);
                 bool b = radioButton1.Checked == true ? true : false;
-                CData cd = CData.create_from_gridProperty(g, gp_name, value, b);
-                cd.save_to_gslibwin();
+                // CData2 cd = CData2.create_from_gridProperty(g[gp_name], gp_name, value, b);
+                // cd.save_to_gslibwin();
             }
         }
 

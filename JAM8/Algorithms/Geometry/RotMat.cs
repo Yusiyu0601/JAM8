@@ -13,75 +13,60 @@ namespace JAM8.Algorithms.Geometry
     /// </summary>
     public class RotMat
     {
-        private float[,] rotmat = new float[3, 3];
-
-        private const double DEG2RAD = System.Math.PI / 180;
+        private readonly float[,] _rot = new float[3, 3];
+        private const double DEG2RAD = Math.PI / 180;
 
         /// <summary>
-        /// 以三个角度初始化旋转椭圆
+        /// 各向异性旋转矩阵，用于将笛卡尔坐标投影到变换椭圆空间（参见 GSLIB 2.3）。
+        /// 本类统一用于 2D 和 3D 空间的构造。
+        /// 
+        /// <para><b>二维使用说明（如地图或水平剖面插值）:</b></para>
+        /// <para> - alpha: 主轴与 X 轴夹角（度），逆时针为正</para>
+        /// <para> - beta: 固定设为 0</para>
+        /// <para> - theta: 固定设为 0</para>
+        /// <para> - radius: 主轴长度</para>
+        /// <para> - radius1: 水平次轴长度</para>
+        /// <para> - radius2: 任意正数（设为 1 即可，不参与计算）</para>
+        /// 
+        /// <para><b>三维使用说明（如地质建模）:</b></para>
+        /// <para> - alpha: 主轴与东西方向夹角（度）</para>
+        /// <para> - beta: 主轴与水平面夹角（度，向下为正）</para>
+        /// <para> - theta: 次轴绕主轴旋转角（度）</para>
+        /// <para> - radius: 主轴长度</para>
+        /// <para> - radius1: 水平次轴长度</para>
+        /// <para> - radius2: 垂向次轴长度</para>
         /// </summary>
-        /// <param name="alpha">angle between the major axis of anisotropy and the E-W axis. Note: Counter clockwise is positive.</param>
-        /// <param name="beta">angle between major axis and the horizontal plane.(The dip of the ellipsoid measured positive down)</param>
-        /// <param name="theta">Angle of rotation of minor axis about the major axis of the ellipsoid.</param>
-        /// <param name="radius">主轴</param>
-        /// <param name="radius1">平面次轴</param>
-        /// <param name="radius2">垂向次轴</param>
         public RotMat(double alpha, double beta, double theta, double radius, double radius1, double radius2)
         {
             double sanis1 = radius / radius1;
             double sanis2 = radius / radius2;
-            if (alpha >= 0.0 && alpha < 270.0)
-                alpha = (90 - alpha) * DEG2RAD;
-            else
-                alpha = (450 - alpha) * DEG2RAD;
-            double sina = System.Math.Sin(alpha);
-            double sinb = System.Math.Sin(-beta);
-            double sint = System.Math.Sin(theta);
-            double cosa = System.Math.Cos(alpha);
-            double cosb = System.Math.Cos(-beta);
-            double cost = System.Math.Cos(theta);
 
-            rotmat[0, 0] = (float)(cosb * cosa);
-            rotmat[0, 1] = (float)(cosb * sina);
-            rotmat[0, 2] = (float)-sinb;
-            rotmat[1, 0] = (float)(sanis1 * (-cost * sina + sint * sinb * cosa));
-            rotmat[1, 1] = (float)(sanis1 * (cost * cosa + sint * sinb * sina));
-            rotmat[1, 2] = (float)(sanis1 * (sint * cosb));
-            rotmat[2, 0] = (float)(sanis2 * (sint * sina + cost * sinb * cosa));
-            rotmat[2, 1] = (float)(sanis2 * (-sint * cosa + cost * sinb * sina));
-            rotmat[2, 2] = (float)(sanis2 * (cost * cosb));
+            alpha = (alpha >= 0.0 && alpha < 270.0)
+                ? (90 - alpha) * DEG2RAD
+                : (450 - alpha) * DEG2RAD;
+
+            double sina = Math.Sin(alpha), cosa = Math.Cos(alpha);
+            double sinb = Math.Sin(-beta), cosb = Math.Cos(-beta);
+            double sint = Math.Sin(theta), cost = Math.Cos(theta);
+
+            _rot[0, 0] = (float)(cosb * cosa);
+            _rot[0, 1] = (float)(cosb * sina);
+            _rot[0, 2] = (float)-sinb;
+
+            _rot[1, 0] = (float)(sanis1 * (-cost * sina + sint * sinb * cosa));
+            _rot[1, 1] = (float)(sanis1 * (cost * cosa + sint * sinb * sina));
+            _rot[1, 2] = (float)(sanis1 * sint * cosb);
+
+            _rot[2, 0] = (float)(sanis2 * (sint * sina + cost * sinb * cosa));
+            _rot[2, 1] = (float)(sanis2 * (-sint * cosa + cost * sinb * sina));
+            _rot[2, 2] = (float)(sanis2 * cost * cosb);
         }
 
         /// <summary>
-        /// 获取笛卡尔坐标轴到椭圆局部坐标轴的投影
+        /// 访问旋转矩阵的元素（局部轴 i，对应原坐标轴 j）
         /// </summary>
-        /// <param name="local">RorMat Coordinatesa</param>
-        /// <param name="world">Cartesian coordinates</param>
-        /// <returns></returns>
-        public float GetRotMatScale(int local, int world)
-        {
-            return rotmat[local, world];
-        }
+        public float this[int i, int j] => _rot[i, j];
     }
-
-    /// <summary>
-    /// 坐标轴：
-    /// </summary>
-    //public enum RotMatAxis
-    //{
-    //    /// <summary>
-    //    /// 主轴
-    //    /// </summary>
-    //    Main = 0,
-    //    /// <summary>
-    //    /// 平面上次轴
-    //    /// </summary>
-    //    Two = 1,
-    //    /// <summary>
-    //    /// 垂直于平面的第三个轴
-    //    /// </summary>
-    //    Three = 2,
-    //}
 
     /// <summary>
     /// 各向异性的距离
@@ -89,86 +74,75 @@ namespace JAM8.Algorithms.Geometry
     public class AnisotropicDistance
     {
         /// <summary>
-        /// 椭圆约束下某点与中心点的距离
-        /// 如何理解？
-        /// 此处距离是指各项异性空间中的点（输入参数coord）在校正到各向同性空间后的距离
+        /// 计算向量 (dx, dy, dz) 在各向异性空间下的距离平方。
         /// </summary>
-        /// <param name="mat"></param>
-        /// <returns></returns>
-        public static float calc_anis_dist(RotMat mat, Coord coord)
+        /// <param name="mat">各向异性旋转矩阵（RotMat）</param>
+        /// <param name="dx">X 方向上的坐标差值（delta x）</param>
+        /// <param name="dy">Y 方向上的坐标差值（delta y）</param>
+        /// <param name="dz">Z 方向上的坐标差值（delta z）</param>
+        /// <returns>将该向量映射到椭球空间后的距离平方值（无开方，适合用于距离比较）</returns>
+        public static float get_distance_power2(RotMat mat, float dx, float dy, float dz)
         {
-            double dis = 0;
+            float dist2 = 0;
             for (int i = 0; i < 3; i++)
             {
-                //RotMatAxis axis = (RotMatAxis)i;
-                double cont = 0;
-                cont += mat.GetRotMatScale(i, 0) * coord.x;
-                cont += mat.GetRotMatScale(i, 1) * coord.y;
-                cont += mat.GetRotMatScale(i, 2) * coord.z;
-                dis += cont * cont;
+                float comp = 0;
+                comp += mat[i, 0] * dx;
+                comp += mat[i, 1] * dy;
+                comp += mat[i, 2] * dz;
+                dist2 += comp * comp;
             }
-            return (float)Math.Sqrt(dis);
+
+            return dist2;
         }
 
         /// <summary>
-        /// 椭圆约束下两个点之间的距离
+        /// 计算两个点在各向异性空间下的距离平方（输入为三元组坐标）。
         /// </summary>
-        /// <param name="mat"></param>
-        /// <param name="c1"></param>
-        /// <param name="c2"></param>
-        /// <returns></returns>
-        public static float calc_anis_dist(RotMat mat, Coord c1, Coord c2)
+        /// <param name="mat">各向异性旋转矩阵（RotMat）</param>
+        /// <param name="p1">第一个点的坐标，格式为 (x, y, z)</param>
+        /// <param name="p2">第二个点的坐标，格式为 (x, y, z)</param>
+        /// <returns>两个点之间的各向异性距离的平方值（未开方，适合用于排序和比较）</returns>
+        /// <remarks>
+        /// 本函数适用于任何可表示为三元组 (x, y, z) 的点结构，
+        /// 例如：Coord、SpatialIndex、元组、或自定义类转换为元组的结果。
+        /// </remarks>
+        public static float get_distance_power2(RotMat mat, (float x, float y, float z) p1,
+            (float x, float y, float z) p2)
         {
-            Coord dc = Coord.create(c1.x - c2.x, c1.y - c2.y, c1.z - c2.z);
-            return calc_anis_dist(mat, dc);
+            float dx = p1.x - p2.x;
+            float dy = p1.y - p2.y;
+            float dz = p1.z - p2.z;
+            return get_distance_power2(mat, dx, dy, dz);
         }
 
-        #region MyRegion
-
         /// <summary>
-        /// 计算si与原点的各向异性距离平方
+        /// 计算某向量（以 Coord 表示）在各向异性空间下的距离平方。
         /// </summary>
-        /// <param name="rotmat"></param>
-        /// <param name="si"></param>
-        /// <returns></returns>
-        public static float calc_anis_distance_power2(RotMat rotmat, SpatialIndex si)
+        /// <param name="mat">各向异性旋转矩阵（RotMat）</param>
+        /// <param name="delta">以 <see cref="Coord"/> 表示的差值向量（从某点到另一点的差）</param>
+        /// <returns>各向异性空间下的距离平方（不进行平方根计算）</returns>
+        public static float get_distance_power2(RotMat mat, Coord delta)
         {
-            return calc_anis_distance_power2(rotmat, si.ix, si.iy, si.iz);
-        }
-        /// <summary>
-        /// 计算si与原点的各向异性距离平方
-        /// </summary>
-        /// <param name="rotmat"></param>
-        /// <param name="si1"></param>
-        /// <param name="si2"></param>
-        /// <returns></returns>
-        public static float calc_anis_distance_power2(RotMat rotmat, SpatialIndex si1, SpatialIndex si2)
-        {
-            return calc_anis_distance_power2(rotmat, si1.ix - si2.ix, si1.iy - si2.iy, si1.iz - si2.iz);
-        }
-        /// <summary>
-        /// 计算si与原点的各向异性距离平方
-        /// </summary>
-        /// <param name="rotmat"></param>
-        /// <param name="delta_ix"></param>
-        /// <param name="delta_iy"></param>
-        /// <param name="delta_iz"></param>
-        /// <returns></returns>
-        public static float calc_anis_distance_power2(RotMat rotmat, int delta_ix, int delta_iy, int delta_iz)
-        {
-            float dist_power2 = 0;
-            for (int i = 0; i < 3; i++)
-            {
-                float cont = 0;
-                cont += rotmat.GetRotMatScale(i, 0) * delta_ix;
-                cont += rotmat.GetRotMatScale(i, 1) * delta_iy;
-                cont += rotmat.GetRotMatScale(i, 2) * delta_iz;
-                dist_power2 += cont * cont;
-            }
-            return dist_power2;
+            return get_distance_power2(mat, delta.x, delta.y, delta.z);
         }
 
-        #endregion
+        /// <summary>
+        /// Demonstrates the calculation of anisotropic distance squared in both 2D and 3D contexts.
+        /// </summary>
+        /// <remarks>This method creates rotation matrices for 2D and 3D transformations and computes the
+        /// squared anisotropic distance for given coordinate deltas. The results are printed to the console.</remarks>
+        public static void Test()
+        {
+            var rot2d = new RotMat(30, 0, 0, 100, 50, 1); // 2D 用法
+            var delta = Coord.create(10, 5);
+            float d2 = AnisotropicDistance.get_distance_power2(rot2d, delta);
+            Console.WriteLine($"2D distance²: {d2}");
+
+            var rot3d = new RotMat(45, 30, 15, 100, 60, 40);
+            var delta3d = Coord.create(10, 5, 3);
+            float d3 = AnisotropicDistance.get_distance_power2(rot3d, delta3d);
+            Console.WriteLine($"3D distance²: {d3}");
+        }
     }
-
 }

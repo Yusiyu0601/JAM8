@@ -21,8 +21,8 @@ namespace JAM8.SpecificApps.建模方法
             Random rnd = new();
             GridStructure gs = GridStructure.create_win();
             Variogram vm = Variogram.create(VariogramType.Spherical, 0, 1, 20);
-            CData cd = CData.read_from_gslibwin().cdata;
-            GRFS grfs = GRFS.create(gs, vm, cd, cd.select_cd_propertyName_win());
+            CData cd = CData.read_from_gslib_win().cdata;
+            GRFS grfs = GRFS.create(gs, vm, cd, cd.select_by_property_name_win());
             var rot_mat = new double[] { 0, 0, 0, 20, 20, 2 };
             var (result, time) = grfs.run2(30, rot_mat, 20, rnd.Next());
             result.showGrid_win();
@@ -34,8 +34,8 @@ namespace JAM8.SpecificApps.建模方法
             Random rnd = new();
             GridStructure gs = GridStructure.create_win();
             Variogram vm = Variogram.create(VariogramType.Spherical, 0, 1, 20);
-            CData cd = CData.read_from_gslibwin().cdata;
-            GRFS grfs = GRFS.create(gs, vm, cd, cd.select_cd_propertyName_win());
+            CData cd = CData.read_from_gslib_win().cdata;
+            GRFS grfs = GRFS.create(gs, vm, cd, cd.select_by_property_name_win());
             var rot_mat = new double[] { 0, 0, 0, 20, 20, 2 };
             var (result, time) = grfs.run(30, rot_mat, 20, rnd.Next());
             result.showGrid_win();
@@ -47,18 +47,22 @@ namespace JAM8.SpecificApps.建模方法
             GridStructure gs = GridStructure.create_win();
             Grid g = Grid.create(gs, "GRFS_work");
             g.add_gridProperty("GRF");
-            GridStructure gs_extent = GridStructure.create_simple(gs.nx + 50, gs.ny + 50, gs.dim == Dimension.D2 ? 1 : gs.nz + 10);
+            GridStructure gs_extent =
+                GridStructure.create_simple(gs.nx + 50, gs.ny + 50, gs.dim == Dimension.D2 ? 1 : gs.nz + 10);
 
             Grid g_extent = Grid.create(gs_extent);
             g_extent.add_gridProperty("origin");
             g_extent.add_gridProperty("gauss");
             g_extent["origin"].set_values_gaussian(0, 1, new Random());
-            Mould mould = (gs.dim == Dimension.D2) ? Mould.create_by_ellipse(25, 25, 1) : Mould.create_by_ellipse(5, 5, 5, 1);
+            Mould mould = (gs.dim == Dimension.D2)
+                ? Mould.create_by_ellipse(25, 25, 1)
+                : Mould.create_by_ellipse(5, 5, 5, 1);
             int flag = 1;
             Parallel.For(0, gs_extent.N, i =>
             {
                 MyConsoleProgress.Print(flag++, gs_extent.N, "gauss random field: ");
-                var mouldInstance = MouldInstance.create_from_gridProperty(mould, gs_extent.get_spatial_index(i), g_extent["origin"]);
+                var mouldInstance =
+                    MouldInstance.create_from_gridProperty(mould, gs_extent.get_spatial_index(i), g_extent["origin"]);
                 if (mouldInstance.neighbor_nulls_ids.Count == 0)
                     g_extent["gauss"].set_value(i, mouldInstance.neighbor_values.Average(a => a.Value));
             });
@@ -71,15 +75,19 @@ namespace JAM8.SpecificApps.建模方法
 
             g.showGrid_win();
 
-            var (cd, _) = CData.read_from_gslibwin();
-            g.add_gridProperty("cd", cd.assign_to_grid(gs).grid_assigned.first_gridProperty());
+            var (cd, _) = CData.read_from_gslib_win();
+            g.add_gridProperty("cd", cd.coarsened(gs).coarsened_grid.first_gridProperty());
 
             //cd quantile
-            Quantile quantile_cd = Quantile.create(g["cd"].buffer.Where(a => a != null).Select(a => (double)a).ToList());
-            Form_QuickChart.ScatterPlot(quantile_cd.quantile_values, quantile_cd.cumulative_probabilities, null, "quantile", "cdf", "cd quantile");
+            Quantile quantile_cd =
+                Quantile.create(g["cd"].buffer.Where(a => a != null).Select(a => (double)a).ToList());
+            Form_QuickChart.ScatterPlot(quantile_cd.quantile_values, quantile_cd.cumulative_probabilities, null,
+                "quantile", "cdf", "cd quantile");
             //GRF quantile
-            Quantile quantile_gauss = Quantile.create(g["GRF"].buffer.Where(a => a != null).Select(a => (double)a).ToList());
-            Form_QuickChart.ScatterPlot(quantile_gauss.quantile_values, quantile_gauss.cumulative_probabilities, null, "quantile", "cdf", "guass quantile");
+            Quantile quantile_gauss =
+                Quantile.create(g["GRF"].buffer.Where(a => a != null).Select(a => (double)a).ToList());
+            Form_QuickChart.ScatterPlot(quantile_gauss.quantile_values, quantile_gauss.cumulative_probabilities, null,
+                "quantile", "cdf", "guass quantile");
             //return;
             //正态得分变换(GRF->cd)
             g.add_gridProperty("GRF_transformed");
@@ -96,6 +104,7 @@ namespace JAM8.SpecificApps.建模方法
                         continue;
                 }
             }
+
             //计算偏差
             g.add_gridProperty("error");
             for (int n = 0; n < gs.N; n++)
@@ -103,10 +112,9 @@ namespace JAM8.SpecificApps.建模方法
                     g["error"].set_value(n, g["cd"].get_value(n) - g["GRF_transformed"].get_value(n));
             //对偏差进行OK计算
             Variogram vg = Variogram.create(VariogramType.Spherical, 0, 1, 100);
-            CData cd1 = CData.create_from_gridProperty(g, "error", null, false);
-            OK ok = OK.create(gs, vg, cd1, "error");
+            CData cd1 = CData.create_from_gridProperty(g["error"], "error", CompareType.NotEqual, null);
             var rot_mat = new double[] { 0, 0, 0, 20, 20, 2 };
-            g.add_gridProperty("estimate", ok.Run(50, rot_mat, 3).result[1]);
+            g.add_gridProperty("estimate", OK.Run(gs, vg, cd1, "error", 50, rot_mat, 3).result[1]);
             //将OK结果与随机场进行叠加
             g.add_gridProperty("result", g["estimate"] + g["GRF_transformed"]);
             g.showGrid_win();
@@ -144,6 +152,7 @@ namespace JAM8.SpecificApps.建模方法
                     cov[ix, iy] = new Complex(gp.get_value(ix, iy).Value, 0);
                 }
             }
+
             //Form_QuickChart.ArrayPlot2(cov, 0);
             var cov_shift = MyFFT.fftshift2(cov);
             //Form_QuickChart.ArrayPlot2(cov_shift, 0);
@@ -160,6 +169,7 @@ namespace JAM8.SpecificApps.建模方法
                     z_rand[i, j] = new Complex(g.Sample(), 0);
                 }
             }
+
             Form_QuickChart.ArrayPlot2(z_rand, 0);
             z_rand = MyFFT.fft2(z_rand);
             //Form_QuickChart.ArrayPlot2(z_rand, 0);
@@ -171,6 +181,7 @@ namespace JAM8.SpecificApps.建模方法
                     random_field[i, j] = fftC[i, j].SquareRoot() * z_rand[i, j];
                 }
             }
+
             random_field = MyFFT.ifft2(random_field);
             Form_QuickChart.ArrayPlot2(random_field, 0);
         }
@@ -203,10 +214,12 @@ namespace JAM8.SpecificApps.建模方法
             {
                 var c = gs.array_index_to_coord(n);
                 var offset = Coord.create(c.x - (rx + 1), c.y - (ry + 1), c.z - (rz + 1));
-                var dist = Math.Sqrt(Math.Pow(offset.x / scale_x, 2) + Math.Pow(offset.y / scale_y, 2) + Math.Pow(offset.z / scale_z, 2));
+                var dist = Math.Sqrt(Math.Pow(offset.x / scale_x, 2) + Math.Pow(offset.y / scale_y, 2) +
+                                     Math.Pow(offset.z / scale_z, 2));
                 var semiv = stdev * stdev - Math.Pow(stdev, 2) * (1 - Math.Exp(-Math.Pow(dist, 2)));
                 gp.set_value(n, (float?)semiv);
             }
+
             sw.Stop();
             Console.WriteLine($@"阶段2,time={sw.ElapsedMilliseconds}");
             sw.Reset();
@@ -224,6 +237,7 @@ namespace JAM8.SpecificApps.建模方法
                     }
                 }
             }
+
             sw.Stop();
             Console.WriteLine($@"阶段3,time={sw.ElapsedMilliseconds}");
             sw.Reset();
@@ -255,6 +269,7 @@ namespace JAM8.SpecificApps.建模方法
                     }
                 }
             }
+
             sw.Stop();
             Console.WriteLine($@"阶段6,time={sw.ElapsedMilliseconds}");
             sw.Reset();
@@ -277,6 +292,7 @@ namespace JAM8.SpecificApps.建模方法
                     }
                 }
             }
+
             random_field = MyFFT.ifft3(random_field);
             sw.Stop();
             Console.WriteLine($@"模拟完成,time={sw.ElapsedMilliseconds}");

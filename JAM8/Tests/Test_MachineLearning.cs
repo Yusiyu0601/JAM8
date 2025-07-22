@@ -13,8 +13,9 @@ namespace JAM8.Tests
             MyDataFrame df = MyDataFrame.read_from_excel();
             df.show_win();
             var model = Algorithms.MachineLearning.MySVM.train(df, df.series_names.Take(df.N_Series - 1).ToArray(),
-                  df.series_names[df.series_names.Length - 1]);
-            var predict = Algorithms.MachineLearning.MySVM.predict(df, df.series_names.Take(df.N_Series - 1).ToArray(), model);
+                df.series_names[df.series_names.Length - 1]);
+            var predict =
+                Algorithms.MachineLearning.MySVM.predict(df, df.series_names.Take(df.N_Series - 1).ToArray(), model);
             predict.show_win();
         }
 
@@ -23,13 +24,14 @@ namespace JAM8.Tests
             GridStructure gs = GridStructure.create_win();
             GridProperty gp = GridProperty.create(gs);
             gp.set_values_gaussian(0, 1, new Random(1));
-            CData cd = CData.create_from_gridProperty(gp, null, false);
+
             List<MyVector> my_vectors = new();
             for (int n = 0; n < gs.N; n++)
             {
                 SpatialIndex si = gs.get_spatial_index(n);
                 my_vectors.Add(MyVector.create(new float[] { si.ix, si.iy, si.iz }));
             }
+
             PStableLSH lsh = new(3, 3, 0.1f, 0.05f, 1);
             lsh.MapVectorToHashTable(my_vectors);
             Stopwatch sw = new();
@@ -42,6 +44,7 @@ namespace JAM8.Tests
                 var (a, b) = lsh.Search(MyVector.create(new float[] { si.ix, si.iy, si.iz }));
                 MyConsoleProgress.Print(i, 10000000, a.Count.ToString());
             }
+
             Console.WriteLine(@"end");
             sw.Stop();
             Console.WriteLine(sw.ElapsedMilliseconds);

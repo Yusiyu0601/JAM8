@@ -82,7 +82,7 @@ namespace JAM8.Tests
             ofd.ShowDialog();
             var dt = ExcelHelper.excel_to_dataTable(ofd.FileName);
             MyDataFrame df = MyDataFrame.create_from_datatable(dt);
-            df.show_console();
+            df.print();
             List<ABC> abc = EntityHelper.dataTable_to_entities<ABC>(dt);
             Console.WriteLine(abc.Count);
             foreach (var item in abc)

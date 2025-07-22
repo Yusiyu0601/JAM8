@@ -18,9 +18,9 @@ namespace JAM8.SpecificApps.建模方法
 
         private void button5_Click(object sender, EventArgs e)
         {
-            (cd, file_name_cd) = CData.read_from_gslibwin();//cd
+            (cd, file_name_cd) = CData.read_from_gslib_win();//cd
             comboBox2.Items.Clear();
-            foreach (var item in cd.propertyNames)
+            foreach (var item in cd.property_names)
             {
                 comboBox2.Items.Add(item);
             }
@@ -33,7 +33,7 @@ namespace JAM8.SpecificApps.建模方法
             GridStructure gs = GridStructure.create_win();
             if (gs != null)
             {
-                GridProperty gp_cd = cd.assign_to_grid(gs).grid_assigned[comboBox2.Text];
+                GridProperty gp_cd = cd.coarsened(gs).coarsened_grid[comboBox2.Text];
                 gp_cd.show_win();
             }
         }

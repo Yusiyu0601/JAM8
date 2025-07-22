@@ -980,30 +980,50 @@ namespace JAM8.Utilities
         /// <returns></returns>
         public string view_text(int N_first_lines = 15)
         {
-            string text = "";
-            text += ($"MyDataFrame[{N_Record}行,{N_Series}列]");
-            text += (Environment.NewLine);
-            for (int iSeries = 0; iSeries < N_Series; iSeries++)
+            var sb = new System.Text.StringBuilder();
+            const int columnWidth = 16;
+
+            sb.AppendLine($"MyDataFrame[{N_Record} rows, {N_Series} columns]");
+
+            // Header
+            for (int i = 0; i < N_Series; i++)
             {
-                text += string.Format("{0}", StringHelper.padRightEx(series_names[iSeries], 20));
+                string header = series_names[i] ?? "";
+                sb.Append(StringHelper.padRightEx(header, columnWidth));
             }
-            text += (Environment.NewLine);
-            N_first_lines = Math.Min(N_first_lines, N_Record);
-            for (int iRecord = 0; iRecord < N_first_lines; iRecord++)
+            sb.AppendLine();
+
+            // Separator line
+            sb.AppendLine(new string('-', N_Series * columnWidth));
+
+            // Rows
+            int rows_to_show = Math.Min(N_first_lines, N_Record);
+            for (int i = 0; i < rows_to_show; i++)
             {
-                for (int iSeries = 0; iSeries < N_Series; iSeries++)
+                for (int j = 0; j < N_Series; j++)
                 {
-                    string text_cell = this[iRecord, iSeries] == null ? "null" : this[iRecord, iSeries].ToString();
-                    text += string.Format("{0}", StringHelper.padRightEx(text_cell, 20));
+                    var val = this[i, j];
+                    string text = val == null ? "null" :
+                        val is float f ? f.ToString("0.###") : val.ToString();
+                    sb.Append(StringHelper.padRightEx(text, columnWidth));
                 }
-                text += (Environment.NewLine);
+                sb.AppendLine();
             }
-            return text;
+
+            // 如果有更多行未显示，添加提示
+            if (N_Record > N_first_lines)
+            {
+                sb.AppendLine($"... (only first {N_first_lines} rows shown)");
+            }
+
+            return sb.ToString();
         }
+
+
         /// <summary>
         /// 控制台展示
         /// </summary>
-        public void show_console()
+        public void print()
         {
             Console.Write(view_text());
         }
