@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 using JAM8.Algorithms.Geometry;
-using JAM8.Algorithms.Numerics;
+using JAM8.Utilities;
 using Octree;
 using Shouldly;
 

@@ -1,4 +1,6 @@
-﻿using Easy.Common.Extensions;
+﻿#nullable enable
+
+using Easy.Common.Extensions;
 
 namespace JAM8.Utilities
 {
@@ -7,474 +9,199 @@ namespace JAM8.Utilities
     /// </summary>
     public class MyArrayHelper
     {
-        #region 1d Array functions
-
-        #region 合并只要有交集的所有集合
-
         /// <summary>
-        /// 合并只要有交集的所有集合
+        /// 通用数组打印函数，支持一维、二维、三维数组输出到控制台。
+        /// 支持浮点格式控制。
+        /// 格式字符串含义
+        /// "G"	    常规格式（默认格式，保留必要位数）
+        /// "F2"	固定小数点格式，保留 2 位小数
+        /// "F3"	保留 3 位小数
+        /// "E"	    科学计数法（如 1.23E+003）
+        /// "N0"	带千分位的整数（如 1,234）
+        /// "P1"	百分比格式（如 12.3%）
         /// </summary>
-        /// <param name="lists"></param>
-        /// <returns></returns>
-        public static List<List<double>> UnionArraysHaveIntersection(List<List<double>> lists)
-        {
-            //参考方法: https://www.cnblogs.com/Iconnector/p/10320579.html
-
-            List<double> all = new(); //所有的集合数据					
-            HashSet<double> repeated = new(); //得到没有重复的hashset				
-            foreach (List<double> item in lists)
-            {
-                foreach (double index in item)
-                {
-                    if (all.Contains(index))
-                        repeated.Add(index); //得到所有重复的集合的元素									
-                    all.Add(index); //得到所有的集合的元素									
-                }
-            }
-
-
-            foreach (var setkey in repeated) //循环重复的值					
-            {
-                List<double> templist = null; //临时						
-                List<List<double>> removelist = new();
-                foreach (var item in lists) //循环					
-                {
-                    if (item.Contains(setkey))
-                    {
-                        if (templist == null)
-                        {
-                            templist = item;
-                            removelist.Add(item);
-                        }
-                        else
-                        {
-                            removelist.Add(item);
-                            templist = templist.Union(item).ToList();
-                        }
-                    }
-                }
-
-                foreach (var item in removelist)
-                {
-                    lists.Remove(item);
-                }
-
-                removelist.Clear();
-                lists.Add(templist);
-            }
-
-            return lists;
-        }
-
-        #endregion
-
-        #region 中位数计算
-
-        /// <summary>
-        /// 计算中位数
-        /// </summary>
-        /// <param name="array"></param>
-        /// <returns></returns>
-        public static double Median(IList<double> array)
+        /// <typeparam name="T">数组元素类型</typeparam>
+        /// <param name="array">支持 1D, 2D, 3D 数组</param>
+        /// <param name="label">可选标签名称</param>
+        /// <param name="floatFormat">浮点输出格式（例如 "F3" 保留三位小数）</param>
+        /// <param name="printTips">是否输出提示信息</param>
+        public static void print<T>(Array array, string label = "", string floatFormat = "G", bool printTips = true)
         {
             if (array == null)
             {
-                throw new ArgumentNullException(nameof(array));
+                Console.WriteLine("数组为空！");
+                return;
             }
 
-            int N = array.Count;
-            array = array.OrderBy(a => a).ToArray();
-            int endIndex = N / 2;
-            for (int i = 0; i <= endIndex; i++)
+            int rank = array.Rank;
+
+            if (printTips)
             {
-                for (int j = 0; j < N - i - 1; j++)
+                Console.WriteLine();
+                Console.WriteLine($"--- 打印{rank}维数组{(string.IsNullOrEmpty(label) ? "" : $"：{label}")} ---");
+            }
+
+            if (rank == 1)
+            {
+                int length = array.GetLength(0);
+                for (int i = 0; i < length; i++)
                 {
-                    if (array[j + 1] < array[j])
+                    print(array.GetValue(i), floatFormat);
+                    Console.Write("\t");
+                }
+
+                Console.WriteLine();
+            }
+            else if (rank == 2)
+            {
+                int rows = array.GetLength(0);
+                int cols = array.GetLength(1);
+                for (int i = 0; i < rows; i++)
+                {
+                    for (int j = 0; j < cols; j++)
                     {
-                        (array[j], array[j + 1]) = (array[j + 1], array[j]);
+                        print(array.GetValue(i, j), floatFormat);
+                        Console.Write("\t");
+                    }
+
+                    Console.WriteLine();
+                }
+            }
+            else if (rank == 3)
+            {
+                int dim0 = array.GetLength(0);
+                int dim1 = array.GetLength(1);
+                int dim2 = array.GetLength(2);
+
+                for (int i = 0; i < dim0; i++)
+                {
+                    Console.WriteLine($"\n>>> 第 {i} 层 (slice in dim0 = {i})");
+                    for (int j = 0; j < dim1; j++)
+                    {
+                        for (int k = 0; k < dim2; k++)
+                        {
+                            print(array.GetValue(i, j, k), floatFormat);
+                            Console.Write("\t");
+                        }
+
+                        Console.WriteLine();
                     }
                 }
             }
-
-            if (N % 2 != 0)
+            else
             {
-                return array[endIndex];
+                Console.WriteLine("暂不支持4维或以上数组的打印。");
             }
-
-            return (array[endIndex - 1] + array[endIndex]) / 2;
         }
 
-        #endregion
-
-        #region 查找Max
-
         /// <summary>
-        /// 从数组查找最大值及其索引(最大值，索引)
+        /// 按指定格式打印值（主要用于浮点数格式化）
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="arr"></param>
-        /// <returns></returns>
-        public static (T, int) FindMax<T>(T[] arr) where T : IComparable<T>
+        static void print(object? value, string floatFormat)
         {
-            var i_Pos = 0;
-            var value = arr[0];
-            for (var i = 1; i < arr.Length; ++i)
+            if (value == null)
             {
-                var _value = arr[i];
-                if (_value.CompareTo(value) > 0)
-                {
-                    value = _value;
-                    i_Pos = i;
-                }
+                Console.Write("null");
+                return;
             }
 
-            return (value, i_Pos);
+            if (value is double d)
+                Console.Write(d.ToString(floatFormat));
+            else if (value is float f)
+                Console.Write(f.ToString(floatFormat));
+            else
+                Console.Write(value);
         }
 
-        #endregion
-
-        #region 查找众数
-
         /// <summary>
-        /// 计算众数及其频数，支持值类型和引用类型（含可空），基于去重统计。
+        /// 统计任意维度数组中每个值的出现次数，支持值类型、引用类型和 null 值处理。
+        /// 返回一个包含 (值, 频数) 的列表，值可为 null。
         /// </summary>
-        /// <typeparam name="T">元素类型</typeparam>
-        /// <param name="list">输入列表</param>
-        /// <param name="keepNull">是否保留null（对引用类型和可空类型有效）</param>
-        /// <returns>(众数，频数)，无元素时返回(default, 0)</returns>
-        public static (T? mode, int count) FindMode<T>(IList<T> list, bool keepNull = true)
+        /// <typeparam name="T">数组元素类型（可为值类型、引用类型、Nullable 类型）</typeparam>
+        /// <param name="array">输入数组（支持任意维度，如 1D、2D、3D 等）</param>
+        /// <param name="keep_null">是否将 null 元素计入频数统计</param>
+        /// <returns>列表，每项为 (值, 频数)，值可能为 null</returns>
+        public static List<(T? value, int count)> count_frequency<T>(Array array, bool keep_null = true)
         {
+            // 使用字符串作为字典键，避免直接使用 T?（可能是 null）作为键带来的问题
+            // Dictionary<T?, int> 在值类型场景下不能接收 null，且 T 的哈希逻辑不可控
             var dict = new Dictionary<string, (T? value, int count)>();
-            foreach (var item in list)
+
+            // 遍历数组中所有元素（支持任意维度数组，因为 Array 实现了 IEnumerable）
+            foreach (var obj in array)
             {
-                if (item == null)
+                // === 情况一：元素为 null ===
+                if (obj == null)
                 {
-                    if (!keepNull) continue;
-                    var key = "<null>";
-                    if (!dict.ContainsKey(key))
-                        dict[key] = (default, 0);
-                    dict[key] = (default, dict[key].count + 1);
+                    // 如果不保留 null，则跳过此元素
+                    if (!keep_null) continue;
+
+                    // 使用固定字符串 "<null>" 作为 null 的唯一标识键
+                    const string nullKey = "<null>";
+
+                    // 如果字典中还没有这个键，初始化为 (null, 0)
+                    if (!dict.ContainsKey(nullKey))
+                        dict[nullKey] = (default, 0); // default 表示 null
+
+                    // 将对应频数加一
+                    dict[nullKey] = (default, dict[nullKey].count + 1);
                 }
                 else
                 {
-                    var key = item.ToString() ?? "";
+                    // === 情况二：元素不为 null ===
+
+                    // 强制将 object 转为目标类型 T
+                    T item = (T)obj;
+
+                    // 将 item 转为字符串作为键（避免直接用 item 作为键）
+                    // ToString() 可能返回 null，因此用 ?? 替代为 "<unknown>"
+                    string key = item?.ToString() ?? "<unknown>";
+
+                    // 初始化该 key 对应的频数
                     if (!dict.ContainsKey(key))
                         dict[key] = (item, 0);
+
+                    // 累加频数
                     dict[key] = (item, dict[key].count + 1);
                 }
             }
 
-            if (dict.Count == 0) 
-                return (default, 0);
-
-            var mode = dict.Values.OrderByDescending(x => x.count).First();
-            return (mode.value, mode.count);
-        }
-
-        #endregion
-
-        #region Get Segments
-
-        /// <summary>
-        /// 从1个元素数组中提取连续的段Segment，返回每个段Segment的值、起始索引、终止索引
-        /// </summary>
-        /// <param name="Elements"></param>
-        /// <returns></returns>
-        public static Tuple<List<int?>, List<int>, List<int>, List<int>> GetSegments(List<int?> Elements)
-        {
-            int N = Elements.Count;
-            Elements.Add(int.MaxValue); //增加1个最大值，便于处理最后一个值
-            int idx = -1; //元素索引
-            int flag = 0; //标记，从0开始，进入下一个Segment则增加1
-            List<int> Segment_flag = new();
-            List<int> Segment_idx1 = new();
-            List<int> Segment_idx2 = new();
-            List<int> Segment_length = new();
-            List<int?> Segment_code = new();
-            while (true)
-            {
-                idx++;
-                if (idx == N)
-                {
-                    break;
-                }
-
-                if (Elements[idx] != Elements[idx + 1])
-                {
-                    //当前元素与下一个元素不相同，表明出现1个新Segment，标记flag加1
-                    Segment_flag.Add(flag);
-                    flag++;
-                    continue;
-                }
-
-                Segment_flag.Add(flag);
-            }
-
-            //找出不重复的元素
-            var distinct = MyDistinct.distinct(Segment_flag);
-            for (int i = 0; i < distinct.Item2.Length; i++)
-            {
-                int segment_idx1 = Segment_flag.FindIndex(a => a == distinct.Item1[i]);
-                int segment_idx2 = Segment_flag.FindLastIndex(a => a == distinct.Item1[i]);
-                Segment_idx1.Add(segment_idx1);
-                Segment_idx2.Add(segment_idx2);
-                Segment_length.Add(segment_idx2 - segment_idx1 + 1);
-                Segment_code.Add(Elements[segment_idx1]);
-            }
-
-            return new Tuple<List<int?>, List<int>, List<int>, List<int>>(Segment_code, Segment_idx1, Segment_idx2,
-                Segment_length);
+            // 返回字典中所有的值（即 (value, count) 列表）
+            return dict.Values.ToList();
         }
 
         /// <summary>
-        /// 从1个元素数组中提取连续的段Segment，返回每个段Segment的值、起始索引、终止索引
+        /// 查找数组中的所有并列众数（即出现次数最多的值，可有多个）。
+        /// 支持任意维度数组（如 1D、2D、3D），值类型、引用类型、Nullable 和 null 值。
         /// </summary>
-        /// <param name="Elements"></param>
-        /// <returns></returns>
-        public static Tuple<List<double?>, List<int>, List<int>, List<int>> GetSegments(List<double?> Elements)
+        /// <typeparam name="T">数组元素类型（支持任意类型）</typeparam>
+        /// <param name="array">输入数组（System.Array，可为任意维度）</param>
+        /// <param name="keep_null">是否将 null 值参与众数统计</param>
+        /// <returns>
+        /// 一个元组：
+        /// - modes：所有频数最大的值列表（可能含多个并列众数）
+        /// - count：众数的频数（即最大出现次数）
+        /// 若数组为空或所有元素被跳过，返回空列表和 0。
+        /// </returns>
+        public static (List<T?> modes, int count) find_all_modes<T>(Array array, bool keep_null = true)
         {
-            int N = Elements.Count;
-            Elements.Add(double.MaxValue); //增加1个最大值，便于处理最后一个值
-            int idx = -1; //元素索引
-            int flag = 0; //标记，从0开始，进入下一个Segment则增加1
-            List<int> Segment_flag = new();
-            List<int> Segment_idx1 = new();
-            List<int> Segment_idx2 = new();
-            List<int> Segment_length = new();
-            List<double?> Segment_code = new();
-            while (true)
-            {
-                idx++;
-                if (idx == N)
-                {
-                    break;
-                }
+            // 调用频数统计函数，获取所有元素及其对应频数
+            List<(T? value, int count)> freqList = count_frequency<T>(array, keep_null);
 
-                if (Elements[idx] != Elements[idx + 1])
-                {
-                    //当前元素与下一个元素不相同，表明出现1个新Segment，标记flag加1
-                    Segment_flag.Add(flag);
-                    flag++;
-                    continue;
-                }
+            // 如果数组为空或所有元素都被跳过（例如都是 null 且 keepNull 为 false），直接返回空结果
+            if (freqList.Count == 0)
+                return (new List<T?>(), 0);
 
-                Segment_flag.Add(flag);
-            }
+            // 找出最大频数，即众数的频数
+            int max = freqList.Max(x => x.count);
 
-            //找出不重复的元素
-            var distinct = MyDistinct.distinct(Segment_flag);
-            for (int i = 0; i < distinct.Item2.Length; i++)
-            {
-                int segment_idx1 = Segment_flag.FindIndex(a => a == distinct.Item1[i]);
-                int segment_idx2 = Segment_flag.FindLastIndex(a => a == distinct.Item1[i]);
-                Segment_idx1.Add(segment_idx1);
-                Segment_idx2.Add(segment_idx2);
-                Segment_length.Add(segment_idx2 - segment_idx1 + 1);
-                Segment_code.Add(Elements[segment_idx1]);
-            }
+            // 筛选出所有频数等于最大值的元素，即为并列众数
+            List<T?> modes = freqList
+                .Where(x => x.count == max)
+                .Select(x => x.value)
+                .ToList();
 
-            return new Tuple<List<double?>, List<int>, List<int>, List<int>>(Segment_code, Segment_idx1, Segment_idx2,
-                Segment_length);
+            return (modes, max);
         }
-
-        #endregion
-
-        #region print
-
-        /// <summary>
-        /// 打印数组，Mode=0,横向打印，Mode=1 纵向打印
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="array"></param>
-        /// <param name="Mode">横向打印 or 纵向打印</param>
-        /// <param name="b_print_tips">是否打印提示 --- 1D Array内容 --- </param>
-        public static void Print<T>(IEnumerable<T> array, int Mode = 0, bool b_print_tips = true)
-        {
-            if (b_print_tips)
-                Console.WriteLine(@"--- 1D Array内容 ---");
-            if (Mode == 0)
-            {
-                for (int n = 0; n < array.Count(); n++)
-                {
-                    Console.Write("{0:F3}", array.ElementAt(n));
-                    Console.Write("\t");
-                }
-
-                Console.Write("\n");
-            }
-
-            if (Mode == 1)
-            {
-                for (int n = 0; n < array.Count(); n++)
-                {
-                    Console.Write("{0:F3}", array.ElementAt(n));
-                    Console.Write("\n");
-                }
-            }
-        }
-
-        #endregion
-
-        #region read from console
-
-        public static double[] ReadFromConsole(int SplitCode = 0)
-        {
-            List<double> data = new();
-            string[] temp = null!;
-            if (SplitCode == 0)
-            {
-                temp = Console.ReadLine()!.Split(new char[] { ' ' });
-            }
-
-            if (SplitCode == 1)
-            {
-                temp = Console.ReadLine()!.Split(new char[] { ';' });
-            }
-
-            if (SplitCode == 2)
-            {
-                temp = Console.ReadLine()!.Split(new char[] { ',' });
-            }
-
-            for (int i = 0; i < temp.Length; i++)
-            {
-                data.Add(double.Parse(temp[i]));
-            }
-
-            return data.ToArray();
-        }
-
-        #endregion
-
-        #endregion
-
-        #region 2d Array functions
-
-        /// <summary>
-        /// 打印二维数组到控制台
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="matrix"></param>
-        public static void print<T>(T[,] array)
-        {
-            Console.WriteLine(@"--- 2D Array内容 ---");
-            for (int i = 0; i < array.GetLength(0); i++)
-            {
-                for (int j = 0; j < array.GetLength(1); j++)
-                {
-                    Console.Write("{0:F3}", array[i, j]);
-                    Console.Write("\t");
-                }
-
-                Console.WriteLine(@"	");
-            }
-        }
-
-        /// <summary>
-        /// 从1个2d数组中提取部分列，组成1个新数组
-        /// </summary>
-        public static T[,] Get2dArray_Cols<T>(T[,] input, int[] iCols)
-        {
-            int rows = input.GetLength(0);
-            int cols = iCols.Length;
-            T[,] output_2dArray = new T[rows, cols];
-            for (int col = 0; col < cols; col++)
-            {
-                for (int row = 0; row < rows; row++)
-                {
-                    output_2dArray[row, col] = input[row, iCols[col]];
-                }
-            }
-
-            return output_2dArray;
-        }
-
-        /// <summary>
-        /// 转换数据类型，string类型 -> double类型
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="input_2dArray"></param>
-        /// <returns></returns>
-        public static double[,] convert_to_double<T>(T[,] D2_array)
-        {
-            try
-            {
-                int rows = D2_array.GetLength(0);
-                int cols = D2_array.GetLength(1);
-                double[,] output = new double[rows, cols];
-
-                for (int col = 0; col < cols; col++)
-                for (int row = 0; row < rows; row++)
-                    output[row, col] = Convert.ToDouble(D2_array[row, col]);
-
-                return output;
-            }
-            catch
-            {
-                return null;
-            }
-        }
-
-        /// <summary>
-        /// 转换数据类型，string类型 -> float类型
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="input_2dArray"></param>
-        /// <returns></returns>
-        public static float[,] convert_to_float<T>(T[,] D2_array)
-        {
-            try
-            {
-                int rows = D2_array.GetLength(0);
-                int cols = D2_array.GetLength(1);
-                float[,] output = new float[rows, cols];
-
-                for (int col = 0; col < cols; col++)
-                for (int row = 0; row < rows; row++)
-                    output[row, col] = Convert.ToSingle(D2_array[row, col]);
-
-                return output;
-            }
-            catch
-            {
-                return null;
-            }
-        }
-
-        /// <summary>
-        /// 替换原数组中的元素值
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="input_2dArray"></param>
-        /// <param name="valueMapper">原值->新值 映射</param>
-        /// <returns></returns>
-        public static T[,] ReplaceElement_2dArray<T>(T[,] input_2dArray, Dictionary<T, T> valueMapper)
-        {
-            try
-            {
-                int rows = input_2dArray.GetLength(0);
-                int cols = input_2dArray.GetLength(1);
-                T[,] output_2dArray = new T[rows, cols];
-                for (int col = 0; col < cols; col++)
-                {
-                    for (int row = 0; row < rows; row++)
-                    {
-                        T key = input_2dArray[row, col];
-                        if (valueMapper.ContainsKey(key)) //如果Element是valueMapper中的key，则更改该Element值
-                            output_2dArray[row, col] = valueMapper[key];
-                        else //否则使用原值
-                            output_2dArray[row, col] = key;
-                    }
-                }
-
-                return output_2dArray;
-            }
-            catch
-            {
-                return null;
-            }
-        }
-
-        #endregion
     }
 }

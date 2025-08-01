@@ -38,7 +38,7 @@ namespace JAM8.Algorithms.Geometry
                 : Mould.create_by_ellipse(search_radius, search_radius, 2, 1);
 
             //随机访问模拟网格的索引
-            var visit_re_idxes = SortHelper.FisherYatesShuffle(MyGenerator.range(0, gs_re.N - 1, 1, true), mt); //乱序
+            var visit_re_idxes = MyShuffleHelper.fisher_yates_shuffle(MyGenerator.range(0, gs_re.N), mt).shuffled; //乱序
 
             //进度
             int progress = 0;

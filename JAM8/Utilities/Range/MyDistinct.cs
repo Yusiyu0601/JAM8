@@ -3,9 +3,12 @@
 namespace JAM8.Utilities
 {
     /// <summary>
-    /// 泛型版本的distinct方法,用于去重复类
-    /// 2025-5-18
-    /// 喻思羽
+    /// 去重复类
+    /// 
+    /// 作者:喻思羽 & chargpt
+    ///
+    /// 2025-5-18 创建
+    /// 2025-8-1 修改
     /// </summary>
     public class MyDistinct
     {
@@ -19,7 +22,7 @@ namespace JAM8.Utilities
         /// - values: 去重后的值数组（按升序排列）
         /// - counts: 每个值对应的出现次数
         /// </returns>
-        public static (T[] values, int[] counts) distinct<T>(IList<T> list) where T : struct
+        public static (T[] values, int[] counts) distinct_by_value<T>(IList<T> list) where T : struct
         {
             // 用字符串形式的 key 来避免 Dictionary 的 T 比较器陷阱（如浮点 NaN），但排序时仍使用真实值
             var dict = new Dictionary<string, (T value, int count)>();
@@ -67,7 +70,7 @@ namespace JAM8.Utilities
         /// - values: 去重后的值数组（null 在前，其他按升序排列）
         /// - counts: 每个值对应的出现次数
         /// </returns>
-        public static (T?[] values, int[] counts) distinct<T>(IList<T?> list, bool keep_null = true) where T : struct
+        public static (T?[] values, int[] counts) distinct_by_nullable_value<T>(IList<T?> list, bool keep_null = true) where T : struct
         {
             // 使用字符串作为键，避免浮点类型比较陷阱
             var dict = new Dictionary<string, (T? value, int count)>();
@@ -135,7 +138,7 @@ namespace JAM8.Utilities
         /// - values: 去重后的值数组（null 作为第一项，其他按字符串顺序排列）
         /// - counts: 每个值对应的出现次数
         /// </returns>
-        public static (T[] values, int[] counts) distinct<T>(IList<T> list, bool keep_null = true) where T : class
+        public static (T[] values, int[] counts) distinct_by_reference<T>(IList<T> list, bool keep_null = true) where T : class
         {
             // 使用字符串键，统一比较逻辑（避免引用对象默认地址比较问题）
             var dict = new Dictionary<string, (T value, int count)>();

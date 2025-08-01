@@ -74,7 +74,7 @@ namespace JAM8.Algorithms.Geometry
             //对高斯随机场数据进行排序
             var data_grf = g["grf"].buffer.OrderBy(a => a).Select(a => (double)a).ToList();
             //由于数量过大，从原始数据里提取一部分
-            var indx = MyGenerator.linespace(0, data_grf.Count - 1, 500);
+            var indx = MyGenerator.linspace(0, data_grf.Count - 1, 500);
             List<double> data_grf_sampling = [];
             foreach (var item in indx)
                 data_grf_sampling.Add(data_grf[(int)item]);
@@ -154,7 +154,7 @@ namespace JAM8.Algorithms.Geometry
             //GRF quantile 计算分位数
             var data_gauss = g["grf"].buffer.OrderBy(a => a).Select(a => (double)a).ToList();
             //防止数量过大，从原始数据里提取一部分
-            var indx = MyGenerator.linespace(0, data_gauss.Count - 1, 1000);
+            var indx = MyGenerator.linspace(0, data_gauss.Count - 1, 1000);
             List<double> data_gauss_sampling = [];
             foreach (var item in indx)
             {

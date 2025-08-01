@@ -18,6 +18,7 @@ namespace JAM8.Tests
                     string value = df[iRecord, 0].ToString().Trim('\"');
                     df[iRecord, 0] = value;
                 }
+
                 string name = FileHelper.GetFileName(file_path, false);
                 name = name.Split(" ")[0];
                 _50_realiztions_纹理特征.Add(name, df);
@@ -58,16 +59,17 @@ namespace JAM8.Tests
 
                     differences.Add(hsim);
                 }
+
                 df_result[record_idx, "hsim"] = differences.Average();
             }
-            df_result.show_win();
 
+            df_result.show_win();
         }
 
 
         public static void Linespace()
         {
-            var idx = MyGenerator.linespace(1, 100, 100);
+            var idx = MyGenerator.linspace(1, 100, 100);
         }
 
         private class ABC
@@ -76,6 +78,7 @@ namespace JAM8.Tests
             public string b { get; set; }
             public string c { get; set; }
         }
+
         public static void EntityHelper_Test()
         {
             OpenFileDialog ofd = new();
@@ -106,12 +109,6 @@ namespace JAM8.Tests
             //SaveFileDialog sfd = new();
             //sfd.ShowDialog();
             //ExcelHelper.dataTable_to_xls(sfd.FileName, dt);
-        }
-
-        public static void SortHelper_RandomNotRepeatNum()
-        {
-            var nums = SortHelper.Create_RandomNumbers_NotRepeat(1, 10, new Random());
-            Console.WriteLine(nums);
         }
 
         public static void GenericCopier_Test()

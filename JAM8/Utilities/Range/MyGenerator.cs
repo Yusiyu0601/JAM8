@@ -6,41 +6,81 @@
     public class MyGenerator
     {
         /// <summary>
-        /// 可以生成指定步长的整数递增（递减）序列
+        /// 生成一个整数序列（左闭右开），例如 range(1, 5) → [1, 2, 3, 4]
+        /// 用法与 Python 的 range 函数类似。
         /// </summary>
-        /// <param name="start">序列起点(闭区间)</param>
-        /// <param name="stop">序列终点(闭区间 or 开区间,由EndClosed控制)</param>
-        /// <param name="step">步长</param>
-        /// <param name="end_closed">是否是闭区间，默认为否</param>
-        /// <returns></returns>
-        public static List<int> range(int start, int stop, int step, bool end_closed = false)
+        /// <param name="start">起始值（包含）</param>
+        /// <param name="stop">终止值（不包含）</param>
+        /// <param name="step">步长，不能为 0。正数表示递增，负数表示递减。</param>
+        /// <returns>
+        /// 一个整数列表，包含从 <paramref name="start"/> 开始，按照 <paramref name="step"/> 递增或递减，
+        /// 直到到达或超过（不包含）<paramref name="stop"/> 为止的所有整数。
+        /// </returns>
+        /// <exception cref="ArgumentException">当 <paramref name="step"/> 为零时抛出。</exception>
+        /// <example>
+        /// 示例：
+        /// <code>
+        /// var r1 = range(1, 5);        // [1, 2, 3, 4]
+        /// var r2 = range(5, 1, -1);    // [5, 4, 3, 2]
+        /// var r3 = range(0, 10, 3);    // [0, 3, 6, 9]
+        /// </code>
+        /// </example>
+        public static List<int> range(int start, int stop, int step = 1)
         {
+            if (step == 0)
+                throw new ArgumentException("Step cannot be zero.");
+
             List<int> result = new();
-            for (int i = start; i <= stop; i += step)
+            if (step > 0)
             {
-                if (i != stop)//如果i没有达到End时，都满足条件的都添加
+                for (int i = start; i < stop; i += step)
                     result.Add(i);
-                else//否则
-                {
-                    if (end_closed)//如果是闭区间，添加End
-                        result.Add(i);
-                    else//否则不添加
-                        continue;
-                }
             }
+            else
+            {
+                for (int i = start; i > stop; i += step)
+                    result.Add(i);
+            }
+
             return result;
         }
 
         /// <summary>
-        /// 生成一组从start到stop等距的N个数据，等效于MATLAB linspace。
+        /// 生成从 <paramref name="start"/> 到 <paramref name="stop"/> 的等间距 double 数组，
+        /// 类似 MATLAB 或 NumPy 的 linspace 函数。
+        /// 起点总是包含，是否包含终点由 <paramref name="endpoint"/> 决定。
+        /// 示例：
+        /// linspace(0.0, 1.0, 5)        → [0.0, 0.25, 0.5, 0.75, 1.0];
+        /// linspace(0.0, 1.0, 5, false) → [0.0, 0.2, 0.4, 0.6, 0.8]
         /// </summary>
-        /// <param name="start"></param>
-        /// <param name="stop"></param>
-        /// <param name="N"></param>
-        /// <returns></returns>
-        public static double[] linespace(double start, double stop, int N)
+        /// <param name="start">起始值（包含）</param>
+        /// <param name="stop">终止值（是否包含由 endpoint 决定）</param>
+        /// <param name="N">生成点数，必须 ≥ 2</param>
+        /// <param name="endpoint">是否包含终点，默认 true</param>
+        /// <returns>等间距 double 数组，长度为 N</returns>
+        /// <exception cref="ArgumentException">当 N 小于 2 时抛出</exception>
+        public static double[] linspace(double start, double stop, int N, bool endpoint = true)
         {
-            return MathNet.Numerics.Generate.LinearSpaced(N, start, stop);
+            if (N < 2)
+                throw new ArgumentException("N must be at least 2.");
+
+            double[] result = new double[N];
+
+            double step = endpoint
+                ? (stop - start) / (N - 1)
+                : (stop - start) / N;
+
+            for (int i = 0; i < N; i++)
+            {
+                result[i] = start + step * i;
+            }
+
+            if (endpoint)
+            {
+                result[N - 1] = stop; // 强制终点精确等于 stop，防止浮点误差
+            }
+
+            return result;
         }
     }
 }

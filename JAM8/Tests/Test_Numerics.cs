@@ -163,16 +163,16 @@ namespace JAM8.Tests
         public static void FFTShift_Test()
         {
             double[] values = new double[] { 1, 2, 3, 4, 5, 6, 7 };
-            MyArrayHelper.Print(values);
-            MyArrayHelper.Print(MyFFT.ifftshift(values));
-            MyArrayHelper.Print(MyFFT.fftshift(values));
-            MyArrayHelper.Print(MyFFT.ifftshift(MyFFT.fftshift(values)));
+            MyArrayHelper.print<double>(values);
+            MyArrayHelper.print<double>(MyFFT.ifftshift(values));
+            MyArrayHelper.print<double>(MyFFT.fftshift(values));
+            MyArrayHelper.print<double>(MyFFT.ifftshift(MyFFT.fftshift(values)));
 
             values = new double[] { 1, 2, 3, 4, 5, 6, 7, 8 };
-            MyArrayHelper.Print(values);
-            MyArrayHelper.Print(MyFFT.ifftshift(values));
-            MyArrayHelper.Print(MyFFT.fftshift(values));
-            MyArrayHelper.Print(MyFFT.ifftshift(MyFFT.fftshift(values)));
+            MyArrayHelper.print<double>(values);
+            MyArrayHelper.print<double>(MyFFT.ifftshift(values));
+            MyArrayHelper.print<double>(MyFFT.fftshift(values));
+            MyArrayHelper.print<double>(MyFFT.ifftshift(MyFFT.fftshift(values)));
         }
 
         public static void QuickChart_Test()
@@ -246,7 +246,7 @@ namespace JAM8.Tests
 
             Form_QuickChart frm = new();
             frm.Show();
-            double[] x = MyGenerator.linespace(0, 1, 1400);
+            double[] x = MyGenerator.linspace(0, 1, 1400);
             double[] x_tick = MyGenerator.range(0, 1400, 1).Select(a => (double)a).ToArray();
             double[] y = new double[x.Length];
             for (int j = 0; j < y.Length; j++)

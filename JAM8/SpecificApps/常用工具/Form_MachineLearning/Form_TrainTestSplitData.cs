@@ -14,6 +14,7 @@ namespace JAM8.SpecificApps.常用工具
     public partial class Form_TrainTestSplitData : Form
     {
         private MyDataFrame df;
+
         public Form_TrainTestSplitData()
         {
             InitializeComponent();
@@ -44,12 +45,12 @@ namespace JAM8.SpecificApps.常用工具
         //Split数据集
         private void button2_Click(object sender, EventArgs e)
         {
-            double ratio_train = double.Parse(textBox1.Text);//训练集占比
-            if (checkBox1.Checked == false)//
+            double ratio_train = double.Parse(textBox1.Text); //训练集占比
+            if (checkBox1.Checked == false) //
             {
                 int N_train = (int)(ratio_train * df.N_Record);
                 var indexes = MyGenerator.range(0, df.N_Record, 1);
-                var indexes_train = SortHelper.RandomSelect(indexes, N_train, new Random());
+                var indexes_train = MySamplingHelper.sample_from_list(indexes, N_train, new MersenneTwister(111));
                 MyDataFrame df_train = df.get_record_subset(indexes_train);
                 df_train.show_win("训练数据集");
 
@@ -58,11 +59,11 @@ namespace JAM8.SpecificApps.常用工具
                 MyDataFrame df_test = df.get_record_subset(indexes_test);
                 df_test.show_win("测试数据集");
             }
-            else//保持比例
+            else //保持比例
             {
-                string series_name_categories = comboBox1.Text;//属类别的序列名称
+                string series_name_categories = comboBox1.Text; //属类别的序列名称
                 var series_output = df.get_series<string>(series_name_categories);
-                var (categories, counts) = MyDistinct.distinct(series_output);//类别去重
+                var (categories, counts) = MyDistinct.distinct_by_reference(series_output); //类别去重
                 Dictionary<string, List<int>> dict = new();
                 foreach (var item in categories)
                     dict.Add(item, new List<int>());
@@ -72,20 +73,23 @@ namespace JAM8.SpecificApps.常用工具
                     var category = df[iRecord, series_name_categories].ToString();
                     dict[category].Add(iRecord);
                 }
+
                 //为每个类提取给定比例的记录作为训练集和测试集
                 List<int> indexes_train = new();
                 List<int> indexes_test = new();
                 foreach (var (category, indexes_category) in dict)
                 {
-                    int N_train_category = (int)(ratio_train * indexes_category.Count);//该类的训练集
+                    int N_train_category = (int)(ratio_train * indexes_category.Count); //该类的训练集
                     //随机抽样
-                    var indexes_train_category = SortHelper.RandomSelect(indexes_category, N_train_category, new Random());
+                    var indexes_train_category = MySamplingHelper.sample_from_list(indexes_category, N_train_category,
+                        new MersenneTwister(111));
                     indexes_train.AddRange(indexes_train_category);
 
-                    var indexes_test_category = new List<int>(indexes_category);//该类的测试集
+                    var indexes_test_category = new List<int>(indexes_category); //该类的测试集
                     indexes_test_category.RemoveAll(indexes_train_category.Contains);
                     indexes_test.AddRange(indexes_test_category);
                 }
+
                 MyDataFrame df_train = df.get_record_subset(indexes_train);
                 df_train.show_win("训练数据集");
                 MyDataFrame df_test = df.get_record_subset(indexes_test);

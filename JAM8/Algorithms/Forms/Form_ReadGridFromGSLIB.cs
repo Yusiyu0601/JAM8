@@ -35,7 +35,7 @@ namespace JAM8.Algorithms.Geometry
         {
             var ofd = new OpenFileDialog()
             {
-                Filter = "gslib格式(*.dat;*.out)|*.dat;*.out"
+                Filter = "gslib格式(*.dat;*.out;*.gslib)|*.dat;*.out;*gslib|txt格式(*.*)|*.*"
             };
             if (ofd.ShowDialog() != DialogResult.OK)
                 return;

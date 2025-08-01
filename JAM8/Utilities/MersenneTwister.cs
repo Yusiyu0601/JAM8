@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace JAM8.Algorithms.Numerics
+namespace JAM8.Utilities
 {
     /// <summary>
     /// 
@@ -26,7 +26,7 @@ namespace JAM8.Algorithms.Numerics
             mt[0] = seed; // 将种子赋值给第一个元素
             for (int i = 1; i < N; i++)
             {
-                mt[i] = 0x6C078965 * (mt[i - 1] ^ (mt[i - 1] >> 30)) + (uint)i; // 初始化状态向量
+                mt[i] = 0x6C078965 * (mt[i - 1] ^ mt[i - 1] >> 30) + (uint)i; // 初始化状态向量
             }
             index = 0; // 初始时索引为0
         }
@@ -40,10 +40,10 @@ namespace JAM8.Algorithms.Numerics
             }
 
             uint y = mt[index++]; // 获取当前状态值，并递增索引
-            y ^= (y >> 11); // 梅森旋转算法中的移位与异或操作
-            y ^= (y << 7) & 0x9D2C5680;
-            y ^= (y << 15) & 0xEFC60000;
-            y ^= (y >> 18);
+            y ^= y >> 11; // 梅森旋转算法中的移位与异或操作
+            y ^= y << 7 & 0x9D2C5680;
+            y ^= y << 15 & 0xEFC60000;
+            y ^= y >> 18;
 
             index = index % N; // 保证 index 在 0 到 N-1 之间
             return y; // 返回计算后的随机数

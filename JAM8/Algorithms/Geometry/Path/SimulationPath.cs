@@ -72,7 +72,7 @@ namespace JAM8.Algorithms.Geometry
             {
                 path_nodes.Add(new path_node() { spatialIndex = spatialIndexes[n] });
             }
-            path_nodes = SortHelper.RandomSort(path_nodes, rnd).sorted;
+            path_nodes = MyShuffleHelper.fisher_yates_shuffle(path_nodes, new MersenneTwister(111)).shuffled;
             for (int i = 0; i < path_nodes.Count; i++)
                 spatialIndex_MapTo_randomIndex.Add(path_nodes[i].spatialIndex.view_text(), i);
         }

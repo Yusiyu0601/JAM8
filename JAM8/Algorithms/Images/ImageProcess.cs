@@ -120,7 +120,7 @@ namespace JAM8.Algorithms.Images
                     grayValues.Add(color.R);
                 }
             }
-            return MyDistinct.distinct(grayValues);
+            return MyDistinct.distinct_by_value(grayValues);
         }
 
         #region 缩略图

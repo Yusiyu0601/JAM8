@@ -70,10 +70,13 @@ namespace JAM8.SpecificApps.常用工具
                 if (gp.grid_structure.dim == Dimension.D2)
                 {
                     //随机选取井位
-                    var list_rnd =
-                        SortHelper.Create_RandomNumbers_NotRepeat(1, gp.grid_structure.N, new Random(random_seed));
+                    var cell_locs = MyGenerator.range(0, gp.grid_structure.N);
+                    cell_locs = MyShuffleHelper.fisher_yates_shuffle(cell_locs, new MersenneTwister((uint)random_seed))
+                        .shuffled;
+
+                    //抽样
                     for (int n = 0; n < N; n++)
-                        gp_sampling.set_value(list_rnd[n], gp.get_value(list_rnd[n]));
+                        gp_sampling.set_value(cell_locs[n], gp.get_value(cell_locs[n]));
                 }
 
                 if (gp.grid_structure.dim == Dimension.D3)
@@ -82,10 +85,12 @@ namespace JAM8.SpecificApps.常用工具
                     {
                         var xy_slice = gp.get_slice(1, Algorithms.GridSliceType.xy_slice);
                         //随机选取井位
-                        var random_selected = SortHelper
-                            .Create_RandomNumbers_NotRepeat(1, xy_slice.grid_structure.N, new Random(random_seed))
-                            .Take(N);
-                        foreach (var item in random_selected)
+                        var well_locs = MyGenerator.range(0, xy_slice.grid_structure.N);
+                        well_locs = MyShuffleHelper.fisher_yates_shuffle(well_locs, new MersenneTwister((uint)random_seed))
+                            .shuffled;
+
+                        //抽样
+                        foreach (var item in well_locs)
                         {
                             var si = xy_slice.grid_structure.get_spatial_index(item);
                             for (int iz = 0; iz < gp.grid_structure.nz; iz++)
@@ -97,10 +102,14 @@ namespace JAM8.SpecificApps.常用工具
                     }
                     else
                     {
-                        var list_rnd =
-                            SortHelper.Create_RandomNumbers_NotRepeat(1, gp.grid_structure.N, new Random(random_seed));
+                        //随机选取井位
+                        var cell_locs = MyGenerator.range(0, gp.grid_structure.N);
+                        cell_locs = MyShuffleHelper.fisher_yates_shuffle(cell_locs, new MersenneTwister((uint)random_seed))
+                            .shuffled;
+
+                        //抽样
                         for (int n = 0; n < N; n++)
-                            gp_sampling.set_value(list_rnd[n], gp.get_value(list_rnd[n]));
+                            gp_sampling.set_value(cell_locs[n], gp.get_value(cell_locs[n]));
                     }
                 }
 

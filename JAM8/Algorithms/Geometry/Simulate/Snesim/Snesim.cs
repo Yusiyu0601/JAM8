@@ -144,14 +144,11 @@ namespace JAM8.Algorithms.Geometry
             path = SimulationPath.create(gs_re, multigrid_level, rnd);
 
             //Only the simulation time is recorded (excluding building the search tree).
-            //只记录模拟时间（不包括构建搜索树）
             Stopwatch sw = new();
             sw.Start();
 
             MyDataFrame df_time = MyDataFrame.create(["progress", "ElapsedMilliseconds", "totalElapsedTime"]);
-            //累计时长变量（单位：毫秒）
             long totalElapsedTime = 0;
-            //避免重复进度
             double progress_preview = -1;
             while (path.is_visit_over() == false)
             {

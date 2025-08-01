@@ -118,7 +118,7 @@ namespace JAM8.SpecificApps.建模方法.Forms
             int template_rz = int.Parse(tb_template_rz.Text);
 
             var (model, _) = snesim.run(random_seed, multigrid, max_number, (template_rx, template_ry, template_rz),
-                g_ti.first_gridProperty(), cd, gs_re);
+                g_ti.first_gridProperty(), cd, gs_re, 35);
 
             scottplot4Grid1.update_grid(model);
         }

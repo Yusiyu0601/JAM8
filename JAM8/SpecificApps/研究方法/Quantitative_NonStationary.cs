@@ -548,7 +548,8 @@ namespace JAM8.SpecificApps.研究方法
                     flag++;
                     MyConsoleProgress.Print(flag, array_indexes.Count, "计算所有位置的实验变差函数");
 
-                    var (region, index_out_of_bounds) = TI.get_region_by_center(gs.get_spatial_index(n), radius, radius);
+                    var (region, index_out_of_bounds) =
+                        TI.get_region_by_center(gs.get_spatial_index(n), radius, radius);
                     int N_lag = radius;
                     //if (index_out_of_bounds)//丢弃不完整的region
                     //    continue;
@@ -726,8 +727,8 @@ namespace JAM8.SpecificApps.研究方法
 
             //进度、运算时间
             Dictionary<int, List<double>> lags_different_locs = new();
-            var locs_random = MyGenerator.range(1, gs.N, 1, true);
-            locs_random = SortHelper.RandomSelect(locs_random, 500, new Random());
+            var locs_random = MyGenerator.range(1, gs.N + 1);
+            locs_random = MySamplingHelper.sample_from_list(locs_random, 500, new MersenneTwister(111));
             int flag = 0;
             Dictionary<int, Bitmap> images = new();
             foreach (var n in locs_random)
@@ -962,8 +963,7 @@ namespace JAM8.SpecificApps.研究方法
                 for (int i = 0; i < gs.N; i++)
                     OtherArrayIndexs.Add(i);
                 int N = (int)(gs.N * Ratio); //计算量
-                var rnd = new Random(1);
-                OtherArrayIndexs = SortHelper.RandomSelect(OtherArrayIndexs, N, rnd);
+                OtherArrayIndexs = MySamplingHelper.sample_from_list(OtherArrayIndexs, N, new MersenneTwister(111));
 
                 #endregion
 
@@ -1232,8 +1232,8 @@ namespace JAM8.SpecificApps.研究方法
 
                             var std_x = EasyMath.StdDev(N_X);
                             var std_y = EasyMath.StdDev(N_Y);
-                            MyArrayHelper.Print(N_X);
-                            MyArrayHelper.Print(N_Y);
+                            MyArrayHelper.print<double>(N_X);
+                            MyArrayHelper.print<double>(N_Y);
                             var std = std_x + std_y;
                             v += std;
                         }
@@ -1356,7 +1356,8 @@ namespace JAM8.SpecificApps.研究方法
                     flag++;
                     MyConsoleProgress.Print(flag, locs_random.Count, "计算所有位置的实验变差函数");
 
-                    var (region, index_out_of_bounds) = ti.get_region_by_center(gs.get_spatial_index(n), radius, radius);
+                    var (region, index_out_of_bounds) =
+                        ti.get_region_by_center(gs.get_spatial_index(n), radius, radius);
                     var n_lag = radius;
 
                     //if (index_out_of_bounds)//丢弃不完整的region

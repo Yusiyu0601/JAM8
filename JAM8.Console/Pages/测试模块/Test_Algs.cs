@@ -49,9 +49,35 @@ namespace JAM8.Console.Pages
                     .Add("Variogram_calc_experiment_variogram_grid", Variogram_calc_experiment_variogram_grid)
                     .Add("Form_VariogramFit4PointSet", Form_VariogramFit4PointSet)
                     .Add("test_CDataNearestFinder_kdtree", test_CDataNearestFinder_kdtree)
+                    .Add("GridProperty Test[max min]", GridProperty_Test_MaxMin)
                 ;
 
             menu.Display();
+        }
+
+        private void GridProperty_Test_MaxMin()
+        {
+            Grid g = Grid.create_from_gslibwin().grid;
+            Stopwatch sw = new();
+            sw.Start();
+            MyConsoleHelper.write_string_to_console(g.first_gridProperty().Min.Value.ToString());
+            MyConsoleHelper.write_string_to_console(g.first_gridProperty().Max.Value.ToString());
+            MyConsoleHelper.write_string_to_console(g.first_gridProperty().Min.Value.ToString());
+            MyConsoleHelper.write_string_to_console(g.first_gridProperty().Max.Value.ToString());
+            MyConsoleHelper.write_string_to_console(g.first_gridProperty().Min.Value.ToString());
+            MyConsoleHelper.write_string_to_console(g.first_gridProperty().Max.Value.ToString());
+            MyConsoleHelper.write_string_to_console(g.first_gridProperty().Min.Value.ToString());
+            MyConsoleHelper.write_string_to_console(g.first_gridProperty().Max.Value.ToString());
+            MyConsoleHelper.write_string_to_console(g.first_gridProperty().Min.Value.ToString());
+            MyConsoleHelper.write_string_to_console(g.first_gridProperty().Max.Value.ToString());
+            MyConsoleHelper.write_string_to_console(g.first_gridProperty().Min.Value.ToString());
+            MyConsoleHelper.write_string_to_console(g.first_gridProperty().Max.Value.ToString());
+            MyConsoleHelper.write_string_to_console(g.first_gridProperty().Min.Value.ToString());
+            MyConsoleHelper.write_string_to_console(g.first_gridProperty().Max.Value.ToString());
+            MyConsoleHelper.write_string_to_console(g.first_gridProperty().Min.Value.ToString());
+            MyConsoleHelper.write_string_to_console(g.first_gridProperty().Max.Value.ToString());
+            sw.Stop();
+            MyConsoleHelper.write_string_to_console($"耗时: {sw.ElapsedMilliseconds}毫秒");
         }
 
         private void test_CDataNearestFinder_kdtree()
@@ -104,8 +130,8 @@ namespace JAM8.Console.Pages
                 MyConsoleProgress.Print(n, gp.grid_structure.N, "去噪点");
                 var pattern = MouldInstance.create_from_gridProperty(mould, gp.grid_structure.get_spatial_index(n), gp);
                 var values = pattern.neighbor_values;
-                var (a, b) = MyArrayHelper.FindMode(values, false);
-                result.set_value(n, a);
+                var (a, b) = MyArrayHelper.find_all_modes<float?>(values.ToArray(), false);
+                result.set_value(n, a[0]);
             }
 
             result.show_win("去噪点");
@@ -276,7 +302,7 @@ namespace JAM8.Console.Pages
             df.show_win("", true);
             var start = 0;
             var end = df.N_Record - 1;
-            var sample_indexes = MyGenerator.linespace(start, end, 101);
+            var sample_indexes = MyGenerator.linspace(start, end, 101);
 
             MyDataFrame df_sample = MyDataFrame.create(df.series_names);
             var record = df_sample.new_record();

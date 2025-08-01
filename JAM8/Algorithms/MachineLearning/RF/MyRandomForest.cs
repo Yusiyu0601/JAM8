@@ -24,7 +24,7 @@ namespace JAM8.Algorithms.MachineLearning
             //从dt提取output列的数据(单输出)
             string[] output_category = df_training.get_series<string>(output_series_name);
             //去重
-            string[] output_category_distinct = MyDistinct.distinct<string>(output_category).values;
+            string[] output_category_distinct = MyDistinct.distinct_by_reference<string>(output_category).values;
             //编码为整数
             for (int i = 0; i < output_category_distinct.Length; i++)
             {

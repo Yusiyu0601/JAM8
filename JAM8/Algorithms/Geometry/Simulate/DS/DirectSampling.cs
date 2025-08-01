@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using System.Security.Policy;
-using JAM8.Algorithms.Numerics;
 using JAM8.Utilities;
 
 namespace JAM8.Algorithms.Geometry
@@ -71,11 +70,11 @@ namespace JAM8.Algorithms.Geometry
                 Mould.create_by_ellipse(search_radius, search_radius, 1)
                 : Mould.create_by_ellipse(search_radius, search_radius, 2, 1);
 
-            var range1 = MyGenerator.range(0, gs_model.N - 1, 1, true);
-            var model_random_idxes = SortHelper.FisherYatesShuffle(range1, mt); //乱序
+            var range1 = MyGenerator.range(0, gs_model.N);
+            var model_random_idxes = MyShuffleHelper.fisher_yates_shuffle(range1, mt).shuffled; //乱序
 
-            var range2 = MyGenerator.range(0, ti.grid_structure.N - 1, 1, true); //训练图像
-            var ti_random_idxes = SortHelper.FisherYatesShuffle(range2, mt); //乱序
+            var range2 = MyGenerator.range(0, ti.grid_structure.N); //训练图像
+            var ti_random_idxes = MyShuffleHelper.fisher_yates_shuffle(range2, mt).shuffled; //乱序
 
             int progress = 0;
             Grid state = Grid.create(gs_model);
