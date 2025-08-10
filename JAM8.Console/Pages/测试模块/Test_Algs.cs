@@ -34,6 +34,7 @@ namespace JAM8.Console.Pages
                     .Add("退出", CommonFunctions.Cancel)
                     .Add("Snesim_Test1(指定网格级别)", Snesim_Test1)
                     .Add("Snesim_Test2(多重网格)", Snesim_Test2)
+                    .Add("test_Snesim_YGL相同参数比较", test_Snesim_YGL相同参数比较)
                     .Add("统计", 统计)
                     .Add("从很大数组里等间距取值（例如等份100份）", 从很大数组里等间距取值)
                     .Add("GridProperty_replace_with_threshold", GridProperty_replace_with_threshold)
@@ -50,9 +51,76 @@ namespace JAM8.Console.Pages
                     .Add("Form_VariogramFit4PointSet", Form_VariogramFit4PointSet)
                     .Add("test_CDataNearestFinder_kdtree", test_CDataNearestFinder_kdtree)
                     .Add("GridProperty Test[max min]", GridProperty_Test_MaxMin)
+                    .Add("test_SimulationPath", test_SimulationPath)
+                    .Add("test_cdf_sampler", test_cdf_sampler)
                 ;
 
             menu.Display();
+        }
+
+        private void test_Snesim_YGL相同参数比较()
+        {
+            //read training image from GSLIB file
+            Output.WriteLine(ConsoleColor.Yellow, "read training image from GSLIB file");
+            Form_GridCatalog frm = new();
+            var g_TI = (frm.ShowDialog() != DialogResult.OK
+                ? Grid.create_from_gslibwin().grid
+                : frm.selected_grids.FirstOrDefault());
+            if (g_TI == null)
+                return;
+
+            //create mould
+            Mould mould = Mould.create_by_ellipse(10, 10, 1);
+
+            //set max number of nodes in mould for snesim
+            int max_number = 20;
+            mould = Mould.create_by_front_section(mould, max_number);
+
+            //create grid structure for simulation
+            GridStructure re_gs = GridStructure.create_simple(101, 101, 1);
+
+            //set random seed
+            int random_seed = 123;
+
+            //set multigrid level
+            int multigrid_level = 1;
+
+            Snesim snesim = Snesim.create();
+            CData cd = null;
+
+            //set retrieve inverse proportion
+            int progress_for_retrieve_inverse = 0;
+
+            Stopwatch sw = new();
+
+            sw.Start();
+
+            var (result, time) = snesim.simulate_single_grid(g_TI.first_gridProperty(), cd, re_gs, random_seed, mould,
+                multigrid_level, progress_for_retrieve_inverse);
+            Output.WriteLine(ConsoleColor.Red, $"时间:{time}");
+            result.showGrid_win();
+
+            sw.Stop();
+
+            Output.WriteLine(ConsoleColor.Red, $"总时间:{sw.ElapsedMilliseconds}毫秒");
+        }
+
+        private void test_cdf_sampler()
+        {
+            var dist = new List<(string, double)> { ("A", 2.0), ("B", 1.0), ("C", 1.0) };
+            var p = 0.65;
+            var result = SamplingHelper.sample(dist, p); // C#
+            MyConsoleHelper.write_string_to_console($"采样结果: {result}");
+        }
+
+        private void test_SimulationPath()
+        {
+            MersenneTwister mt = new(1234);
+            SimulationPath sp = SimulationPath.create(GridStructure.create_simple(100, 100, 1), 1, mt);
+            MyConsoleHelper.write_string_to_console(mt.NextDouble().ToString());
+            MyConsoleHelper.write_string_to_console(mt.NextDouble().ToString());
+            MyConsoleHelper.write_string_to_console(mt.NextDouble().ToString());
+            MyConsoleHelper.write_string_to_console(mt.NextDouble().ToString());
         }
 
         private void GridProperty_Test_MaxMin()
@@ -380,7 +448,7 @@ namespace JAM8.Console.Pages
                 : Mould.create_by_ellipse(10, 10, 10, 1);
             //set max number of nodes in mould for snesim
             int max_number = Input.ReadInt("max number of nodes in mould for snesim: ", 10, 100);
-            mould = Mould.create_by_mould(mould, max_number);
+            mould = Mould.create_by_front_section(mould, max_number);
 
 
             //create grid structure for simulation
@@ -405,12 +473,13 @@ namespace JAM8.Console.Pages
 
                 Stopwatch sw = new();
                 sw.Start();
-                for (int j = 0; j < 10; j++)
+                for (int j = 0; j < 1; j++)
                 {
-                    var (result, time) = snesim.run(g_TI.first_gridProperty(), cd, re_gs, random_seed, mould,
+                    var (result, time) = snesim.simulate_single_grid(g_TI.first_gridProperty(), cd, re_gs, random_seed, mould,
                         multigrid_level,
                         progress_for_retrieve_inverse);
                     Output.WriteLine(ConsoleColor.Red, $"时间:{time}");
+                    result.showGrid_win();
                 }
 
                 sw.Stop();
@@ -445,12 +514,12 @@ namespace JAM8.Console.Pages
             Snesim snesim = Snesim.create();
 
             GridStructure re_gs = ti.grid_structure;
-            re_gs = GridStructure.create_simple(101, 101, 1);
+            re_gs = GridStructure.create_simple(200, 200, 50);
             CData cd = CData.read_from_gslib_win().cdata;
 
             // var corsened_cd = cd.coarsened(re_gs).coarsened_cd;
 
-            var (re, time) = snesim.run(1001, 3, 25, (15, 15, 1),
+            var (re, time) = snesim.simulate_multigrid(1001, 3, 50, (10, 10, 1),
                 ti, cd, re_gs, progress_for_inverse_retrieve);
 
             // re.showGrid_win();

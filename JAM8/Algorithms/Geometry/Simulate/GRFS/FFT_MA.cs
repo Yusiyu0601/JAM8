@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Numerics;
 using JAM8.Algorithms.Numerics;
+using JAM8.Utilities;
 using MathNet.Numerics;
 
 namespace JAM8.Algorithms.Geometry
@@ -20,7 +21,7 @@ namespace JAM8.Algorithms.Geometry
         /// <returns></returns>
         public static (GridProperty gp, long time) fft_move_average_2d(GridStructure gs, int scale_x = 50, int scale_y = 50, int random_seed = 123123)
         {
-            Random rnd = new(random_seed);
+            MersenneTwister mt = new((uint)random_seed);
 
             Stopwatch sw = new();
             sw.Start();
@@ -51,7 +52,7 @@ namespace JAM8.Algorithms.Geometry
             Gaussian gau = new();
             for (int j = 0; j < ny; j++)
                 for (int i = 0; i < nx; i++)
-                    z_rand[i, j] = new Complex(gau.Sample(rnd), 0);
+                    z_rand[i, j] = new Complex(gau.Sample(mt), 0);
             z_rand = MyFFT.fft2(z_rand);
             var random_field = new Complex[gs_fft.nx, gs_fft.ny];
             for (int j = 0; j < ny; j++)
@@ -80,7 +81,7 @@ namespace JAM8.Algorithms.Geometry
         /// <returns></returns>
         public static (GridProperty gp, long time) fft_move_average_3d(GridStructure gs, int scale_x = 20, int scale_y = 20, int scale_z = 20, int random_seed = 123123)
         {
-            Random rnd = new(random_seed);
+            MersenneTwister mt = new((uint)random_seed);
 
             Stopwatch sw = new();
             sw.Start();
@@ -117,7 +118,7 @@ namespace JAM8.Algorithms.Geometry
             for (int k = 0; k < nz; k++)
                 for (int j = 0; j < ny; j++)
                     for (int i = 0; i < nx; i++)
-                        z_rand[i, j, k] = new Complex(gau.Sample(rnd), 0);
+                        z_rand[i, j, k] = new Complex(gau.Sample(mt), 0);
 
             z_rand = MyFFT.fft3(z_rand);
             var random_field = new Complex[gs_fft.nx, gs_fft.ny, gs_fft.nz];
@@ -150,7 +151,7 @@ namespace JAM8.Algorithms.Geometry
         /// <returns></returns>
         public static (GridProperty gp, long time) fft_move_average_3d_parallel(GridStructure gs, int scale_x = 20, int scale_y = 20, int scale_z = 20, int random_seed = 123123)
         {
-            Random rnd = new(random_seed);
+            MersenneTwister mt = new((uint)random_seed);
 
             Stopwatch sw = new();
             sw.Start();
@@ -187,7 +188,7 @@ namespace JAM8.Algorithms.Geometry
             for (int k = 0; k < nz; k++)
                 for (int j = 0; j < ny; j++)
                     for (int i = 0; i < nx; i++)
-                        z_rand[i, j, k] = new Complex(gau.Sample(rnd), 0);
+                        z_rand[i, j, k] = new Complex(gau.Sample(mt), 0);
 
             z_rand = MyFFT.fft3(z_rand);
             var random_field = new Complex[gs_fft.nx, gs_fft.ny, gs_fft.nz];

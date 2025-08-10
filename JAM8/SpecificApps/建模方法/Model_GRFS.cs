@@ -18,26 +18,24 @@ namespace JAM8.SpecificApps.建模方法
 
         public static void GRFS_win2()
         {
-            Random rnd = new();
             GridStructure gs = GridStructure.create_win();
             Variogram vm = Variogram.create(VariogramType.Spherical, 0, 1, 20);
             CData cd = CData.read_from_gslib_win().cdata;
             GRFS grfs = GRFS.create(gs, vm, cd, cd.select_by_property_name_win());
             var rot_mat = new double[] { 0, 0, 0, 20, 20, 2 };
-            var (result, time) = grfs.run2(30, rot_mat, 20, rnd.Next());
+            var (result, time) = grfs.run2(30, rot_mat, 20, 111);
             result.showGrid_win();
             Console.WriteLine($@"计算时间:{time}秒");
         }
 
         public static void GRFS_win1()
         {
-            Random rnd = new();
             GridStructure gs = GridStructure.create_win();
             Variogram vm = Variogram.create(VariogramType.Spherical, 0, 1, 20);
             CData cd = CData.read_from_gslib_win().cdata;
             GRFS grfs = GRFS.create(gs, vm, cd, cd.select_by_property_name_win());
             var rot_mat = new double[] { 0, 0, 0, 20, 20, 2 };
-            var (result, time) = grfs.run(30, rot_mat, 20, rnd.Next());
+            var (result, time) = grfs.run(30, rot_mat, 20, 111);
             result.showGrid_win();
             Console.WriteLine($@"计算时间:{time}秒");
         }
@@ -53,7 +51,7 @@ namespace JAM8.SpecificApps.建模方法
             Grid g_extent = Grid.create(gs_extent);
             g_extent.add_gridProperty("origin");
             g_extent.add_gridProperty("gauss");
-            g_extent["origin"].set_values_gaussian(0, 1, new Random());
+            g_extent["origin"].set_values_gaussian(0, 1, new MersenneTwister());
             Mould mould = (gs.dim == Dimension.D2)
                 ? Mould.create_by_ellipse(25, 25, 1)
                 : Mould.create_by_ellipse(5, 5, 5, 1);

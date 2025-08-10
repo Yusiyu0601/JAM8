@@ -13,7 +13,6 @@ namespace JAM8.Work.建模方法
                 .Add("MPS", Model_MPS.MPS_Run)
                 .Add("Snesim", Model_MPS.Snesim_Run)
                 .Add("DS", Model_MPS.DS_Run)
-                .Add("混合建模", Model_MPS.混合建模)
                 ;
 
             menu.Display();

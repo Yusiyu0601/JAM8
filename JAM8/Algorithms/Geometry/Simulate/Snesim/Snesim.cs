@@ -7,7 +7,7 @@ namespace JAM8.Algorithms.Geometry
 {
     public class Snesim
     {
-        int global_progress = 0;//全局进度(多重网格使用)
+        int global_progress = 0; //全局进度(多重网格使用)
 
         //int cd_max;//Maximum number of conditional data 条件数据最大数量
         //float servo_system;//correction factor 校正系数
@@ -41,7 +41,7 @@ namespace JAM8.Algorithms.Geometry
         /// in the previous simulation progress, default is 0
         /// </param>
         /// <returns></returns>
-        public (Grid, double time) run(int random_seed, int multigrid_count, int max_number,
+        public (Grid, double time) simulate_multigrid(int random_seed, int multigrid_count, int max_number,
             (int rx, int ry, int rz) template, GridProperty TI, CData cd, GridStructure gs_re,
             int progress_for_retrieve_inverse = 0)
         {
@@ -64,9 +64,9 @@ namespace JAM8.Algorithms.Geometry
                     ? Mould.create_by_ellipse(template.rx, template.ry, multi_grid)
                     : Mould.create_by_ellipse(template.rx, template.ry, template.rz, multi_grid);
 
-                mould = Mould.create_by_mould(mould, max_number);
+                mould = Mould.create_by_front_section(mould, max_number);
 
-                var (re_mg, time_) = run(TI, current_cd, gs_re, random_seed, mould, multi_grid,
+                var (re_mg, time_) = simulate_single_grid(TI, current_cd, gs_re, random_seed, mould, multi_grid,
                     progress_for_retrieve_inverse);
 
                 g.add_gridProperty($"{multi_grid}", re_mg[0]);
@@ -106,11 +106,11 @@ namespace JAM8.Algorithms.Geometry
         /// in the previous simulation progress, default is 0
         /// </param>
         /// <returns></returns>
-        public (Grid re, double time) run(GridProperty TI, CData cd, GridStructure gs_re,
-            int random_seed, Mould mould, int multigrid_level = 1,
-            int progress_for_retrieve_inverse = 0)
+        public (Grid re, double time) simulate_single_grid(GridProperty TI, CData cd, GridStructure gs_re, int random_seed, Mould mould,
+            int multigrid_level = 1, int progress_for_retrieve_inverse = 0)
         {
-            Random rnd = new(random_seed);
+            MersenneTwister mt = new((uint)random_seed);
+
             Grid result = Grid.create(gs_re); //Create a grid based on the gs_re. 根据gs_re创建grid工区 
 
             //Assign the value of cd to the model. 把cd赋值到模型中
@@ -129,8 +129,8 @@ namespace JAM8.Algorithms.Geometry
                 return (null, 0.0);
 
             Dictionary<int, int> nod_cut = [];
-            Dictionary<int, float> pdf = []; //global facies probability 全局相概率
-            Dictionary<int, float> cpdf = []; //conditional constraint probability 条件约束相概率
+            Dictionary<int, double> pdf = []; //global facies probability 全局相概率
+            Dictionary<int, double> cpdf = []; //conditional constraint probability 条件约束相概率
             List<float?> categories = []; //The value range of discrete variables 离散变量的取值范围
 
             var category_freq = TI.discrete_category_freq(false);
@@ -141,7 +141,7 @@ namespace JAM8.Algorithms.Geometry
                 categories.Add(category_freq[i].value);
             }
 
-            path = SimulationPath.create(gs_re, multigrid_level, rnd);
+            path = SimulationPath.create(gs_re, multigrid_level, mt);
 
             //Only the simulation time is recorded (excluding building the search tree).
             Stopwatch sw = new();
@@ -152,7 +152,7 @@ namespace JAM8.Algorithms.Geometry
             double progress_preview = -1;
             while (path.is_visit_over() == false)
             {
-                global_progress++;//全局进度(多重网格使用)
+                global_progress++; //全局进度(多重网格使用)
                 if (global_progress == (int)(gs_re.N * 0.2))
                 {
                     // result.showGrid_win("20%");
@@ -171,13 +171,18 @@ namespace JAM8.Algorithms.Geometry
 
                 MyConsoleProgress.Print(path.progress, $"snesim multigrid_level{multigrid_level}");
                 var si = path.visit_next();
+                if (gs_re.get_array_index(si) == 6219)
+                {
+                    MyConsoleHelper.write_string_to_console("发现异常");
+                }
+
                 var value_si = result["re"].get_value(si);
                 if (value_si == null)
                 {
                     var dataEvent = MouldInstance.create_from_gridProperty(mould, si, result["re"]);
                     cpdf = get_cpdf(dataEvent, tree, path.progress, progress_for_retrieve_inverse);
                     cpdf ??= pdf;
-                    var value = cdf_sampler.sample<int>(cpdf, (float)rnd.NextDouble());
+                    var value = SamplingHelper.sample<int>(cpdf.Select(kv => (kv.Key, kv.Value)), mt.NextDouble());
                     result["re"].set_value(si, value);
                     // nod_cut[value]++;
                 }
@@ -187,10 +192,10 @@ namespace JAM8.Algorithms.Geometry
             return (result, totalElapsedTime);
         }
 
-        private Dictionary<int, float> get_cpdf(MouldInstance dataEvent, STree tree, double progress,
+        private Dictionary<int, double> get_cpdf(MouldInstance dataEvent, STree tree, double progress,
             int progress_for_retrieve_inverse = 0)
         {
-            var cpdf = new Dictionary<int, float>();
+            var cpdf = new Dictionary<int, double>();
 
             //In the case of conditional data, a cpdf of the conditional data is
             //retrieved from the search tree.

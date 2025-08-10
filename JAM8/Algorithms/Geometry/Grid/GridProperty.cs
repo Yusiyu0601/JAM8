@@ -1,6 +1,7 @@
 ﻿using CsvHelper;
 using JAM8.Algorithms.Images;
 using JAM8.Algorithms.Numerics;
+using JAM8.Utilities;
 
 namespace JAM8.Algorithms.Geometry
 {
@@ -521,13 +522,13 @@ namespace JAM8.Algorithms.Geometry
         /// <param name="Min"></param>
         /// <param name="Max"></param>
         /// <param name="rnd"></param>
-        public void set_values_uniform(float min, float max, Random rnd)
+        public void set_values_uniform(float min, float max, MersenneTwister mt)
         {
             DataMapper mapper = new();
             mapper.Reset(0, 1, min, max);
             for (int i = 0; i < grid_structure.N; i++)
             {
-                float value = (float)rnd.NextDouble();
+                float value = (float)mt.NextDouble();
                 value = (float)mapper.MapAToB(value);
                 set_value(i, value);
             }
@@ -539,12 +540,12 @@ namespace JAM8.Algorithms.Geometry
         /// <param name="rnd"></param>
         /// <param name="mean">均值</param>
         /// <param name="dev">方差</param>
-        public void set_values_gaussian(double mean, double dev, Random rnd)
+        public void set_values_gaussian(double mean, double dev, MersenneTwister mt)
         {
             Gaussian norm = new(mean, dev);
             for (int i = 0; i < grid_structure.N; i++)
             {
-                set_value(i, (float)norm.Sample(rnd));
+                set_value(i, (float)norm.Sample(mt));
             }
         }
 

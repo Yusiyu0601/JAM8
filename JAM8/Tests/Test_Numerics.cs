@@ -327,7 +327,7 @@ namespace JAM8.Tests
         public static void SimulationPath_Test()
         {
             GridStructure gs = GridStructure.create_win();
-            SimulationPath path = SimulationPath.create(gs, 1, new Random());
+            SimulationPath path = SimulationPath.create(gs, 1, new MersenneTwister(111));
             for (int i = 10; i <= gs.N / 2; i++)
             {
                 path.freeze(gs.get_spatial_index(i));

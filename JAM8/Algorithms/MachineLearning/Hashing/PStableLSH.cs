@@ -1,4 +1,5 @@
 ﻿using JAM8.Algorithms.Numerics;
+using JAM8.Utilities;
 
 namespace JAM8.Algorithms.MachineLearning
 {
@@ -48,7 +49,7 @@ namespace JAM8.Algorithms.MachineLearning
         //初始化LSH参数
         private void InitLSH(int seed)
         {
-            Random rnd = new(seed);
+            MersenneTwister mt = new((uint)seed);
             //p-Stable分布（L=2；高斯分布）的随机向量
             a = new float[HashTableCount][];
             Gaussian gaussian = new(0, 1);
@@ -58,7 +59,7 @@ namespace JAM8.Algorithms.MachineLearning
                 float[] a1 = new float[Dimension];
                 for (int k = 0; k < Dimension; k++)
                 {
-                    a1[k] = (float)gaussian.Sample(rnd);
+                    a1[k] = (float)gaussian.Sample(mt);
                 }
                 a[j] = a1;
             }

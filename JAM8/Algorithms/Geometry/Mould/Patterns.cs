@@ -51,7 +51,7 @@ namespace JAM8.Algorithms.Geometry
         /// <param name="parallel">Whether to use parallel processing? 是否使用并行处理</param>
         /// <param name="distinct">Whether to deduplicate. 是否去重</param>
         /// <returns>生成的 Patterns</returns>
-        public static Patterns create(Mould mould, GridProperty gp_source, bool parallel = true, bool distinct = true)
+        public static Patterns create(Mould mould, GridProperty gp_source, bool parallel = true, bool distinct = false)
         {
             GridStructure gs = gp_source.grid_structure;
             ConcurrentBag<MouldInstance> patterns_list = [];

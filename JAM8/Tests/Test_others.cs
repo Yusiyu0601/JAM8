@@ -578,7 +578,7 @@ namespace JAM8.Tests
             }
             MyDataFrame result = MyDataFrame.create(series_names);
 
-            Random rnd = new(11);
+            MersenneTwister mt = new(11);
             //
             for (int idx_record = 0; idx_record < df.N_Record; idx_record++)
             {
@@ -590,7 +590,7 @@ namespace JAM8.Tests
                 while (true)
                 {
                     Gaussian gau = new(平时成绩, 2);
-                    var array = gau.sample(N, rnd);
+                    var array = gau.sample(N, mt);
 
                     var 平均值 = array.Average(a => (int)a);
                     if (平均值 != 平时成绩)

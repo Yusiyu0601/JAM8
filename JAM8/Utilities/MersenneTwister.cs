@@ -21,13 +21,14 @@ namespace JAM8.Utilities
         private static readonly double Pi = Math.PI;
 
         // 构造函数
-        public MersenneTwister(uint seed)
+        public MersenneTwister(uint seed = 111)
         {
             mt[0] = seed; // 将种子赋值给第一个元素
             for (int i = 1; i < N; i++)
             {
                 mt[i] = 0x6C078965 * (mt[i - 1] ^ mt[i - 1] >> 30) + (uint)i; // 初始化状态向量
             }
+
             index = 0; // 初始时索引为0
         }
 
@@ -69,7 +70,10 @@ namespace JAM8.Utilities
             return minValue + (int)(randomValue % range); // 生成 [minValue, maxValue) 的随机数
         }
 
-        // 将生成的32位整数映射到 [0, 1) 之间的浮点数值
+        /// <summary>
+        /// 将生成的32位整数映射到 [0, 1) 之间的浮点数值
+        /// </summary>
+        /// <returns></returns>
         public double NextDouble()
         {
             uint rand32 = Next(); // 获取 32 位无符号整数随机数

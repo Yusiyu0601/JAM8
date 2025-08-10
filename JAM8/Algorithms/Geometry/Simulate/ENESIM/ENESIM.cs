@@ -101,7 +101,7 @@ namespace JAM8.Algorithms.Geometry
                         var cpdf = get_cpdf_parallel(scan_re_mi, ti, categories);
 
                         //抽样
-                        var value = cdf_sampler.sample(cpdf, (float)mt.NextDouble());
+                        var value = SamplingHelper.sample<float?>(cpdf.Select(kv => (kv.Key, kv.Value)), mt.NextDouble());
 
                         //赋值
                         g_result["re"].set_value(model_random_idx, value);
@@ -198,7 +198,7 @@ namespace JAM8.Algorithms.Geometry
         /// <param name="ti"></param>
         /// <param name="categories"></param>
         /// <returns></returns>
-        private Dictionary<float?, float> get_cpdf_parallel(MouldInstance scan_re_mi, GridProperty ti,
+        private Dictionary<float?, double> get_cpdf_parallel(MouldInstance scan_re_mi, GridProperty ti,
             List<float?> categories)
         {
             var trim_scan_re_mi = scan_re_mi.trim(CompareType.NotEqual, null);
@@ -278,7 +278,7 @@ namespace JAM8.Algorithms.Geometry
 
                 if (sum >= CMin)
                 {
-                    var cpdf = new Dictionary<float?, float>();
+                    var cpdf = new Dictionary<float?, double>();
                     for (int j = 0; j < categories.Count; j++)
                     {
                         cpdf.Add(categories[j], tempCounts[i, j] / (float)sum);

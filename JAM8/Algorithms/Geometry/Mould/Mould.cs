@@ -36,34 +36,63 @@ namespace JAM8.Algorithms.Geometry
         public Dimension dim { get; internal set; }
 
         /// <summary>
-        /// 根据 core 与 neighbors 创建 Mould
+        /// 根据中心点 core 与邻居点 neighbors 构建 Mould 模板。
+        /// 所有邻居位置将统一以 core 为参考点进行偏移，并按偏移后的空间距离从近到远排序（与 C++ 行为完全一致）。
+        /// 
+        /// 【注意】
+        /// - 该方法排除重复邻居（根据坐标判断）；
+        /// - 排除与 core 相同位置的点（距离为0）；
+        /// - 返回的 neighbor_spiral_mapper 不包含 core 自身；
+        /// - 所有节点相对于 core 的坐标将进行偏移处理，构建一个以 (0,0[,0]) 为中心的模板。
+        /// 
+        /// 【等效行为】
+        /// 与 C++ 中 geometry::Mould::create_by_location(const SpatialIndex& core, const std::vector<SpatialIndex>& neighbors) 完全一致。
+        /// 
+        /// 【示例】
+        /// <code>
+        /// var core = SpatialIndex.create(5, 5);
+        /// var neighbors = new List&lt;SpatialIndex&gt;
+        /// {
+        ///     SpatialIndex.create(6, 5),
+        ///     SpatialIndex.create(4, 5),
+        ///     SpatialIndex.create(5, 6),
+        ///     SpatialIndex.create(5, 4),
+        /// };
+        /// var mould = Mould.create_by_location(core, neighbors);
+        /// </code>
         /// </summary>
-        /// <param name="core">核心点</param>
-        /// <param name="neighbors">相邻点列表</param>
-        /// <returns>生成的 Mould 对象</returns>
+        /// <param name="core">核心点 SpatialIndex，模板中心</param>
+        /// <param name="neighbors">模板邻居点集合，未偏移，允许任意顺序</param>
+        /// <returns>一个新的 Mould 对象，内部邻居列表已偏移并按距离排序</returns>
+        /// <exception cref="ArgumentNullException">core 为 null</exception>
+        /// <exception cref="ArgumentException">neighbors 为 null 或空</exception>
         public static Mould create_by_location(SpatialIndex core, List<SpatialIndex> neighbors)
         {
-            // 参数检查
             if (core == null)
                 throw new ArgumentNullException(nameof(core), "Core cannot be null.");
             if (neighbors == null || neighbors.Count == 0)
                 throw new ArgumentException("Neighbors cannot be null or empty.", nameof(neighbors));
 
-            // 1. 对 neighbors 去重并过滤距离为 0 的点，同时计算距离
+            // 【步骤1】计算偏移量，使 core 变为原点
             var offset = core.dim == Dimension.D2
                 ? SpatialIndex.create(-core.ix, -core.iy)
                 : SpatialIndex.create(-core.ix, -core.iy, -core.iz);
 
-            // 计算与核心点的距离，过滤距离为 0 的点，并排序
+            // 【步骤2】去重 → 应用偏移 → 排除中心点 → 计算距离 → 排序
             var neighbor_spiral_mapper = neighbors
                 .DistinctBy(n => new { n.dim, n.ix, n.iy, n.iz }) // 去重
-                .Select(n => (distance: SpatialIndex.calc_dist(core, n), neighbor: n)) // 计算距离
-                .Where(t => t.distance > 0) // 过滤距离为 0 的点
-                .OrderBy(t => t.distance) // 按距离排序
-                .Select(t => (t.distance, t.neighbor.offset(offset))) // 应用偏移量
+                .Select(n => n.offset(offset)) // 将 neighbor 偏移，使 core → 原点
+                .Where(n => SpatialIndex.calc_dist_to_origin(n) > 0) // 排除偏移后变为原点的点
+                .Select(n => (
+                    distance: SpatialIndex.calc_dist_to_origin(n),
+                    spatial_index: n
+                ))
+                .OrderBy(t => t.distance) // 主排序：距离升序
+                .ThenBy(t => t.spatial_index.ix) // Tie-break 1
+                .ThenBy(t => t.spatial_index.iy) // Tie-break 2
+                .ThenBy(t => t.spatial_index.iz) // Tie-break 3
                 .ToList();
 
-            // 2. 构建 Mould 对象
             return new Mould
             {
                 dim = core.dim,
@@ -77,7 +106,7 @@ namespace JAM8.Algorithms.Geometry
         /// <param name="mould"></param>
         /// <param name="first_k"></param>
         /// <returns></returns>
-        public static Mould create_by_mould(Mould mould, int k_first_neighbors)
+        public static Mould create_by_front_section(Mould mould, int k_first_neighbors)
         {
             // 参数检查
             if (k_first_neighbors > mould.neighbors_number)
@@ -100,9 +129,9 @@ namespace JAM8.Algorithms.Geometry
         /// <param name="mould"></param>
         /// <param name="first_ratio"></param>
         /// <returns></returns>
-        public static Mould create_by_mould(Mould mould, double first_ratio)
+        public static Mould create_by_front_section(Mould mould, double first_ratio)
         {
-            return create_by_mould(mould, (int)(first_ratio * mould.neighbors_number));
+            return create_by_front_section(mould, (int)(first_ratio * mould.neighbors_number));
         }
 
         /// <summary>
@@ -297,6 +326,34 @@ namespace JAM8.Algorithms.Geometry
             }
 
             return distance;
+        }
+
+        /// <summary>
+        /// 无需构造 MouldInstance，直接提取邻居值列表并进行有效性检测
+        /// </summary>
+        public static bool TryGetNeighborValues(
+            Mould mould,
+            SpatialIndex core,
+            GridProperty gp,
+            out List<float?> neighbor_values,
+            out float? core_value)
+        {
+            neighbor_values = new List<float?>(mould.neighbors_number);
+            core_value = gp.get_value(core);
+            int valid_count = 0;
+
+            for (int i = 0; i < mould.neighbors_number; i++)
+            {
+                var offset = mould.neighbor_spiral_mapper[i].spatial_index;
+                var neighbor = core.offset(offset);
+                var value = gp.get_value(neighbor);
+                neighbor_values.Add(value);
+                if (value != null)
+                    valid_count++;
+            }
+
+            // 是否为“完整样式”
+            return valid_count == mould.neighbors_number;
         }
 
         /// <summary>

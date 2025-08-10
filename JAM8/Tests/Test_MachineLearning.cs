@@ -23,7 +23,7 @@ namespace JAM8.Tests
         {
             GridStructure gs = GridStructure.create_win();
             GridProperty gp = GridProperty.create(gs);
-            gp.set_values_gaussian(0, 1, new Random(1));
+            gp.set_values_gaussian(0, 1, new MersenneTwister(1));
 
             List<MyVector> my_vectors = new();
             for (int n = 0; n < gs.N; n++)

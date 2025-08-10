@@ -21,7 +21,7 @@ namespace JAM8.Tests
             GridStructure gs = GridStructure.create_win();
             for (int m = 1; m <= 3; m++)
             {
-                var path = SimulationPath.create(gs, m, new Random());
+                var path = SimulationPath.create(gs, m, new MersenneTwister(111));
                 var g = Grid.create(gs, "测试");
                 g.add_gridProperty("属性");
 
@@ -174,27 +174,27 @@ namespace JAM8.Tests
             GridStructure gs = GridStructure.create_win();
             Grid g = Grid.create(gs);
             g.add_gridProperty("gp1");
-            g[0].set_values_gaussian(0, 1, new Random());
+            g[0].set_values_gaussian(0, 1, new MersenneTwister());
             g.add_gridProperty("gp2");
-            g[1].set_values_gaussian(0, 1, new Random());
+            g[1].set_values_gaussian(0, 1, new MersenneTwister());
             g.add_gridProperty("gp3");
-            g[2].set_values_gaussian(0, 1, new Random());
+            g[2].set_values_gaussian(0, 1, new MersenneTwister());
             g.add_gridProperty("gp4");
-            g[3].set_values_gaussian(0, 1, new Random());
+            g[3].set_values_gaussian(0, 1, new MersenneTwister());
             g.add_gridProperty("gp5");
-            g[4].set_values_gaussian(0, 1, new Random());
+            g[4].set_values_gaussian(0, 1, new MersenneTwister());
             g.add_gridProperty("gp6");
-            g[5].set_values_gaussian(0, 1, new Random());
+            g[5].set_values_gaussian(0, 1, new MersenneTwister());
             g.add_gridProperty("gp7");
-            g[6].set_values_gaussian(0, 1, new Random());
+            g[6].set_values_gaussian(0, 1, new MersenneTwister());
             g.add_gridProperty("gp8");
-            g[7].set_values_gaussian(0, 1, new Random());
+            g[7].set_values_gaussian(0, 1, new MersenneTwister());
             g.add_gridProperty("gp9");
-            g[8].set_values_gaussian(0, 1, new Random());
+            g[8].set_values_gaussian(0, 1, new MersenneTwister());
             g.add_gridProperty("gp10");
-            g[9].set_values_gaussian(0, 1, new Random());
+            g[9].set_values_gaussian(0, 1, new MersenneTwister());
             g.add_gridProperty("gp11");
-            g[10].set_values_gaussian(0, 1, new Random());
+            g[10].set_values_gaussian(0, 1, new MersenneTwister());
             Grid.save_to_gslibwin(g);
         }
 
@@ -210,7 +210,7 @@ namespace JAM8.Tests
         {
             GridStructure gs = GridStructure.create_win();
             GridProperty gp = GridProperty.create(gs);
-            gp.set_values_gaussian(0, 1, new Random(1));
+            gp.set_values_gaussian(0, 1, new MersenneTwister(1));
             gp.show_win();
             CData cd = CData.create_from_gridProperty(gp, "gp", CompareType.NotEqual, null);
 
@@ -367,7 +367,7 @@ namespace JAM8.Tests
         {
             Grid g = Grid.create_from_gslibwin().grid;
             Mould mould = Mould.create_by_ellipse(10, 10, 1);
-            mould = Mould.create_by_mould(mould, 25);
+            mould = Mould.create_by_front_section(mould, 25);
             STree st = STree.create(mould, g.first_gridProperty());
         }
 
