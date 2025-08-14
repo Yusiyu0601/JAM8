@@ -32,6 +32,7 @@ namespace JAM8.Console.Pages
         {
             var menu = new EasyConsole.Menu()
                     .Add("退出", CommonFunctions.Cancel)
+                    .Add("test_DS", test_DS)
                     .Add("Snesim_Test1(指定网格级别)", Snesim_Test1)
                     .Add("Snesim_Test2(多重网格)", Snesim_Test2)
                     .Add("test_Snesim_YGL相同参数比较", test_Snesim_YGL相同参数比较)
@@ -53,9 +54,59 @@ namespace JAM8.Console.Pages
                     .Add("GridProperty Test[max min]", GridProperty_Test_MaxMin)
                     .Add("test_SimulationPath", test_SimulationPath)
                     .Add("test_cdf_sampler", test_cdf_sampler)
+                    .Add("test_create_by_anis_ellipse", test_create_by_anis_ellipse)
+                    .Add("test_upscale_sparse", test_upscale_sparse)
+                    .Add("test_create_from_win", test_create_from_win)
                 ;
 
             menu.Display();
+        }
+
+        private void test_DS()
+        {
+            GridProperty ti = Grid.create_from_win().grid.first_gridProperty();
+            GridProperty re = GridProperty.create(ti.grid_structure);
+            re = DirectSampling.run(re, ti);
+            re.show_win();
+        }
+
+        private void test_create_from_win()
+        {
+            var result = Grid.create_from_win();
+            result.grid.showGrid_win(result.file_name);
+        }
+
+        private void test_upscale_sparse()
+        {
+            var g = Grid.create_from_win().grid;
+            g.showGrid_win();
+
+
+            var gp_expand_to_pow2 = g.first_gridProperty().expand_to_pow2();
+            gp_expand_to_pow2.show_win("gp_expand_to_pow2");
+            gp_expand_to_pow2 = g.first_gridProperty();
+            var gp_upsample_sparse = gp_expand_to_pow2.pyramid_upsample_sparse(2, 2);
+            gp_upsample_sparse.show_win("gp_upsample_sparse");
+            var gp_resize = gp_expand_to_pow2.pyramid_downsample_smooth(2, 2);
+            gp_resize.show_win("gp_resize");
+            var gp_resize2 = gp_expand_to_pow2.pyramid_downsample_smooth(4, 4);
+            gp_resize2.show_win("gp_resize2");
+            var gp_resize3 = gp_expand_to_pow2.pyramid_downsample_smooth(8, 8);
+            gp_resize3.show_win("gp_resize3");
+        }
+
+        private void test_create_by_anis_ellipse()
+        {
+            // 参数设置（你可以随意改）
+            double aLong = 10; // 长轴
+            double aShort = 5; // 短轴
+            int multiGridLevel = 2; // 多重网格层级
+            double angleDeg = 0; // 旋转角度（例如 0, 30, 45, 90）
+
+            // 调用你写的模板函数
+            var mould = Mould.create_by_anis_ellipse(aLong, aShort, multiGridLevel, angleDeg);
+
+            mould.Show2d("");
         }
 
         private void test_Snesim_YGL相同参数比较()
@@ -65,7 +116,7 @@ namespace JAM8.Console.Pages
             Form_GridCatalog frm = new();
             var g_TI = (frm.ShowDialog() != DialogResult.OK
                 ? Grid.create_from_gslibwin().grid
-                : frm.selected_grids.FirstOrDefault());
+                : frm.selected_grid_with_path.grid);
             if (g_TI == null)
                 return;
 
@@ -294,7 +345,7 @@ namespace JAM8.Console.Pages
             }
             else
             {
-                ti = frm.selected_grids.FirstOrDefault().first_gridProperty();
+                ti = frm.selected_grid_with_path.grid.first_gridProperty();
             }
 
             if (ti == null)
@@ -437,7 +488,7 @@ namespace JAM8.Console.Pages
             Form_GridCatalog frm = new();
             var g_TI = (frm.ShowDialog() != DialogResult.OK
                 ? Grid.create_from_gslibwin().grid
-                : frm.selected_grids.FirstOrDefault());
+                : frm.selected_grid_with_path.grid);
             if (g_TI == null)
                 return;
 
@@ -475,7 +526,8 @@ namespace JAM8.Console.Pages
                 sw.Start();
                 for (int j = 0; j < 1; j++)
                 {
-                    var (result, time) = snesim.simulate_single_grid(g_TI.first_gridProperty(), cd, re_gs, random_seed, mould,
+                    var (result, time) = snesim.simulate_single_grid(g_TI.first_gridProperty(), cd, re_gs, random_seed,
+                        mould,
                         multigrid_level,
                         progress_for_retrieve_inverse);
                     Output.WriteLine(ConsoleColor.Red, $"时间:{time}");

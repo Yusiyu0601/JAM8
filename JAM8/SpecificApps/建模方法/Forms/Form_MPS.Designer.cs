@@ -30,8 +30,7 @@
         {
             tabControl1 = new TabControl();
             tabPage1 = new TabPage();
-            button7 = new Button();
-            scottplot4Grid2 = new Algorithms.Geometry.Scottplot4Grid();
+            scottplot4Grid2 = new JAM8.Algorithms.Geometry.Scottplot4Grid();
             tb_file_name = new TextBox();
             button2 = new Button();
             tabPage3 = new TabPage();
@@ -54,7 +53,7 @@
             label11 = new Label();
             tb_cd_nx = new TextBox();
             label12 = new Label();
-            scottplot4Grid3 = new Algorithms.Geometry.Scottplot4Grid();
+            scottplot4Grid3 = new JAM8.Algorithms.Geometry.Scottplot4Grid();
             textBox2 = new TextBox();
             button1 = new Button();
             tabPage2 = new TabPage();
@@ -70,7 +69,7 @@
             label1 = new Label();
             label2 = new Label();
             mps_nz = new TextBox();
-            scottplot4Grid1 = new Algorithms.Geometry.Scottplot4Grid();
+            scottplot4Grid1 = new JAM8.Algorithms.Geometry.Scottplot4Grid();
             tabControl2 = new TabControl();
             tabPage4 = new TabPage();
             textBox1 = new TextBox();
@@ -79,11 +78,19 @@
             label9 = new Label();
             tb_template_ry = new TextBox();
             label7 = new Label();
-            tb_multigrid = new TextBox();
+            tb_multigrid_simpat = new TextBox();
             label6 = new Label();
             label4 = new Label();
             tb_template_rx = new TextBox();
             tabPage5 = new TabPage();
+            tb_rz_snesim = new TextBox();
+            label24 = new Label();
+            tb_ry_snesim = new TextBox();
+            label25 = new Label();
+            tb_multigrid_snesim = new TextBox();
+            label26 = new Label();
+            label27 = new Label();
+            tb_rx_snesim = new TextBox();
             snesim_max_number = new TextBox();
             label23 = new Label();
             button5 = new Button();
@@ -118,57 +125,46 @@
             tabControl1.Location = new Point(0, 0);
             tabControl1.Name = "tabControl1";
             tabControl1.SelectedIndex = 0;
-            tabControl1.Size = new Size(1242, 665);
+            tabControl1.Size = new Size(1242, 702);
             tabControl1.TabIndex = 0;
             // 
             // tabPage1
             // 
-            tabPage1.Controls.Add(button7);
             tabPage1.Controls.Add(scottplot4Grid2);
             tabPage1.Controls.Add(tb_file_name);
             tabPage1.Controls.Add(button2);
             tabPage1.Location = new Point(4, 33);
             tabPage1.Name = "tabPage1";
             tabPage1.Padding = new Padding(3);
-            tabPage1.Size = new Size(1234, 628);
+            tabPage1.Size = new Size(1234, 665);
             tabPage1.TabIndex = 0;
             tabPage1.Text = "训练图像";
             tabPage1.UseVisualStyleBackColor = true;
-            // 
-            // button7
-            // 
-            button7.Location = new Point(8, 90);
-            button7.Name = "button7";
-            button7.Size = new Size(230, 51);
-            button7.TabIndex = 119;
-            button7.Text = "GridCatalog读取";
-            button7.UseVisualStyleBackColor = true;
-            button7.Click += button7_Click;
             // 
             // scottplot4Grid2
             // 
             scottplot4Grid2.Location = new Point(244, 6);
             scottplot4Grid2.Name = "scottplot4Grid2";
-            scottplot4Grid2.Size = new Size(984, 614);
+            scottplot4Grid2.Size = new Size(984, 651);
             scottplot4Grid2.TabIndex = 118;
             // 
             // tb_file_name
             // 
-            tb_file_name.Location = new Point(8, 160);
+            tb_file_name.Location = new Point(8, 79);
             tb_file_name.Multiline = true;
             tb_file_name.Name = "tb_file_name";
             tb_file_name.ReadOnly = true;
             tb_file_name.ScrollBars = ScrollBars.Vertical;
-            tb_file_name.Size = new Size(230, 136);
+            tb_file_name.Size = new Size(230, 578);
             tb_file_name.TabIndex = 117;
             // 
             // button2
             // 
-            button2.Location = new Point(8, 22);
+            button2.Location = new Point(8, 17);
             button2.Name = "button2";
             button2.Size = new Size(230, 51);
             button2.TabIndex = 116;
-            button2.Text = "Gslib文件读取";
+            button2.Text = "打开训练图像";
             button2.UseVisualStyleBackColor = true;
             button2.Click += button2_Click;
             // 
@@ -199,7 +195,7 @@
             tabPage3.Location = new Point(4, 33);
             tabPage3.Name = "tabPage3";
             tabPage3.Padding = new Padding(3);
-            tabPage3.Size = new Size(1234, 628);
+            tabPage3.Size = new Size(1234, 665);
             tabPage3.TabIndex = 2;
             tabPage3.Text = "条件数据";
             tabPage3.UseVisualStyleBackColor = true;
@@ -404,7 +400,7 @@
             tabPage2.Location = new Point(4, 33);
             tabPage2.Name = "tabPage2";
             tabPage2.Padding = new Padding(3);
-            tabPage2.Size = new Size(1234, 628);
+            tabPage2.Size = new Size(1234, 665);
             tabPage2.TabIndex = 1;
             tabPage2.Text = "建模";
             tabPage2.UseVisualStyleBackColor = true;
@@ -415,7 +411,7 @@
             groupBox2.Controls.Add(label8);
             groupBox2.Controls.Add(mps_randomSeed);
             groupBox2.Controls.Add(label5);
-            groupBox2.Location = new Point(10, 498);
+            groupBox2.Location = new Point(10, 535);
             groupBox2.Name = "groupBox2";
             groupBox2.Size = new Size(310, 122);
             groupBox2.TabIndex = 141;
@@ -464,7 +460,7 @@
             groupBox1.Controls.Add(label1);
             groupBox1.Controls.Add(label2);
             groupBox1.Controls.Add(mps_nz);
-            groupBox1.Location = new Point(10, 345);
+            groupBox1.Location = new Point(10, 382);
             groupBox1.Name = "groupBox1";
             groupBox1.Size = new Size(310, 147);
             groupBox1.TabIndex = 140;
@@ -527,7 +523,7 @@
             scottplot4Grid1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             scottplot4Grid1.Location = new Point(326, 3);
             scottplot4Grid1.Name = "scottplot4Grid1";
-            scottplot4Grid1.Size = new Size(905, 622);
+            scottplot4Grid1.Size = new Size(905, 654);
             scottplot4Grid1.TabIndex = 139;
             // 
             // tabControl2
@@ -538,7 +534,7 @@
             tabControl2.Location = new Point(10, 6);
             tabControl2.Name = "tabControl2";
             tabControl2.SelectedIndex = 0;
-            tabControl2.Size = new Size(310, 333);
+            tabControl2.Size = new Size(310, 370);
             tabControl2.TabIndex = 138;
             // 
             // tabPage4
@@ -549,21 +545,21 @@
             tabPage4.Controls.Add(label9);
             tabPage4.Controls.Add(tb_template_ry);
             tabPage4.Controls.Add(label7);
-            tabPage4.Controls.Add(tb_multigrid);
+            tabPage4.Controls.Add(tb_multigrid_simpat);
             tabPage4.Controls.Add(label6);
             tabPage4.Controls.Add(label4);
             tabPage4.Controls.Add(tb_template_rx);
             tabPage4.Location = new Point(4, 33);
             tabPage4.Name = "tabPage4";
             tabPage4.Padding = new Padding(3);
-            tabPage4.Size = new Size(302, 296);
+            tabPage4.Size = new Size(302, 333);
             tabPage4.TabIndex = 0;
             tabPage4.Text = "SIMPAT";
             tabPage4.UseVisualStyleBackColor = true;
             // 
             // textBox1
             // 
-            textBox1.Location = new Point(56, 254);
+            textBox1.Location = new Point(56, 297);
             textBox1.Name = "textBox1";
             textBox1.ReadOnly = true;
             textBox1.Size = new Size(187, 30);
@@ -581,7 +577,7 @@
             // 
             // button3
             // 
-            button3.Location = new Point(56, 205);
+            button3.Location = new Point(56, 236);
             button3.Name = "button3";
             button3.Size = new Size(187, 43);
             button3.TabIndex = 124;
@@ -615,13 +611,13 @@
             label7.TabIndex = 132;
             label7.Text = "样板_ry";
             // 
-            // tb_multigrid
+            // tb_multigrid_simpat
             // 
-            tb_multigrid.Location = new Point(142, 155);
-            tb_multigrid.Name = "tb_multigrid";
-            tb_multigrid.Size = new Size(113, 30);
-            tb_multigrid.TabIndex = 131;
-            tb_multigrid.Text = "3";
+            tb_multigrid_simpat.Location = new Point(142, 155);
+            tb_multigrid_simpat.Name = "tb_multigrid_simpat";
+            tb_multigrid_simpat.Size = new Size(113, 30);
+            tb_multigrid_simpat.TabIndex = 131;
+            tb_multigrid_simpat.Text = "3";
             // 
             // label6
             // 
@@ -651,22 +647,98 @@
             // 
             // tabPage5
             // 
+            tabPage5.Controls.Add(tb_rz_snesim);
+            tabPage5.Controls.Add(label24);
+            tabPage5.Controls.Add(tb_ry_snesim);
+            tabPage5.Controls.Add(label25);
+            tabPage5.Controls.Add(tb_multigrid_snesim);
+            tabPage5.Controls.Add(label26);
+            tabPage5.Controls.Add(label27);
+            tabPage5.Controls.Add(tb_rx_snesim);
             tabPage5.Controls.Add(snesim_max_number);
             tabPage5.Controls.Add(label23);
             tabPage5.Controls.Add(button5);
             tabPage5.Location = new Point(4, 33);
             tabPage5.Name = "tabPage5";
             tabPage5.Padding = new Padding(3);
-            tabPage5.Size = new Size(302, 296);
+            tabPage5.Size = new Size(302, 333);
             tabPage5.TabIndex = 1;
             tabPage5.Text = "SNESIM";
             tabPage5.UseVisualStyleBackColor = true;
+            // 
+            // tb_rz_snesim
+            // 
+            tb_rz_snesim.Location = new Point(147, 153);
+            tb_rz_snesim.Name = "tb_rz_snesim";
+            tb_rz_snesim.Size = new Size(113, 30);
+            tb_rz_snesim.TabIndex = 143;
+            tb_rz_snesim.Text = "1";
+            // 
+            // label24
+            // 
+            label24.AutoSize = true;
+            label24.Location = new Point(56, 156);
+            label24.Name = "label24";
+            label24.Size = new Size(70, 24);
+            label24.TabIndex = 142;
+            label24.Text = "搜索_rz";
+            // 
+            // tb_ry_snesim
+            // 
+            tb_ry_snesim.Location = new Point(147, 110);
+            tb_ry_snesim.Name = "tb_ry_snesim";
+            tb_ry_snesim.Size = new Size(113, 30);
+            tb_ry_snesim.TabIndex = 141;
+            tb_ry_snesim.Text = "10";
+            // 
+            // label25
+            // 
+            label25.AutoSize = true;
+            label25.Location = new Point(55, 113);
+            label25.Name = "label25";
+            label25.Size = new Size(71, 24);
+            label25.TabIndex = 140;
+            label25.Text = "搜索_ry";
+            // 
+            // tb_multigrid_snesim
+            // 
+            tb_multigrid_snesim.Location = new Point(147, 206);
+            tb_multigrid_snesim.Name = "tb_multigrid_snesim";
+            tb_multigrid_snesim.Size = new Size(113, 30);
+            tb_multigrid_snesim.TabIndex = 139;
+            tb_multigrid_snesim.Text = "3";
+            // 
+            // label26
+            // 
+            label26.AutoSize = true;
+            label26.Location = new Point(33, 209);
+            label26.Name = "label26";
+            label26.Size = new Size(93, 24);
+            label26.TabIndex = 138;
+            label26.Text = "MultiGrid";
+            // 
+            // label27
+            // 
+            label27.AutoSize = true;
+            label27.Location = new Point(56, 70);
+            label27.Name = "label27";
+            label27.Size = new Size(70, 24);
+            label27.TabIndex = 136;
+            label27.Text = "搜索_rx";
+            // 
+            // tb_rx_snesim
+            // 
+            tb_rx_snesim.Location = new Point(147, 67);
+            tb_rx_snesim.Name = "tb_rx_snesim";
+            tb_rx_snesim.Size = new Size(113, 30);
+            tb_rx_snesim.TabIndex = 137;
+            tb_rx_snesim.Text = "10";
             // 
             // snesim_max_number
             // 
             snesim_max_number.Location = new Point(147, 22);
             snesim_max_number.Name = "snesim_max_number";
-            snesim_max_number.Size = new Size(103, 30);
+            snesim_max_number.Size = new Size(113, 30);
             snesim_max_number.TabIndex = 133;
             snesim_max_number.Text = "25";
             // 
@@ -681,7 +753,7 @@
             // 
             // button5
             // 
-            button5.Location = new Point(56, 234);
+            button5.Location = new Point(58, 267);
             button5.Name = "button5";
             button5.Size = new Size(187, 43);
             button5.TabIndex = 125;
@@ -703,7 +775,7 @@
             tabPage6.Location = new Point(4, 33);
             tabPage6.Name = "tabPage6";
             tabPage6.Padding = new Padding(3);
-            tabPage6.Size = new Size(302, 296);
+            tabPage6.Size = new Size(302, 333);
             tabPage6.TabIndex = 2;
             tabPage6.Text = "DS";
             tabPage6.UseVisualStyleBackColor = true;
@@ -790,7 +862,7 @@
             // 
             AutoScaleDimensions = new SizeF(11F, 24F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1242, 665);
+            ClientSize = new Size(1242, 702);
             Controls.Add(tabControl1);
             FormBorderStyle = FormBorderStyle.FixedToolWindow;
             MaximizeBox = false;
@@ -838,7 +910,7 @@
         private TextBox tb_template_rx;
         private Label label4;
         private Algorithms.Geometry.Scottplot4Grid scottplot4Grid2;
-        private TextBox tb_multigrid;
+        private TextBox tb_multigrid_simpat;
         private Label label6;
         private TextBox tb_template_rz;
         private Label label9;
@@ -885,8 +957,15 @@
         private Label label21;
         private Label label22;
         private TextBox ds_搜索半径;
-        private Button button7;
         private TextBox snesim_max_number;
         private Label label23;
+        private TextBox tb_rz_snesim;
+        private Label label24;
+        private TextBox tb_ry_snesim;
+        private Label label25;
+        private TextBox tb_multigrid_snesim;
+        private Label label26;
+        private Label label27;
+        private TextBox tb_rx_snesim;
     }
 }

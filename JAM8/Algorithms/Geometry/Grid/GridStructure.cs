@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.Runtime.CompilerServices;
 
 namespace JAM8.Algorithms.Geometry
 {
@@ -90,6 +91,9 @@ namespace JAM8.Algorithms.Geometry
 
         #endregion
 
+        // 缓存,避免重复计算
+        private int ny_mul_nx = 0;
+
         #region 实例函数
 
         /// <summary>
@@ -99,14 +103,15 @@ namespace JAM8.Algorithms.Geometry
         /// <param name="iy"></param>
         /// <param name="iz"></param>
         /// <returns> 如果 根据spatial_index计算array_index(ix,iy,iz)不在GridStructure范围内，则返回-1 </returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int get_array_index(int ix, int iy, int iz = 0)
         {
-            if (ix < 0 || ix >= nx || iy < 0 || iy >= ny || iz < 0 || iz >= nz)
+            if ((uint)ix >= (uint)nx || (uint)iy >= (uint)ny || (uint)iz >= (uint)nz)
             {
                 return -1; // 索引超出范围
             }
 
-            return iz * ny * nx + iy * nx + ix;
+            return iz * ny_mul_nx + iy * nx + ix;
         }
 
         /// <summary>
@@ -115,6 +120,7 @@ namespace JAM8.Algorithms.Geometry
         /// <param name="si"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int get_array_index(SpatialIndex si)
         {
             return get_array_index(si.ix, si.iy, si.iz);
@@ -309,6 +315,7 @@ namespace JAM8.Algorithms.Geometry
                 if (coord != null)
                     result.Add(coord);
             }
+
             return result;
         }
 
@@ -327,6 +334,7 @@ namespace JAM8.Algorithms.Geometry
                 if (si != null)
                     result.Add(si);
             }
+
             return result;
         }
 
@@ -345,6 +353,7 @@ namespace JAM8.Algorithms.Geometry
                 if (coord != null)
                     result.Add(coord);
             }
+
             return result;
         }
 
@@ -363,9 +372,9 @@ namespace JAM8.Algorithms.Geometry
                 if (ai >= 0)
                     result.Add(ai);
             }
+
             return result;
         }
-
 
         #endregion
 
@@ -400,7 +409,8 @@ namespace JAM8.Algorithms.Geometry
                 xextent = nx * xsiz,
                 yextent = ny * ysiz,
                 zextent = nz * zsiz,
-                N = nx * ny * nz
+                N = nx * ny * nz,
+                ny_mul_nx = ny * nx
             };
             gs.index_mapper = get_index_mapper(gs);
             return gs;

@@ -475,6 +475,42 @@ namespace JAM8.Algorithms.Geometry
         }
 
         /// <summary>
+        /// 在 WinForms 界面中选择并加载 Grid 数据。
+        /// 用户可选择通过 GSLIB 文件或 GridCatalog 表格进行加载。
+        /// </summary>
+        /// <returns>
+        /// 返回一个包含已加载的 Grid 对象和对应文件路径的元组 (Grid grid, string file_name)。<br/>
+        /// - 若选择 GSLIB 方式，则返回来自 GSLIB 文件的 Grid 及其路径。<br/>
+        /// - 若选择 GridCatalog，则弹出选择窗口，仅支持单选模式，并返回选中项。<br/>
+        /// - 若用户取消操作或选择无效，返回 (null, "")。
+        /// </returns>
+        public static (Grid grid, string file_name) create_from_win()
+        {
+            int choice = MyConsoleHelper.read_int_from_console("Select source: 0 = GSLIB, 1 = GridCatalog");
+            if (choice == 0)
+            {
+                return create_from_gslibwin();
+            }
+            else if (choice == 1)
+            {
+                Form_GridCatalog frm = new(false);
+                if (frm.ShowDialog() == DialogResult.OK)
+                {
+                    return frm.selected_grid_with_path;
+                }
+                else
+                {
+                    return (null, "");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Invalid choice. Please enter 0 or 1.");
+                return (null, "");
+            }
+        }
+
+        /// <summary>
         /// 输出Grid到GSLIB
         /// </summary>
         public static void save_to_gslibwin(Grid g)

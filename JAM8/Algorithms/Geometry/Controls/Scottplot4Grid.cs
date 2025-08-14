@@ -8,10 +8,13 @@ namespace JAM8.Algorithms.Geometry
     {
         //输入Grid,2D 或者 3D
         public Grid _g { get; internal set; }
+
         //选中的GridProperty，2D或者3D
         public GridProperty _gp { get; internal set; }
+
         //实际显示GridProperty，只能是2D(2D模型的深度复制体、或者3D模型切片)
         private GridProperty _view_2d_gp;
+
         //过滤字符串
         private string _filter_string = null;
 
@@ -397,7 +400,7 @@ namespace JAM8.Algorithms.Geometry
             var g_resized = Grid.create(gs_resized);
             foreach (var (gp_name, gp) in _g)
             {
-                g_resized.add_gridProperty($"{gp_name}(resized)", gp.resize(gs_resized));
+                g_resized.add_gridProperty($"{gp_name}(resized)", gp.resize_nearest_to_structure(gs_resized));
             }
             g_resized.showGrid_win("resized");
         }

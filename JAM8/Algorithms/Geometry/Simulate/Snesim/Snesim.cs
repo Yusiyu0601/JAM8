@@ -100,7 +100,7 @@ namespace JAM8.Algorithms.Geometry
         /// </param>
         /// <param name="mould">Simulation template
         /// </param>
-        /// <param name="multi_grid">Multi-grid level, default is 1
+        /// <param name="multigrid_level">Multi-grid level, default is 1
         /// </param>
         /// <param name="progress_for_retrieve_inverse">In the simulation progress, the proportion of reverse query 
         /// in the previous simulation progress, default is 0

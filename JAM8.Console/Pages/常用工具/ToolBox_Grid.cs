@@ -118,8 +118,8 @@ namespace JAM8.Console.Pages
                         continue;
                     }
 
-                    var pats_i = Patterns.create(mould, g[i].resize(0.3, 0.3, 0.3), true, true); // 如果支持释放
-                    var pats_j = Patterns.create(mould, g[j].resize(0.3, 0.3, 0.3), true, true);
+                    var pats_i = Patterns.create(mould, g[i].resize_nearest_by_scale(0.3, 0.3, 0.3), true, true); // 如果支持释放
+                    var pats_j = Patterns.create(mould, g[j].resize_nearest_by_scale(0.3, 0.3, 0.3), true, true);
                     MyConsoleHelper.write_string_to_console($"pattern数量{pats_i.Count} {pats_j.Count}");
                     double dist = GetSymmetricPatternDistance(pats_i, pats_j);
 
@@ -211,7 +211,7 @@ namespace JAM8.Console.Pages
 
         private void Grid显示()
         {
-            Grid g = Grid.create_from_gslibwin().grid;
+            Grid g = Grid.create_from_win().grid;
             if (g != null)
                 g.showGrid_win();
         }

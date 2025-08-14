@@ -6,8 +6,8 @@ namespace JAM8.SpecificApps.建模方法.Forms
 {
     public partial class Form_MPS : Form
     {
-        private Grid g_ti; //训练图像
-        private Grid g_re; //模拟网格
+        private GridProperty ti; //训练图像
+        private GridProperty re; //模拟网格
 
         private CData cd;
 
@@ -22,27 +22,14 @@ namespace JAM8.SpecificApps.建模方法.Forms
         //导入TI
         private void button2_Click(object sender, EventArgs e)
         {
-            (g_ti, file_name_ti) = Grid.create_from_gslibwin(); //ti
+            var (g_ti, file_name_ti) = Grid.create_from_win(); //ti
             if (g_ti == null)
                 return;
+            ti = g_ti.select_gridProperty_win().grid_property;
 
             scottplot4Grid2.update_grid(g_ti);
 
             tb_file_name.Text = file_name_ti;
-
-            mps_nx.Text = g_ti.gridStructure.nx.ToString();
-            mps_ny.Text = g_ti.gridStructure.ny.ToString();
-            mps_nz.Text = g_ti.gridStructure.nz.ToString();
-        }
-
-        //导入TI
-        private void button7_Click(object sender, EventArgs e)
-        {
-            Form_GridCatalog frm = new();
-            if (frm.ShowDialog() != DialogResult.OK)
-                return;
-            g_ti = frm.selected_grids.FirstOrDefault();
-            scottplot4Grid2.update_grid(g_ti);
 
             mps_nx.Text = g_ti.gridStructure.nx.ToString();
             mps_ny.Text = g_ti.gridStructure.ny.ToString();
@@ -81,7 +68,7 @@ namespace JAM8.SpecificApps.建模方法.Forms
         //SIMPAT
         private void button3_Click(object sender, EventArgs e)
         {
-            int multigrid = int.Parse(tb_multigrid.Text);
+            int multigrid = int.Parse(tb_multigrid_simpat.Text);
             int random_seed = int.Parse(mps_randomSeed.Text);
             int N = int.Parse(mps_N.Text);
             int nx = int.Parse(mps_nx.Text);
@@ -105,7 +92,7 @@ namespace JAM8.SpecificApps.建模方法.Forms
         private void button5_Click(object sender, EventArgs e)
         {
             var snesim = Snesim.create();
-            int multigrid = int.Parse(tb_multigrid.Text);
+            int multigrid = int.Parse(tb_multigrid_snesim.Text);
             int random_seed = int.Parse(mps_randomSeed.Text);
             int max_number = int.Parse(snesim_max_number.Text);
             int N = int.Parse(mps_N.Text);
@@ -113,12 +100,12 @@ namespace JAM8.SpecificApps.建模方法.Forms
             int ny = int.Parse(mps_ny.Text);
             int nz = int.Parse(mps_nz.Text);
             GridStructure gs_re = GridStructure.create_simple(nx, ny, nz);
-            int template_rx = int.Parse(tb_template_rx.Text);
-            int template_ry = int.Parse(tb_template_ry.Text);
-            int template_rz = int.Parse(tb_template_rz.Text);
+            int template_rx = int.Parse(tb_rx_snesim.Text);
+            int template_ry = int.Parse(tb_ry_snesim.Text);
+            int template_rz = int.Parse(tb_rz_snesim.Text);
 
-            var (model, _) = snesim.simulate_multigrid(random_seed, multigrid, max_number, (template_rx, template_ry, template_rz),
-                g_ti.first_gridProperty(), cd, gs_re, 35);
+            var (model, _) = snesim.simulate_multigrid(random_seed, multigrid, max_number,
+                (template_rx, template_ry, template_rz), ti, cd, gs_re, 35);
 
             scottplot4Grid1.update_grid(model);
         }
@@ -128,23 +115,29 @@ namespace JAM8.SpecificApps.建模方法.Forms
         {
             int random_seed = int.Parse(mps_randomSeed.Text);
             int N = int.Parse(mps_N.Text);
-            int nx = int.Parse(mps_nx.Text);
-            int ny = int.Parse(mps_ny.Text);
-            int nz = int.Parse(mps_nz.Text);
-            GridStructure gs_re = GridStructure.create_simple(nx, ny, nz);
+
             int search_radius = int.Parse(ds_搜索半径.Text);
             float max_fraction = float.Parse(ds_搜索比例.Text);
             int max_number = int.Parse(ds_最大条件数.Text);
             float distance_threshold = float.Parse(ds_距离阈值.Text);
 
-            DirectSampling ds = null;
-            if (cd != null)
-                ds = DirectSampling.create(gs_re, g_ti.first_gridProperty(), cd, cd.property_names[0]);
-            else
-                ds = DirectSampling.create(gs_re, g_ti.first_gridProperty());
+            int nx = int.Parse(mps_nx.Text);
+            int ny = int.Parse(mps_ny.Text);
+            int nz = int.Parse(mps_nz.Text);
+            GridStructure gs_re = GridStructure.create_simple(nx, ny, nz);
+            GridProperty re = GridProperty.create(gs_re);
 
-            g_re = ds.run(search_radius, max_number, max_fraction, distance_threshold, random_seed);
-            scottplot4Grid1.update_grid(g_re);
+            var ds_params = new List<(int radius, int max_number, double max_fraction, double threshold)>
+            {
+                (6, 20, 0.8, 0.001), // Level 0 (coarsest)
+                (8, 20, 0.5, 0.01),  // Level 1
+                (10, 20, 0.6, 0.03), // Level 2 (finest)
+                (10, 10, 0.7, 0.05), // Level 2 (finest)
+                (10, 10, 0.8, 0.1), // Level 2 (finest)
+                (10, 10, 0.9, 0.5), // Level 2 (finest)
+            };
+            var g_re = DirectSampling.run_multiresolution(re, ti, ds_params, random_seed);
+            scottplot4Grid1.update_grid(g_re.convert_to_grid());
         }
     }
 }

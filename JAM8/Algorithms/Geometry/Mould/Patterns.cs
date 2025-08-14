@@ -8,7 +8,7 @@ using System.IO;
 namespace JAM8.Algorithms.Geometry
 {
     /// <summary>
-    /// 样式库，字典类<arrayIndex,mouldInstance>
+    /// 样式库，采用字典类实现 (arrayIndex,mouldInstance)
     /// </summary>
     public class Patterns : Dictionary<int, MouldInstance>
     {

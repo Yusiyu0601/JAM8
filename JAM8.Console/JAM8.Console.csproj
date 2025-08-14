@@ -9,6 +9,7 @@
 		<Platforms>x64</Platforms>
 		<PublishAot>false</PublishAot>
 		<_SuppressWinFormsTrimError>true</_SuppressWinFormsTrimError>
+		<ApplicationManifest>app.manifest</ApplicationManifest>
 	</PropertyGroup>
 
 	<ItemGroup>

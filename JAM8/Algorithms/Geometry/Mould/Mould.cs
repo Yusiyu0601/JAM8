@@ -246,6 +246,58 @@ namespace JAM8.Algorithms.Geometry
             return create_by_location(core, neighbors);
         }
 
+        public static Mould create_by_anis_ellipse(
+            double aLong, // 长轴半径（格点数）
+            double aShort, // 短轴半径（格点数）
+            int multi_grid = 1, // 多重网格层级（>=1）
+            double angleDeg = 0.0 // 椭圆长轴相对 +x 轴的角度（度）
+        )
+        {
+            if (aLong <= 0 || aShort <= 0) throw new ArgumentException("Radii must be > 0.");
+            if (multi_grid < 1) throw new ArgumentException("multiGridLevel must be >= 1.");
+
+            var core = SpatialIndex.create(0, 0);
+            var neighbors = new List<SpatialIndex>();
+
+            // 旋转到椭圆自身坐标（长轴对齐 u 轴）：[u,v] = R(-θ) * [x,y]
+            double theta = angleDeg * Math.PI / 180.0;
+            double c = Math.Cos(theta), s = Math.Sin(theta);
+
+            // 搜索边界盒（取长短轴中较大者）
+            int r = (int)Math.Ceiling(Math.Max(aLong, aShort));
+
+            // 多重网格缩放系数（1,2,4,8,...）
+            int scale = 1 << (multi_grid - 1);
+
+            double aLong2 = aLong * aLong;
+            double aShort2 = aShort * aShort;
+            const double eps = 1e-9;
+
+            for (int iy = -r; iy <= r; iy++)
+            {
+                for (int ix = -r; ix <= r; ix++)
+                {
+                    if (ix == 0 && iy == 0) continue; // 不把 core 自己放进邻居
+
+                    // 旋转到椭圆坐标系：R(-θ) = [[c, s],[-s, c]]
+                    double u = ix * c + iy * s; // 沿长轴
+                    double v = -ix * s + iy * c; // 沿短轴
+
+                    // 椭圆判定：(u/aLong)^2 + (v/aShort)^2 <= 1
+                    double val = (u * u) / aLong2 + (v * v) / aShort2;
+                    if (val <= 1.0 + eps)
+                    {
+                        int ix_mg = ix * scale;
+                        int iy_mg = iy * scale;
+                        neighbors.Add(SpatialIndex.create(ix_mg, iy_mg));
+                    }
+                }
+            }
+
+            return create_by_location(core, neighbors);
+        }
+
+
         /// <summary>
         /// 根据椭球体Ellipse模板的半径尺寸新建IrregularMould(默认包含模板中心core自身)
         /// </summary>
@@ -299,8 +351,50 @@ namespace JAM8.Algorithms.Geometry
         /// 显示2d的IrregularMould
         /// </summary>
         /// <param name="Title"></param>
-        public void Show2d(string Title)
+        public void Show2d(string title)
         {
+            if (dim != Dimension.D2)
+            {
+                Console.WriteLine("⚠️  This mould is not 2D. Show2d is only for 2D templates.");
+                return;
+            }
+
+            if (neighbor_spiral_mapper == null || neighbor_spiral_mapper.Count == 0)
+            {
+                Console.WriteLine("⚠️  No neighbors to show.");
+                return;
+            }
+
+            // 获取所有邻居坐标（偏移后的）
+            var all = neighbor_spiral_mapper.Select(t => t.spatial_index).ToList();
+
+            // 包括中心 (0,0)
+            all.Add(SpatialIndex.create(0, 0));
+
+            int minX = all.Min(p => p.ix);
+            int maxX = all.Max(p => p.ix);
+            int minY = all.Min(p => p.iy);
+            int maxY = all.Max(p => p.iy);
+
+            Console.WriteLine($"\n📐 {title}");
+            Console.WriteLine($"范围：X=[{minX},{maxX}], Y=[{minY},{maxY}]\n");
+
+            // y 从 max 到 min（上到下），x 从 min 到 max（左到右）
+            for (int y = maxY; y >= minY; y--)
+            {
+                for (int x = minX; x <= maxX; x++)
+                {
+                    if (x == 0 && y == 0)
+                        Console.Write(" O"); // 中心点
+                    else if (neighbor_spiral_mapper.Any(t => t.spatial_index.ix == x && t.spatial_index.iy == y))
+                        Console.Write(" *"); // 邻居点
+                    else
+                        Console.Write("  "); // 空白
+                }
+                Console.WriteLine();
+            }
+
+            Console.WriteLine();
         }
 
         public override string ToString()
@@ -342,11 +436,20 @@ namespace JAM8.Algorithms.Geometry
             core_value = gp.get_value(core);
             int valid_count = 0;
 
+            int core_x = core.ix;
+            int core_y = core.iy;
+            int core_z = core.iz;
+
             for (int i = 0; i < mould.neighbors_number; i++)
             {
                 var offset = mould.neighbor_spiral_mapper[i].spatial_index;
-                var neighbor = core.offset(offset);
-                var value = gp.get_value(neighbor);
+
+                int neighbor_x = core_x + offset.ix;
+                int neighbor_y = core_y + offset.iy;
+                int neighbor_z = core_z + offset.iz;
+
+                var value = gp.get_value(neighbor_x, neighbor_y, neighbor_z);
+
                 neighbor_values.Add(value);
                 if (value != null)
                     valid_count++;

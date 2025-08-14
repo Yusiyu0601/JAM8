@@ -37,22 +37,21 @@
             scottplot4Grid1.Location = new Point(0, 0);
             scottplot4Grid1.Name = "scottplot4Grid1";
             scottplot4Grid1.Size = new Size(976, 604);
-            scottplot4Grid1.TabIndex = 0;
+            scottplot4Grid1.TabIndex = 2;
             // 
-            // Form_Scottplot4Grid2
+            // Form_Scottplot4Grid
             // 
             AutoScaleDimensions = new SizeF(11F, 24F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(976, 604);
             Controls.Add(scottplot4Grid1);
-            Name = "Form_Scottplot4Grid2";
+            Name = "Form_Scottplot4Grid";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "show grid";
             ResumeLayout(false);
         }
 
         #endregion
-
         private Scottplot4Grid scottplot4Grid1;
     }
 }

@@ -27,7 +27,7 @@ namespace JAM8.SpecificApps.研究方法
             var (grid, fileName) = Grid.create_from_gslibwin();
             GridStructure gs = grid.gridStructure;
             var ti = grid.select_gridProperty_win("选择TI").grid_property;
-            ti = ti.resize(GridStructure.create_simple(80, 80, 1));
+            ti = ti.resize_nearest_to_structure(GridStructure.create_simple(80, 80, 1));
 
             //预先提取所有样式
             var mould = Mould.create_by_rectangle(5, 5, 1);
@@ -40,7 +40,7 @@ namespace JAM8.SpecificApps.研究方法
             {
                 var gp_pat = GridProperty.create(gs_pat);
                 pat.paste_to_gridProperty(mould, SpatialIndex.create(5 + 1, 5 + 1), gp_pat);
-                gp_pat = gp_pat.resize(GridStructure.create_simple(50, 50, 1));
+                gp_pat = gp_pat.resize_nearest_to_structure(GridStructure.create_simple(50, 50, 1));
                 var image = gp_pat.draw_image_2d(Color.Gray, Algorithms.Images.ColorMapEnum.Jet);
                 images.Add(i, image);
             }

@@ -33,7 +33,7 @@ namespace JAM8.SpecificApps.研究方法
             //缩放到固定尺寸
             var gs = GridStructure.create_simple(100, 100, 1);
             if (gs != TI.grid_structure)
-                TI = TI.resize(gs);
+                TI = TI.resize_nearest_to_structure(gs);
 
             Console.Write("是否进行倒角变换[仅二值图像采用，0 => 否 ; 1 => 是]\n\t");
             int b = int.Parse(Console.ReadLine());
@@ -495,11 +495,12 @@ namespace JAM8.SpecificApps.研究方法
             Form_GridCatalog frm = new();
             if (frm.ShowDialog() != DialogResult.OK)
                 return null;
-            var TI = frm.selected_grids[0].select_gridProperty_win("选择TI").grid_property;
+            var TI = frm.selected_grid_with_path.grid
+                .select_gridProperty_win("选择TI").grid_property;
 
             //缩放到固定尺寸
             var gs = GridStructure.create_simple(100, 100, 1);
-            TI = TI.resize(gs);
+            TI = TI.resize_nearest_to_structure(gs);
 
             double[,] similarityMatrix = new double[gs.N, gs.N];
 
@@ -1316,12 +1317,12 @@ namespace JAM8.SpecificApps.研究方法
                     Form_GridCatalog frm = new();
                     if (frm.ShowDialog() != DialogResult.OK)
                         return;
-                    var grids = frm.selected_grids;
+                    var grids = frm.selected_grids_with_path.Select(a => a.grid);
 
                     foreach (var selected_grid in grids)
                     {
                         var ti = (GridProperty)selected_grid.first_gridProperty();
-                        ti = ti.resize(gs);
+                        ti = ti.resize_nearest_to_structure(gs);
                         g.add_gridProperty(selected_grid.grid_name, ti);
                     }
 
@@ -1332,7 +1333,7 @@ namespace JAM8.SpecificApps.研究方法
                     var temp_grid = Grid.create_from_gslibwin("打开训练图像").grid;
                     foreach (var (name, gp) in temp_grid)
                     {
-                        g.add_gridProperty(name, gp.resize(gs));
+                        g.add_gridProperty(name, gp.resize_nearest_to_structure(gs));
                     }
 
                     break;
