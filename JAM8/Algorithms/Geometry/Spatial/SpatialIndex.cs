@@ -304,5 +304,30 @@
         {
             return view_text();
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is not SpatialIndex other)
+                return false;
+
+            return dim == other.dim &&
+                   ix == other.ix &&
+                   iy == other.iy &&
+                   (dim == Dimension.D2 || iz == other.iz);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hash = 17;
+                hash = hash * 23 + dim.GetHashCode();
+                hash = hash * 23 + ix.GetHashCode();
+                hash = hash * 23 + iy.GetHashCode();
+                if (dim == Dimension.D3)
+                    hash = hash * 23 + iz.GetHashCode();
+                return hash;
+            }
+        }
     }
 }

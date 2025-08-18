@@ -126,15 +126,17 @@ namespace JAM8.SpecificApps.建模方法.Forms
             int nz = int.Parse(mps_nz.Text);
             GridStructure gs_re = GridStructure.create_simple(nx, ny, nz);
             GridProperty re = GridProperty.create(gs_re);
+            re = cd.coarsened(gs_re).coarsened_grid.first_gridProperty();
+            re.show_win("初始工区");
 
             var ds_params = new List<(int radius, int max_number, double max_fraction, double threshold)>
             {
                 (6, 20, 0.8, 0.001), // Level 0 (coarsest)
                 (8, 20, 0.5, 0.01),  // Level 1
-                (10, 20, 0.6, 0.03), // Level 2 (finest)
-                (10, 10, 0.7, 0.05), // Level 2 (finest)
-                (10, 10, 0.8, 0.1), // Level 2 (finest)
-                (10, 10, 0.9, 0.5), // Level 2 (finest)
+                (10, 20, 0.6, 0.03), // Level 2 
+                // (10, 10, 0.7, 0.05), // Level 3 
+                // (10, 10, 0.8, 0.01), // Level 4 
+                // (10, 10, 0.9, 0.001), // Level 5 (finest)
             };
             var g_re = DirectSampling.run_multiresolution(re, ti, ds_params, random_seed);
             scottplot4Grid1.update_grid(g_re.convert_to_grid());

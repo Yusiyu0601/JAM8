@@ -205,7 +205,8 @@ namespace JAM8.Algorithms.Geometry
                 return null;
 
             SpatialIndex si = null;
-
+            if (coord.y == 99.5)
+                Console.WriteLine();
             if (dim == Dimension.D2)
             {
                 int ix = (int)((coord.x - xmn + 0.5 * xsiz) / xsiz);
@@ -374,6 +375,67 @@ namespace JAM8.Algorithms.Geometry
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// 将当前网格结构粗化（或细化）到指定的网格数量（nx, ny, nz），
+        /// 保持原始空间范围（extent）不变，
+        /// 自动计算新的网格单元尺寸（xsiz 等）与起点坐标（xmn 等）。
+        /// </summary>
+        /// <param name="nx_coarsed">目标 X 向网格数量</param>
+        /// <param name="ny_coarsed">目标 Y 向网格数量</param>
+        /// <param name="nz_coarsed">目标 Z 向网格数量（2D 时填 1）</param>
+        /// <returns>新的 GridStructure 对象，起点为 coarse 后第一个单元格的中心坐标</returns>
+        public GridStructure coarse(int nx_coarsed, int ny_coarsed, int nz_coarsed)
+        {
+            if ((dim == Dimension.D2 && nz_coarsed > 1) || (dim == Dimension.D3 && nz_coarsed < 1))
+            {
+                Console.WriteLine(MyExceptions.Geometry_IndexException);
+                return null;
+            }
+
+            // 原始最小边界（左下角/底部）
+            float x_boundary_min = xmn - 0.5f * xsiz;
+            float y_boundary_min = ymn - 0.5f * ysiz;
+            float z_boundary_min = zmn - 0.5f * zsiz;
+
+            // 新的 cell size
+            float xsiz_coarsed = xextent / nx_coarsed;
+            float ysiz_coarsed = yextent / ny_coarsed;
+            float zsiz_coarsed = zextent / nz_coarsed;
+
+            // 新的起点（格子中心）
+            float xmn_coarsed = x_boundary_min + 0.5f * xsiz_coarsed;
+            float ymn_coarsed = y_boundary_min + 0.5f * ysiz_coarsed;
+            float zmn_coarsed = z_boundary_min + 0.5f * zsiz_coarsed;
+
+            return init(nx_coarsed, ny_coarsed, nz_coarsed,
+                xsiz_coarsed, ysiz_coarsed, zsiz_coarsed,
+                xmn_coarsed, ymn_coarsed, zmn_coarsed);
+        }
+
+        /// <summary>
+        /// 按给定的缩放倍数（factor）对当前网格进行粗化或细化，
+        /// 保持空间范围（extent）不变，自动计算新的网格数量和起点坐标。
+        /// </summary>
+        /// <param name="factor_x">X 向缩放倍数（>1 为粗化，<1 为细化）</param>
+        /// <param name="factor_y">Y 向缩放倍数</param>
+        /// <param name="factor_z">Z 向缩放倍数（2D 时填 1）</param>
+        /// <returns>新的 GridStructure 对象，起点为缩放后第一个单元格的中心坐标</returns>
+        public GridStructure coarse_by_factor(double factor_x, double factor_y, double factor_z)
+        {
+            if ((dim == Dimension.D2 && factor_z != 1) || (dim == Dimension.D3 && factor_z <= 0))
+            {
+                Console.WriteLine(MyExceptions.Geometry_IndexException);
+                return null;
+            }
+
+            // 计算缩放后的格子数（向上取整，防止缩小后格子数为 0）
+            int nx_new = Math.Max(1, (int)Math.Round(nx / factor_x));
+            int ny_new = Math.Max(1, (int)Math.Round(ny / factor_y));
+            int nz_new = dim == Dimension.D2 ? 1 : Math.Max(1, (int)Math.Round(nz / factor_z));
+
+            return coarse(nx_new, ny_new, nz_new);
         }
 
         #endregion

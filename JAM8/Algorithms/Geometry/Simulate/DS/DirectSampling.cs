@@ -177,9 +177,10 @@ namespace JAM8.Algorithms.Geometry
             GridProperty current_ti = ti;
             for (int i = 0; i < N_pyramid - 1; i++)
             {
-                current_ti = current_ti.pyramid_downsample_smooth(factor, factor, factor);
+                current_ti = GridPyramid.pyramid_downsample_smooth(current_ti, factor, factor, factor);
                 ti_pyramid.Insert(0, current_ti); // 最粗在最前
             }
+
             ti_pyramid.Add(ti); // 最细在最后
 
             // 构建 RE 金字塔
@@ -187,9 +188,11 @@ namespace JAM8.Algorithms.Geometry
             GridProperty current_re = re;
             for (int i = 0; i < N_pyramid - 1; i++)
             {
-                current_re = current_re.resize_nearest_by_scale(1.0 / factor, 1.0 / factor, 1.0 / factor);
+                GridStructure coarse_gs = current_re.grid_structure.coarse_by_factor(factor, factor, 1);
+                current_re = GridPyramid.project_hard_data_to_coarse(current_re, coarse_gs, true);
                 re_pyramid.Insert(0, current_re);
             }
+
             re_pyramid.Add(re);
 
             // 多分辨率模拟
@@ -208,7 +211,7 @@ namespace JAM8.Algorithms.Geometry
                 {
                     // 上一层插值作为当前层的条件
                     current_ti = ti_pyramid[i];
-                    current_re = re_pyramid[i - 1].pyramid_upsample_sparse(factor, factor);
+                    current_re = GridPyramid.pyramid_upsample_sparse(re_pyramid[i - 1], factor, factor);
                     current_re = DirectSampling.run(
                         current_re, current_ti,
                         radius, max_num, max_frac, threshold, random_seed);
@@ -220,6 +223,5 @@ namespace JAM8.Algorithms.Geometry
 
             return re_pyramid.Last(); // 返回最高分辨率结果
         }
-
     }
 }

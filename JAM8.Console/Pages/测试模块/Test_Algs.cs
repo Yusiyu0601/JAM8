@@ -57,9 +57,30 @@ namespace JAM8.Console.Pages
                     .Add("test_create_by_anis_ellipse", test_create_by_anis_ellipse)
                     .Add("test_upscale_sparse", test_upscale_sparse)
                     .Add("test_create_from_win", test_create_from_win)
+                    .Add("test_project_hard_data_to_coarse", test_project_hard_data_to_coarse)
                 ;
 
             menu.Display();
+        }
+
+        private void test_project_hard_data_to_coarse()
+        {
+            CData cd = CData.read_from_gslib_win().cdata;
+            GridStructure gs = GridStructure.create_simple(100, 100, 1);
+            var (cd1, g) = cd.coarsened(gs);
+            g.showGrid_win();
+
+            GridStructure gs1 = gs.coarse_by_factor(2, 2, 1);
+            var gp1 = GridPyramid.project_hard_data_to_coarse(g.first_gridProperty(), gs1, true);
+            gp1.show_win("coarsed1");
+
+            GridStructure gs2 = gs1.coarse_by_factor(2, 2, 1);
+            var gp2 = GridPyramid.project_hard_data_to_coarse(g.first_gridProperty(), gs2, true);
+            gp2.show_win("coarsed2");
+
+            //测试从coarse 到 fine
+            var gp3 = GridPyramid.project_hard_data_to_fine(gp2, gp1);
+            gp3.show_win("gp3");
         }
 
         private void test_DS()
@@ -82,16 +103,16 @@ namespace JAM8.Console.Pages
             g.showGrid_win();
 
 
-            var gp_expand_to_pow2 = g.first_gridProperty().expand_to_pow2();
+            var gp_expand_to_pow2 = GridPyramid.expand_to_pow2(g.first_gridProperty());
             gp_expand_to_pow2.show_win("gp_expand_to_pow2");
             gp_expand_to_pow2 = g.first_gridProperty();
-            var gp_upsample_sparse = gp_expand_to_pow2.pyramid_upsample_sparse(2, 2);
+            var gp_upsample_sparse = GridPyramid.pyramid_upsample_sparse(gp_expand_to_pow2, 2, 2);
             gp_upsample_sparse.show_win("gp_upsample_sparse");
-            var gp_resize = gp_expand_to_pow2.pyramid_downsample_smooth(2, 2);
+            var gp_resize = GridPyramid.pyramid_downsample_smooth(gp_expand_to_pow2, 2, 2);
             gp_resize.show_win("gp_resize");
-            var gp_resize2 = gp_expand_to_pow2.pyramid_downsample_smooth(4, 4);
+            var gp_resize2 = GridPyramid.pyramid_downsample_smooth(gp_expand_to_pow2, 4, 4);
             gp_resize2.show_win("gp_resize2");
-            var gp_resize3 = gp_expand_to_pow2.pyramid_downsample_smooth(8, 8);
+            var gp_resize3 = GridPyramid.pyramid_downsample_smooth(gp_expand_to_pow2, 8, 8);
             gp_resize3.show_win("gp_resize3");
         }
 
